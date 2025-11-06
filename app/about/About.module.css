@@ -1,4 +1,4 @@
-.page {
+/* .page {
   font-family: "Arial", sans-serif;
   background: #fff;
 }
@@ -64,5 +64,87 @@
   }
   .heroImage {
     height: 40vh;
+  }
+} */
+
+
+
+.page {
+  font-family: "Arial", sans-serif;
+  background: #fff;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 85vh;
+  align-items: stretch;
+}
+
+.heroText {
+  padding: 56px 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroTextInner {
+  max-width: 400px;
+  text-align: center;
+  direction: ltr;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.lead {
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: #222;
+}
+
+.lead p + p {
+  margin-top: 10px;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+}
+
+.heroImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ✅ desktop behaves the same */
+  display: block;
+}
+
+/* ✅ Recommended fix: Protect image on small screens */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero::before {
+    display: none;
+  }
+
+  .title {
+    font-size: 2.3rem;
+  }
+
+  .heroImage {
+    height: auto; /* allow natural height */
+  }
+
+  .heroImage img {
+    width: 100%;
+    height: auto !important;
+    object-fit: contain !important; /* ✅ no cropping on mobile */
   }
 }
