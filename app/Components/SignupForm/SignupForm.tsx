@@ -1,90 +1,112 @@
 "use client";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import styles from "./SignupForm.module.css";
-import { FcGoogle } from "react-icons/fc";
-import axios from "axios";
+import Image from "next/image";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signOut, User } from "firebase/auth";
 
-export default function SignupForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [subscribe, setSubscribe] = useState(false);
-  const [loading, setLoading] = useState(false);
+const firebaseConfig = {
+  apiKey: "AIzaSyDiO9v_BzyyJ8C0W_M_pNvGFHGOH0rcn0E",
+  authDomain: "modella-19e1a.firebaseapp.com",
+  projectId: "modella-19e1a",
+  storageBucket: "modella-19e1a.firebasestorage.app",
+  messagingSenderId: "950370790683",
+  appId: "1:950370790683:web:c4b6c74355ac2bd7e077be"
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+type FormData = {
+  email: string;
+  password: string;
+};
+
+export default function AuthForm() {
+  const [user, setUser] = useState<User | null>(null);
+  const { register, handleSubmit } = useForm<FormData>();
+
+  // כניסה עם גוגל
+  function signInWithGoogle() {
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const user = result.user;
+        setUser(user);
+
+        // שמירה במסד MongoDB
+        await fetch("/api/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: user.displayName,
+            email: user.email,
+            profileImage: user.photoURL,
+            gender: "female", // אפשר לשנות בהתאם
+          }),
+        });
+
+        console.log("Signed in as:", user.displayName);
+      })
+      .catch(console.error);
+  }
+
+  // יצירת משתמש עם אימייל וסיסמה
+  async function onSubmit(data: FormData) {
     try {
-      await axios.post("/api/auth/register", { email, password, subscribe });
-      alert("Account created successfully!");
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Registration failed");
-    } finally {
-      setLoading(false);
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      const user = userCredential.user;
+      setUser(user);
+
+      // שמירה במסד MongoDB
+      await fetch("/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          createdAt: new Date(),
+        }),
+      });
+
+      console.log("User registered:", user.email);
+    } catch (error) {
+      console.error(error);
     }
-  };
+  }
+
+  function signOutUser() {
+    signOut(auth).then(() => setUser(null)).catch(console.error);
+  }
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>Create Your Account</h2>
-
-      <button
-        onClick={() => signIn("google")}
-        className={styles.googleButton}
-        disabled={loading}
-      >
-        <FcGoogle className={styles.googleIcon} /> Continue with Google
-      </button>
-
-      <div className={styles.divider}>
-        <span>Or</span>
-      </div>
-
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.inputGroup}>
-          <label>Email address</label>
-          <input
-            type="email"
-            placeholder="email@address.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        <label className={styles.checkbox}>
-          <input
-            type="checkbox"
-            checked={subscribe}
-            onChange={(e) => setSubscribe(e.target.checked)}
-          />
-          Receive news, updates and deals
-        </label>
-
-        <button type="submit" className={styles.submitButton} disabled={loading}>
-          {loading ? "Creating..." : "Create Account"}
-        </button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 dark:bg-black font-sans gap-4">
+      {/* טופס רגיל */}
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 bg-white p-6 rounded shadow-md dark:bg-zinc-800">
+        <input {...register("email")} placeholder="Email" className="p-2 border rounded" />
+        <input {...register("password")} type="password" placeholder="Password" className="p-2 border rounded" />
+        <button type="submit" className="bg-blue-500 text-white p-2 rounded mt-2">Register / Login</button>
       </form>
 
-      <p className={styles.terms}>
-        By creating an account, you agree to the{" "}
-        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-      </p>
+      {/* כניסה עם גוגל */}
+      <button onClick={signInWithGoogle} className="rounded-full bg-white px-6 py-3 shadow-md hover:shadow-lg active:scale-95 dark:bg-zinc-800">
+        Sign in with Google
+      </button>
 
-      <p className={styles.loginText}>
-        Already have an account? <a href="/login">Log in here</a>
-      </p>
+      {/* התנתקות */}
+      {user && (
+        <>
+          <button onClick={signOutUser} className="rounded-full bg-white px-6 py-3 shadow-md dark:bg-zinc-800">
+            Sign Out
+          </button>
+
+          <div className="mt-4 text-center">
+            <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-200">
+              Welcome, {user.displayName || user.email}
+            </h2>
+            {user.photoURL && <Image src={user.photoURL} alt="Profile Picture" width={100} height={100} className="rounded-full mt-2" />}
+          </div>
+        </>
+      )}
     </div>
   );
 }
