@@ -55,7 +55,7 @@ function Step({ title, description, imageUrl, reverse }: StepProps) {
   );
 }
 
-export default function Home() {
+export default function HomePage() {
   const stepsData = [
     {
       title: "Step 1: Your Closet",
