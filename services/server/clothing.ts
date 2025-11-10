@@ -10,7 +10,7 @@ export async function addClothingItem(item: any) {
   return result;
 }
 
-export async function getAllClothing(userId: string) {
+export async function getAllClothingItem(userId: string) {
   const db = await getDb();
   const collection = db.collection("clothes");
 
