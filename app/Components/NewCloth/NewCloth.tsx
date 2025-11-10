@@ -6,11 +6,12 @@ import axios from "axios";
 import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
 import styles from "./NewCloth.module.css";
-
+import { getDominantColorFromCenter } from "../../../services/server/colorUtils";
+import { uploadToCloudinary } from "@/services/server/cloudinary";
 const NewCloth = ({ userId }: { userId: string }) => {
   const [category, setCategory] = useState("");
   const [thickness, setThickness] = useState("");
-  const [style, setStyle] = useState<string[]>([]);
+  const [style, setStyle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,13 +28,6 @@ const NewCloth = ({ userId }: { userId: string }) => {
   const thicknesses = ["light", "medium", "heavy"];
   const styleOptions = ["casual", "formal", "sporty", "party"];
 
-  const handleStyleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOptions = Array.from(e.target.selectedOptions).map(
-      (o) => o.value
-    );
-    setStyle(selectedOptions);
-  };
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setImageFile(file);
@@ -44,46 +38,13 @@ const NewCloth = ({ userId }: { userId: string }) => {
     }
   };
 
-  const getDominantColorFromCenter = (image: HTMLImageElement) => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return "#ffffff";
-
-    const size = 100;
-    canvas.width = size;
-    canvas.height = size;
-
-    const cropSize = Math.min(image.width, image.height) / 2;
-    const sx = (image.width - cropSize) / 2;
-    const sy = (image.height - cropSize) / 2;
-
-    ctx.drawImage(image, sx, sy, cropSize, cropSize, 0, 0, size, size);
-
-    const imageData = ctx.getImageData(0, 0, size, size);
-    const data = imageData.data;
-
-    let r = 0,
-      g = 0,
-      b = 0,
-      count = 0;
-    for (let i = 0; i < data.length; i += 4) {
-      const alpha = data[i + 3];
-      if (alpha === 0) continue;
-      r += data[i];
-      g += data[i + 1];
-      b += data[i + 2];
-      count++;
-    }
-
-    r = Math.round(r / count);
-    g = Math.round(g / count);
-    b = Math.round(b / count);
-
-    return `rgb(${r}, ${g}, ${b})`;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!category || !thickness || !style) {
+      alert("Please fill all fields!");
+      setLoading(false);
+      return;
+    }
     if (!imageFile) {
       alert("Please upload an image!");
       return;
@@ -92,30 +53,17 @@ const NewCloth = ({ userId }: { userId: string }) => {
     setLoading(true);
 
     try {
-      // --- 1️⃣ העלאת תמונה ל-Cloudinary ---
-      const formData = new FormData();
-      formData.append("file", imageFile);
-      formData.append("upload_preset", "snapfit_unsigned"); // שנה לפי ה-upload preset שלך
-
-      const cloudRes = await axios.post(
-        "https://api.cloudinary.com/v1_1/dfrgvh4hf/image/upload",
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-
-      const imageUrl = cloudRes.data.secure_url;
+      const imageUrl = await uploadToCloudinary(imageFile);
       console.log("Image uploaded to Cloudinary:", imageUrl);
 
-      // --- 2️⃣ זיהוי צבע עיקרי בעזרת canvas (מרכז התמונה) ---
       const img = new Image();
-      img.crossOrigin = "anonymous"; // מונע בעיית CORS
+      img.crossOrigin = "anonymous";
       img.src = imageUrl;
       img.onload = async () => {
         const dominantColor = getDominantColorFromCenter(img);
         console.log("Detected dominant color:", dominantColor);
 
         try {
-          // --- 3️⃣ שליחה ל-Backend ומונגו ---
           await axios.post("/api/clothing", {
             userId,
             category,
@@ -128,7 +76,7 @@ const NewCloth = ({ userId }: { userId: string }) => {
           alert("Item added successfully!");
           setCategory("");
           setThickness("");
-          setStyle([]);
+          setStyle("");
           setImageFile(null);
           setImagePreview(null);
         } catch (err) {
@@ -166,9 +114,10 @@ const NewCloth = ({ userId }: { userId: string }) => {
           </select>
         </label>
 
-        <label>
+        <label className={styles.label}>
           Thickness:
           <select
+            className={styles.select}
             value={thickness}
             onChange={(e) => setThickness(e.target.value)}
             required
@@ -182,9 +131,14 @@ const NewCloth = ({ userId }: { userId: string }) => {
           </select>
         </label>
 
-        <label>
+        <label className={styles.label}>
           Style:
-          <select value={style} onChange={handleStyleChange}>
+          <select
+            className={styles.select}
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+            required
+          >
             <option value="">Select style</option>
             {styleOptions.map((st) => (
               <option key={st} value={st}>
@@ -194,7 +148,7 @@ const NewCloth = ({ userId }: { userId: string }) => {
           </select>
         </label>
 
-        <label>
+        <label className={styles.label}>
           Image:
           <input
             type="file"
