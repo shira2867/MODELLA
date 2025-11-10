@@ -37,7 +37,10 @@ export default function CompleteProfile({ userEmail }: { userEmail: string }) {
   }
 
   return (
+    
     <div className={styles.container}>
+        <h1 className={styles.heading}>Almost done! Just a few more details.</h1>
+
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <h2>Complete Your Profile</h2>
 
