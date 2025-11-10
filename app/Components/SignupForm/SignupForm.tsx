@@ -91,31 +91,7 @@ export default function AuthForm() {
     }
   }
 
-  // async function onSubmit(data: FormData) {
-  //   try {
-  //     const userCredential = await createUserWithEmailAndPassword(
-  //       auth,
-  //       data.email,
-  //       data.password
-  //     );
-  //     const user = userCredential.user;
-  //     setUser(user);
 
-  //     await fetch("/api/user/register", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         email: user.email,
-  //         password: data.password,
-  //         createdAt: new Date(),
-  //       }),
-  //     });
-
-  //     router.push("/complete-profile");
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
 
   function signOutUser() {
     signOut(auth)

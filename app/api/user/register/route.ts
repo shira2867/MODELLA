@@ -8,28 +8,33 @@ export async function POST(req: Request) {
     const { name, email, password, gender, profileImage } = body;
 
     if (!email) {
-      return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
     const col = await usersCollection();
 
-    // check if exists
-    const exists = await col.findOne({ email });
-    if (exists) {
-      return NextResponse.json(
-        { error: "Email already registered" },
-        { status: 409 }
+    // בדיקה אם המשתמש כבר קיים
+    const existingUser = await col.findOne({ email });
+    const now = new Date();
+
+    if (existingUser) {
+      // אם המשתמש קיים, נעדכן רק את name/profileImage/gender אם רוצים
+      await col.updateOne(
+        { email },
+        {
+          $set: {
+            name: name || existingUser.name,
+            gender: gender || existingUser.gender,
+            profileImage: profileImage || existingUser.profileImage,
+            updatedAt: now,
+          },
+        }
       );
+      return NextResponse.json({ ok: true, message: "User updated" });
     }
 
-    // hash password only if it exists
     const passwordHash = password ? await bcrypt.hash(password, 10) : null;
 
-    // insert user
-    const now = new Date();
     await col.insertOne({
       name: name || null,
       email,
@@ -40,12 +45,9 @@ export async function POST(req: Request) {
       updatedAt: now,
     });
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, message: "User created" });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
