@@ -1,4 +1,3 @@
-
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = process.env.MONGODB_URI;
 
@@ -13,7 +12,7 @@ const clientPromise = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
+    // Connect the client to the server (optional starting in v4.7)
     await clientPromise.connect();
     // Send a ping to confirm a successful connection
     await clientPromise.db("admin").command({ ping: 1 });
