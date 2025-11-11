@@ -1,0 +1,62 @@
+.lookArea {
+  width: 20vw;
+  height: 600px;
+  margin: 20px auto;
+  border: 2px dashed #aaa;
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  background-color: #fafafa;
+}
+
+.lookItem {
+  position: relative;
+  margin: 5px;
+}
+
+.lookItem img {
+  width: 130px;
+  height: auto;
+  border-radius: 6px;
+}
+
+.lookItem button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: none;
+  background: rgba(255,255,255,0.8);
+  cursor: pointer;
+}
+
+.hint {
+  color: #999;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px; 
+  margin-top: 15px;
+}
+
+.saveBtn {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancelBtn {
+   background-color: black;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+}

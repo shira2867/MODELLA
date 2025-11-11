@@ -80,7 +80,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
 
   return (
     <div className={styles.container}>
-      <Header />
 
       <div className={styles.mainContent}>
         <h2 className={styles.title}>My Closet</h2>
@@ -90,12 +89,11 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
-              className={`${styles.filterButton} ${
-                (!categoryFilter && cat === "All") || categoryFilter === cat
+              className={`${styles.filterButton} ${(!categoryFilter && cat === "All") || categoryFilter === cat
                   ? styles.active
                   : ""
                 // categoryFilter === cat ? styles.active : ""
-              }`}
+                }`}
               onClick={() => setCategoryFilter(cat === "All" ? null : cat)}
             >
               {cat}
@@ -119,9 +117,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               <div
                 key={color}
                 // className={styles.colorCircle}
-                className={`${styles.colorCircle} ${
-                  colorFilter === color ? styles.activeColor : ""
-                }`}
+                className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""
+                  }`}
                 style={{
                   backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
                 }}
@@ -147,7 +144,12 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
                   src={item.imageUrl}
                   alt={item.category}
                   className={styles.clothImage}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData("application/json", JSON.stringify(item));
+                  }}
                 />
+
                 <div className={styles.cardContent}>
                   <div
                     className={styles.colorPreview}
@@ -156,11 +158,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
                         ? `rgb(${COLOR_MAP[item.colorName].join(",")})`
                         : "#ffffff", // צבע ברירת מחדל אם לא מוגדר
                     }}
-                    // style={{
-                    //   backgroundColor: `rgb(${COLOR_MAP[item.colorName].join(
-                    //     ","
-                    //   )})`,
-                    // }}
+                
                   />
                 </div>
               </div>
@@ -169,7 +167,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
         )}
       </div>
 
-      <Footer />
     </div>
   );
 };
