@@ -1,6 +1,9 @@
 // app/api/clothing/route.ts
 import { NextResponse } from "next/server";
-import { addClothingItem } from "@/services/server/clothing";
+import {
+  addClothingItem,
+  getAllClothingItem,
+} from "@/services/server/clothing";
 
 export async function POST(req: Request) {
   try {
@@ -10,5 +13,22 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error adding clothing:", error);
     return NextResponse.json({ message: "Error saving item" }, { status: 500 });
+  }
+}
+export async function GET(req: Request) {
+  try {
+    const url = new URL(req.url);
+    const userId = url.searchParams.get("userId");
+    if (!userId)
+      return NextResponse.json({ message: "Missing userId" }, { status: 400 });
+
+    const items = await getAllClothingItem(userId);
+    return NextResponse.json(items);
+  } catch (error) {
+    console.error("Error fetching clothing:", error);
+    return NextResponse.json(
+      { message: "Error fetching items" },
+      { status: 500 }
+    );
   }
 }

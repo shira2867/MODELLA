@@ -1,0 +1,137 @@
+.page {
+  font-family: "Arial", sans-serif;
+  background: #fff;
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 85vh;
+  align-items: stretch;
+}
+
+.heroText {
+  padding: 56px 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroTextInner {
+  max-width: 480px;
+  text-align: center;
+  direction: ltr;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.lead {
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: #222;
+}
+.lead p + p {
+  margin-top: 10px;
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+}
+.heroImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- FAQ LIST ---------- */
+.faqSection {
+  padding: 48px 24px 80px;
+}
+
+.faqInner {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.faqList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.faqItem + .faqItem {
+  margin-top: 14px;
+}
+
+.q {
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  cursor: pointer;
+  position: relative;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: #f6f6f7;
+  transition: background 0.2s ease;
+  outline: none;
+}
+
+.q:hover {
+  background: #efeff1;
+}
+
+.a {
+  padding: 14px 20px 22px;
+  line-height: 1.8;
+  color: #333;
+  background: #fff;
+  border: 1px solid #eee;
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+}
+
+/* Make native <details> feel like an accordion */
+.faqItem details {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+.faqItem details[open] .q {
+  background: #f1f1f3;
+  border-bottom: 1px solid #eee;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 2.3rem;
+  }
+
+  .heroImage {
+    height: auto;
+  }
+
+  .heroImage img {
+    width: 100%;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+
+  .faqSection {
+    padding: 32px 16px 64px;
+  }
+}

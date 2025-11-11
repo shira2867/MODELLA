@@ -1,4 +1,5 @@
 import styles from "./Footer.module.css";
+import Link from "next/link";
 import {
   FaInstagram,
   FaYoutube,
@@ -35,7 +36,7 @@ export default function Footer() {
         <div className={styles.column}>
           <h3>Company</h3>
           <a href="https://app.cladwell.com">Login</a>
-          <a href="https://cladwell.zendesk.com">FAQ</a>
+          <Link href="/faq">FAQ</Link>
           <a href="https://cladwell.zendesk.com/hc/en-us/sections/360000415753-Billing-and-Account-">
             Billing & Account
           </a>
