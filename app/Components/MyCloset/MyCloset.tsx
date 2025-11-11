@@ -99,7 +99,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
 
   return (
     <div className={styles.container}>
-      <Header />
 
       <div className={styles.mainContent}>
         <h2 className={styles.title}>My Closet</h2>
@@ -230,6 +229,10 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
                   src={item.imageUrl}
                   alt={item.category}
                   className={styles.clothImage}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData("application/json", JSON.stringify(item));
+                  }}
                 />
             
               </div>
@@ -239,7 +242,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 };

@@ -1,0 +1,21 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainArea {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;           
+  padding: 20px;
+}
+
+.mainArea > :first-child {
+  width: 20%;  
+   margin-top: 150px;        
+}
+
+.mainArea > :last-child {
+  width: 80%;          
+}
