@@ -1,12 +1,8 @@
-/* NewCloth.module.css */
-
-/* Div עוטף לכל העמוד */
 .container {
   display: flex;
   flex-direction: column;
   font-family: "Arial", sans-serif;
   min-height: 100vh;
-  background-color: #fff;
 }
 
 /* Form Container */

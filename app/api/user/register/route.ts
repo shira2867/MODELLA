@@ -8,17 +8,19 @@ export async function POST(req: Request) {
     const { name, email, password, gender, profileImage } = body;
 
     if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Email is required" },
+        { status: 400 }
+      );
     }
 
     const col = await usersCollection();
-
-    // בדיקה אם המשתמש כבר קיים
-    const existingUser = await col.findOne({ email });
     const now = new Date();
 
+    const existingUser = await col.findOne({ email });
+
     if (existingUser) {
-      // אם המשתמש קיים, נעדכן רק את name/profileImage/gender אם רוצים
+      // עדכון משתמש קיים
       await col.updateOne(
         { email },
         {
@@ -30,9 +32,11 @@ export async function POST(req: Request) {
           },
         }
       );
-      return NextResponse.json({ ok: true, message: "User updated" });
+
+      return NextResponse.json({ ok: true, exists: true, message: "User updated" });
     }
 
+    // יצירת משתמש חדש
     const passwordHash = password ? await bcrypt.hash(password, 10) : null;
 
     await col.insertOne({
@@ -45,9 +49,12 @@ export async function POST(req: Request) {
       updatedAt: now,
     });
 
-    return NextResponse.json({ ok: true, message: "User created" });
+    return NextResponse.json({ ok: true, exists: false, message: "User created" });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Server error", ok: false },
+      { status: 500 }
+    );
   }
 }
