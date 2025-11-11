@@ -6,11 +6,13 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "res.cloudinary.com", // אם את משתמשת גם ב-Cloudinary
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com", // זה מוסיף תמונות מה-Google Profile
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
       },
     ],
   },
