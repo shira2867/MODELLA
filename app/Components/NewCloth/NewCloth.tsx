@@ -46,6 +46,7 @@ const NewCloth = ({ userId }: { userId: string }) => {
     Beige: [245, 245, 220],
   };
 
+
   function closestColor(rgb: RGB): string {
     let closest = "";
     let minDistance = Infinity;

@@ -1,7 +1,8 @@
+
 .container {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
 .mainContent {
@@ -9,38 +10,144 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
   gap: 20px;
 }
-
 .title {
   font-size: 2rem;
   font-weight: bold;
   margin: 20px 0;
 }
-
-.filterWrapper {
+.categoriesWrapper {
   display: flex;
-  gap: 15px;
+  align-items: center;
+  gap: 10px;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
-.filterButton {
-  padding: 8px 16px;
+.categoryButton {
+  background: none;
   border: none;
-  border-radius: 20px;
-  background-color: #eee;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-size: 1rem;
+  padding: 5px 10px;
 }
 
-.filterButton.active {
-  background-color: #e3ae6e;
-  color: #fff;
+.categoryButton.active {
+  font-weight: bold;
+  text-decoration: underline;
 }
 
+.openFilterButton {
+  margin-right: auto;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.closetContent {
+  display: flex;
+  gap: 20px;
+  /* justify-content: flex-start; */
+    justify-content: space-between; /* מרחיק את הסיידבר והכרטיסיות */
+
+}
+
+/* סרגל פילטר בצד */
+.filterSidebar {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: right;
+    order: 2; /* מוודא שהוא בצד ימין */
+}
+
+.filterSection > button {
+  width: 100%;
+  padding: 5px;
+  text-align: right;
+  cursor: pointer;
+  background: #eee;
+  border: none;
+  font-weight: bold;
+}
+
+.optionList,
+.colorOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+  flex-wrap: wrap; /* מאפשר לעגלים להתגלגל לשורה הבאה */
+  gap: 10px; /* רווח בין הצבעים */
+    flex-direction: row; /* חשוב! כדי שהעגלים יהיו בשורה ולא בעמודה */
+
+}
+
+.optionButton {
+  padding: 3px 5px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+}
+
+.optionButton.active {
+  background: #aaa;
+}
+
+.colorCircle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid #999;
+    flex: 0 0 30px; /* כל עיגול תופס 30px */
+
+}
+
+.colorCircle.activeColor {
+  border: 2px solid #000;
+}
+
+/* כרטיסיות תמונות */
+.cardsWrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+  flex: 1;
+  
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.colorPreview {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+.loading {
+  font-size: 1.2rem;
+  margin: 50px 0;
+}
+
+.noClothes {
+  font-size: 1rem;
+  color: #777;
+  text-align: center;
+  width: 100%;
+  grid-column: 1 / -1;
+}
 .cardsWrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -66,68 +173,4 @@
   width: 100%;
   height: 280px;
   object-fit: cover;
-}
-
-.cardContent {
-  padding: 15px;
-  text-align: center;
-}
-
-.cardContent h3 {
-  margin: 0 0 10px 0;
-  font-size: 1.2rem;
-  color: #222;
-}
-
-.cardContent p {
-  margin: 5px 0;
-  color: #555;
-  font-size: 0.95rem;
-}
-
-.loading {
-  font-size: 1.2rem;
-  margin: 50px 0;
-}
-
-.noClothes {
-  font-size: 1rem;
-  color: #777;
-  text-align: center;
-  width: 100%;
-  grid-column: 1 / -1;
-}
-.colorFilterWrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.colorCircle {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.colorCircle:hover {
-  transform: scale(1.1);
-}
-.colorCircle {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  margin: 0 5px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.2s ease;
-}
-
-
-
-.activeColor {
-  border: 2px solid #e3ae6e; /* או כל צבע הדגשה שמתאים לך */
 }
