@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -19,7 +21,7 @@ type MyClosetProps = {
   userId: string;
 };
 
-// מפת צבעים מוגדרת מראש
+// צבעים
 const COLOR_MAP: Record<string, [number, number, number]> = {
   Red: [255, 0, 0],
   Pink: [255, 192, 203],
@@ -46,6 +48,9 @@ const CATEGORIES = [
   "Accessories",
 ];
 
+const STYLES = ["casual", "sporty", "formal"];
+const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
+
 const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   const [clothes, setClothes] = useState<ClothingItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,9 +58,13 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   // מסננים
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [colorFilter, setColorFilter] = useState<string | null>(null);
+  const [styleFilter, setStyleFilter] = useState<string | null>(null);
+  const [seasonFilter, setSeasonFilter] = useState<string | null>(null);
 
-  // הצגת אפשרות סינון צבע
-  const [showColorFilter, setShowColorFilter] = useState(false);
+  const [showFilterSidebar, setShowFilterSidebar] = useState(false);
+  const [activeFilterSection, setActiveFilterSection] = useState<
+    "color" | "style" | "season" | null
+  >(null);
 
   useEffect(() => {
     const fetchClothes = async () => {
@@ -71,10 +80,20 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
     fetchClothes();
   }, [userId]);
 
-  // סינון לפי קטגוריה וצבע
   const filteredClothes = clothes.filter((item) => {
-    if (categoryFilter && item.category !== categoryFilter) return false;
+    if (categoryFilter && categoryFilter !== "All" && item.category !== categoryFilter)
+      return false;
     if (colorFilter && item.colorName !== colorFilter) return false;
+    if (styleFilter && item.style !== styleFilter) return false;
+    if (seasonFilter && item.thickness) {
+      const thicknessSeasonMap: Record<string, string[]> = {
+        light: ["Summer", "Spring"],
+        medium: ["Autumn", "Spring"],
+        heavy: ["Winter"],
+      };
+      const seasonsForItem = thicknessSeasonMap[item.thickness] || [];
+      if (!seasonsForItem.includes(seasonFilter)) return false;
+    }
     return true;
   });
 
@@ -85,16 +104,15 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
       <div className={styles.mainContent}>
         <h2 className={styles.title}>My Closet</h2>
 
-        {/* סינון לפי קטגוריות */}
-        <div className={styles.filterWrapper}>
+        {/* כפתורי קטגוריות */}
+        <div className={styles.categoriesWrapper}>
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
-              className={`${styles.filterButton} ${
+              className={`${styles.categoryButton} ${
                 (!categoryFilter && cat === "All") || categoryFilter === cat
                   ? styles.active
                   : ""
-                // categoryFilter === cat ? styles.active : ""
               }`}
               onClick={() => setCategoryFilter(cat === "All" ? null : cat)}
             >
@@ -102,40 +120,105 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             </button>
           ))}
 
-          {/* כפתור מסנן צבע בצד */}
+          {/* כפתור לפתיחת הפילטר בצד */}
           <button
-            className={styles.filterButton}
-            style={{ marginLeft: "auto" }}
-            onClick={() => setShowColorFilter(!showColorFilter)}
+            className={styles.openFilterButton}
+            onClick={() => setShowFilterSidebar(!showFilterSidebar)}
           >
-            🎨 Color Filter
+            ☰ Filter
           </button>
         </div>
 
-        {/* אפשרות סינון צבעים */}
-        {showColorFilter && (
-          <div className={styles.colorFilterWrapper}>
-            {Object.keys(COLOR_MAP).map((color) => (
-              <div
-                key={color}
-                // className={styles.colorCircle}
-                className={`${styles.colorCircle} ${
-                  colorFilter === color ? styles.activeColor : ""
-                }`}
-                style={{
-                  backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
-                }}
-                onClick={() =>
-                  setColorFilter(colorFilter === color ? null : color)
-                }
-                title={color}
-              />
-            ))}
-          </div>
-        )}
+        <div className={styles.closetContent}>
+          {/* סרגל פילטר בצד */}
+          {showFilterSidebar && (
+            <div className={styles.filterSidebar}>
+              <div className={styles.filterSection}>
+                <button
+                  onClick={() =>
+                    setActiveFilterSection(activeFilterSection === "color" ? null : "color")
+                  }
+                >
+                  Color
+                </button>
+                {activeFilterSection === "color" && (
+                  <div className={styles.colorOptions}>
+                    {Object.keys(COLOR_MAP).map((color) => (
+                      <div
+                        key={color}
+                        className={`${styles.colorCircle} ${
+                          colorFilter === color ? styles.activeColor : ""
+                        }`}
+                        style={{
+                          backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
+                        }}
+                        onClick={() =>
+                          setColorFilter(colorFilter === color ? null : color)
+                        }
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
 
-        {/* תצוגת הכרטיסיות */}
-        {loading ? (
+              <div className={styles.filterSection}>
+                <button
+                  onClick={() =>
+                    setActiveFilterSection(activeFilterSection === "style" ? null : "style")
+                  }
+                >
+                  Style
+                </button>
+                {activeFilterSection === "style" && (
+                  <div className={styles.optionList}>
+                    {STYLES.map((style) => (
+                      <button
+                        key={style}
+                        className={`${styles.optionButton} ${
+                          styleFilter === style ? styles.active : ""
+                        }`}
+                        onClick={() =>
+                          setStyleFilter(styleFilter === style ? null : style)
+                        }
+                      >
+                        {style}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.filterSection}>
+                <button
+                  onClick={() =>
+                    setActiveFilterSection(activeFilterSection === "season" ? null : "season")
+                  }
+                >
+                  Season
+                </button>
+                {activeFilterSection === "season" && (
+                  <div className={styles.optionList}>
+                    {SEASONS.map((season) => (
+                      <button
+                        key={season}
+                        className={`${styles.optionButton} ${
+                          seasonFilter === season ? styles.active : ""
+                        }`}
+                        onClick={() =>
+                          setSeasonFilter(seasonFilter === season ? null : season)
+                        }
+                      >
+                        {season}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* תצוגת תמונות */}
+              {loading ? (
           <p className={styles.loading}>Loading...</p>
         ) : filteredClothes.length === 0 ? (
           <p className={styles.noClothes}>No items found.</p>
@@ -148,25 +231,12 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
                   alt={item.category}
                   className={styles.clothImage}
                 />
-                <div className={styles.cardContent}>
-                  <div
-                    className={styles.colorPreview}
-                    style={{
-                      backgroundColor: COLOR_MAP[item.colorName]
-                        ? `rgb(${COLOR_MAP[item.colorName].join(",")})`
-                        : "#ffffff", // צבע ברירת מחדל אם לא מוגדר
-                    }}
-                    // style={{
-                    //   backgroundColor: `rgb(${COLOR_MAP[item.colorName].join(
-                    //     ","
-                    //   )})`,
-                    // }}
-                  />
-                </div>
+            
               </div>
             ))}
           </div>
         )}
+        </div>
       </div>
 
       <Footer />
