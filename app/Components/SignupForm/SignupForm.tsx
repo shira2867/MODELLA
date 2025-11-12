@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { initializeApp } from "firebase/app";
+import logo from '../../../public/logo.png';
+import Link from 'next/link';
+
 import {
   getAuth,
   signInWithPopup,
@@ -41,7 +44,6 @@ export default function AuthForm() {
   const setUserStore = useUserStore((state) => state.setUser);
   const currentUser = useUserStore((state) => state.user);
 
-  // הדפסה של הסטור בכל שינוי
   React.useEffect(() => {
     console.log("Current user in store:", currentUser);
   }, [currentUser]);
@@ -136,7 +138,13 @@ export default function AuthForm() {
       .catch(console.error);
   }
   return (
-    <div className={styles.container}>
+    <div className={styles.signupPage}>
+             <div className={styles.localHeader}>
+          <Link href="/">
+            <Image src={logo} alt="Project Logo" width={210} height={210} />
+          </Link>
+        </div>
+  <div className={styles.container}>
       {!user ? (
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <h2>Create Your Account</h2>
@@ -197,6 +205,7 @@ export default function AuthForm() {
           )}
         </div>
       )}
+      </div>
     </div>
   );
 }
