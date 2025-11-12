@@ -22,13 +22,11 @@ const heroImages = [
   "slider_7_e93yg3",
 ];
 const videos = [
-  "/videos/snaptik_7480615445620378902_v2.mp4",
-  "/videos/Casual Winter Outfit.mp4",
-  "/videos/An outfit I’ve been loving recently.mp4",
-
-  "/videos/Heute gibt es mal wieder ganz klassisch meine Ralph Lauren Old money fits.mp4",
-
-  "/videos/BELLE שמלות ערב2.mp4",
+  "  https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762951355/video_1_jln9qa.mp4",
+  "https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762951802/video_2_u2glay.mp4",
+  "https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762951777/video_3_axlytt.mp4",
+  "https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762952514/video_4_b0l3sb.mp4",
+  "https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762951817/video_5_cgo17i.mp4",
 ];
 function Step({ title, description, imageUrl, reverse }: StepProps) {
   return (
@@ -138,7 +136,7 @@ export default function HomePage() {
           choosing what to wear – your perfect style is just a click away.
         </p>
       </section>
-      <div className={styles.videosWrapper}>
+      {/* <div className={styles.videosWrapper}>
         <h2 className={styles.title}>Daily Outfit Inspo ✨</h2>
         <div className={styles.videosRow}>
           {videos.map((video, index) => (
@@ -153,8 +151,23 @@ export default function HomePage() {
             />
           ))}
         </div>
+      </div> */}
+      <div className={styles.videosWrapper}>
+        <h2 className={styles.title}>Daily Outfit Inspo ✨</h2>
+        <div className={styles.videosRow}>
+          {videos.map((video, index) => (
+            <video
+              key={index}
+              src={video} // כאן נכנס הקישור מהמערך
+              muted
+              loop
+              className={styles.videoItem}
+              onMouseEnter={(e) => e.currentTarget.play()}
+              onMouseLeave={(e) => e.currentTarget.pause()}
+            />
+          ))}
+        </div>
       </div>
-
       <Footer />
     </div>
   );
