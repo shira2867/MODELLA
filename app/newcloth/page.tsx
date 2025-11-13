@@ -1,4 +1,6 @@
 // app/add-item/page.tsx
+"use client";
+
 import NewCloth from "@/app/Components/NewCloth/NewCloth";
 
 export default function AddItemPage() {

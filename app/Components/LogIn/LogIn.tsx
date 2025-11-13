@@ -103,7 +103,12 @@ export default function LoginForm() {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.loginPage}>
+  <div className={styles.localHeader}>
+    <Image src="/logo.png" alt="Project Logo" width={210} height={210} />
+  </div>
+
+  <div className={styles.container}>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <h2>Login</h2>
 
@@ -141,5 +146,6 @@ export default function LoginForm() {
         </p>
       </form>
     </div>
+</div>
   );
 }

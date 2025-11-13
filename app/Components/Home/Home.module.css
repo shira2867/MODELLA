@@ -123,6 +123,7 @@
   font-size: 1.8rem;
   margin-bottom: 15px;
   color: #222;
+  color: #2f3f4e;
   font-family: jaf-lapture-display, serif;
   font-weight: bolder;
 }
@@ -160,6 +161,8 @@
   font-size: 2rem;
   margin-bottom: 20px;
   color: #e3ae6e;
+    color: #5C1A1A;
+
 }
 
 .aboutSection p {
