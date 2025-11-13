@@ -99,7 +99,6 @@
   border-radius: 0 0 14px 14px;
 }
 
-/* Make native <details> feel like an accordion */
 .faqItem details {
   border: 1px solid #eee;
   border-radius: 14px;
@@ -111,7 +110,6 @@
   border-bottom: 1px solid #eee;
 }
 
-/* ---------- RESPONSIVE ---------- */
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;

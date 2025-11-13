@@ -2,20 +2,35 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  margin-left: 50px;
 }
 
 .mainArea {
   display: flex;
   flex-direction: row;
-  gap: 20px;           
+  gap: -30px;
   padding: 20px;
 }
 
 .mainArea > :first-child {
-  width: 20%;  
-   margin-top: 150px;        
+  position: fixed;
+  top: 300px;
+  width: 20%;
 }
 
 .mainArea > :last-child {
-  width: 80%;          
+  margin-left: 20%; 
+  width: 75%;
+}
+@media (max-width: 768px) {
+  .mainArea {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .mainArea > :first-child,
+  .mainArea > :last-child {
+    width: 100%;       
+    margin-top: 0;     
+  }
 }

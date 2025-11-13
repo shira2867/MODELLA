@@ -1,176 +1,275 @@
-
+/* Container & Content */
 .container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  align-items: center;
 }
 
 .mainContent {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  width: 100%;
+  max-width: 1100px;
+  margin-top: 2rem;
+  text-align: center;
 }
+
 .title {
   font-size: 2rem;
-  font-weight: bold;
-  margin: 20px 0;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: #333;
 }
-.categoriesWrapper {
+
+/* Filter Toggle */
+.filterToggle {
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: medium;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  border-radius: 25px;
+  margin-left: 20px;
+}
+
+/* Filter Panel */
+.filterPanel {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.5s ease;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin: 1rem auto;
+  border: 1.5px solid #ccc;
+  padding: 0;
+  width: 90%;
+}
+
+.filterPanel.open {
+  max-height: 600px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 1.5rem;
+}
+
+/* Category Row */
+.categoryFilterRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: space-between; 
+  margin-bottom: 1rem;
+}
+
+.categoryRow {
+  display: flex;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
 }
 
 .categoryButton {
-  background: none;
-  border: none;
+  padding: 8px 18px;
+  font-size: medium;
+  color: #070707;
+  font-weight: 500;
   cursor: pointer;
-  font-size: 1rem;
-  padding: 5px 10px;
+  transition: all 0.3s ease;
+  outline: none;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+}
+
+.categoryButton:hover {
+  font-weight: 700;
+}
+
+.categoryButton:active {
+  transform: scale(0.95);
 }
 
 .categoryButton.active {
-  font-weight: bold;
-  text-decoration: underline;
+  font-weight: 700;
 }
 
-.openFilterButton {
-  margin-right: auto;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.closetContent {
-  display: flex;
-  gap: 20px;
-  /* justify-content: flex-start; */
-    justify-content: space-between; /* מרחיק את הסיידבר והכרטיסיות */
-
-}
-
-/* סרגל פילטר בצד */
-.filterSidebar {
-  width: 150px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  text-align: right;
-    order: 2; /* מוודא שהוא בצד ימין */
-}
-
-.filterSection > button {
-  width: 100%;
-  padding: 5px;
-  text-align: right;
-  cursor: pointer;
-  background: #eee;
-  border: none;
-  font-weight: bold;
-}
-
+/* Other Button Styles */
+.categoryButtons,
 .optionList,
 .colorOptions {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-top: 5px;
-  flex-wrap: wrap; /* מאפשר לעגלים להתגלגל לשורה הבאה */
-  gap: 10px; /* רווח בין הצבעים */
-    flex-direction: row; /* חשוב! כדי שהעגלים יהיו בשורה ולא בעמודה */
-
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
 }
 
-.optionButton {
-  padding: 3px 5px;
-  border: none;
-  background: #ddd;
+.filterButton {
+  padding: 0.4rem 1rem;
+  border-radius: 15px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.optionButton.active {
-  background: #aaa;
+.filterButton:hover,
+.filterButton.active {
+  font-weight: 700;
 }
 
+/* Color Circles */
 .colorCircle {
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
-  border: 1px solid #999;
-    flex: 0 0 30px; /* כל עיגול תופס 30px */
-
+  border: 2px solid transparent;
+  transition: transform 0.3s ease, border 0.3s ease;
 }
 
-.colorCircle.activeColor {
-  border: 2px solid #000;
+.colorCircle:hover {
+  transform: scale(1.1);
 }
 
-/* כרטיסיות תמונות */
+.activeColor {
+  border: 2px solid #222;
+}
+
+/* Cards Grid */
 .cardsWrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 15px;
-  flex: 1;
-  
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+  gap: 12px; 
+  justify-items: center;
+  padding: 12px;
 }
 
 .card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.card img {
-  width: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.colorPreview {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  margin-top: 5px;
-}
-.loading {
-  font-size: 1.2rem;
-  margin: 50px 0;
-}
-
-.noClothes {
-  font-size: 1rem;
-  color: #777;
-  text-align: center;
-  width: 100%;
-  grid-column: 1 / -1;
-}
-.cardsWrapper {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-}
-
-.card {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 250px;        
+  height: 330px;       
+  display: flex;           
+  flex-direction: column;  
+  padding: 0;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+.imageWrapper {
+  flex: 1;               
+  width: 100%;
+  overflow: hidden;
 }
 
 .clothImage {
   width: 100%;
-  height: 280px;
-  object-fit: cover;
+  height: 100%;
+  object-fit: cover;    
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05); 
+}
+
+.card:hover .clothImage {
+  transform: scale(1.1);
+}
+
+.loading,
+.noClothes {
+  margin-top: 2rem;
+  color: #666;
+}
+
+/* Sidebar Filter */
+.sidebarFilter {
+  position: fixed;
+  top: 50%; 
+  right: -100%; 
+  transform: translateY(-50%); 
+  width: 300px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background-color: #f0efef94; 
+  padding: 4rem 3rem; 
+  box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+  transition: right 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; 
+}
+
+.sidebarFilter.open {
+  right: 0; 
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  gap: 0.8rem; 
+}
+
+.filterGroup label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+/* Mobile Category Row */
+.categoryRowMobile {
+  display: none;
+  flex-direction: column; 
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-start; 
+  margin-bottom: 1rem;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .categoryRow {
+    display: none;
+  }
+
+  .categoryRowMobile {
+    display: flex;
+  }
+
+  .sidebarFilter {
+    width: 90%;
+    right: -100%;
+  }
+
+  .sidebarFilter.open {
+    right: 5%;
+  }
+    .cardsWrapper {
+    grid-template-columns: 1fr; 
+    gap: 5px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 320px; 
+    height: 300px; 
+  }
+}
+
+@media (max-width: 480px) {
+  .cardsWrapper {
+    grid-template-columns: 1fr; 
+    gap: 5px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 320px; 
+    height: 300px; 
+  }
+ 
 }

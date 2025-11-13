@@ -100,7 +100,6 @@ const NewCloth = ({ userId }: { userId: string }) => {
       img.onload = async () => {
         const dominantColor = getDominantColorFromCenter(img);
         console.log("Detected dominant color:", dominantColor);
-        // המרה ל-RGB array כדי להשתמש בפונקציה
         const rgbMatch = dominantColor.match(/\d+/g); // מחלץ [r, g, b]
         let colorName = "Unknown";
         if (rgbMatch) {
