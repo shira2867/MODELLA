@@ -53,6 +53,10 @@ export default function LoginForm() {
         return;
       }
 
+      if (data.user?.id) {
+        localStorage.setItem("userId", data.user.id);
+      }
+
       setUserStore({
         name: firebaseUser.displayName || null,
         email: firebaseUser.email || null,
@@ -83,6 +87,11 @@ export default function LoginForm() {
         data.password
       );
       const firebaseUser = userCredential.user;
+
+
+      if (dbData.user?.id) {
+        localStorage.setItem("userId", dbData.user.id);
+      }
 
       setUserStore({
         name: dbData.user?.name || "",
