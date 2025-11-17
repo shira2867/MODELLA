@@ -6,6 +6,20 @@ import axios from "axios";
 import Footer from "../Footer/Footer";
 import styles from "./MyCloset.module.css";
 import close from '../../../public/remove.png';
+import all from '../../../public/summer_11907165.png';
+import coat from '../../../public/clothes_15930120.png';
+import shirt from '../../../public/crop-top_10339535.png';
+import Accessories from '../../../public/accessories_5029392.png';
+
+import pants from '../../../public/short_13387117.png';
+import filter from '../../../public/filter_7420963.png';
+
+
+
+
+// Icons
+import { FaTshirt, FaHatCowboy, FaUserTie, FaMale } from "react-icons/fa";
+import { GiClothes, GiLargeDress, GiSkirt } from "react-icons/gi";
 
 type ClothingItem = {
   _id: string;
@@ -35,15 +49,16 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
   Beige: [245, 245, 220],
 };
 
+// UPDATED: icon-based categories
 const CATEGORIES = [
-  "All",
-  "shirt",
-  "pants",
-  "Jacket&coat",
-  "dress",
-  "Skirts",
-  "Shoes",
-  "Accessories",
+  { key: "All", image: <Image src={all} alt="All clothes" width={30} height={30} /> },
+  { key: "shirt", image: <Image src={shirt} alt="shirt" width={30} height={30} /> },
+  { key: "pants", image: <Image src={pants} alt="pants" width={30} height={30} /> },
+  { key: "Jacket&coat", image: <Image src={coat} alt="coat" width={30} height={30} /> },
+  { key: "dress", image: <Image src={all} alt="All clothes" width={30} height={30} /> },
+  { key: "Skirts", image: <Image src={all} alt="All clothes" width={30} height={30} /> },
+  { key: "Shoes", image: <Image src={all} alt="All clothes" width={30} height={30} /> },
+  { key: "Accessories", image: <Image src={Accessories} alt="Accessories" width={30} height={30} /> },
 ];
 
 const STYLES = ["casual", "sporty", "formal"];
@@ -92,15 +107,17 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
+
+        {/* Top categories row */}
         <div className={styles.categoryFilterRow}>
           <div className={styles.categoryRow}>
             {CATEGORIES.map((cat) => (
               <button
-                key={cat}
-                className={`${styles.categoryButton} ${categoryFilter === cat ? styles.active : ""}`}
-                onClick={() => setCategoryFilter(cat === "All" ? null : cat)}
+                key={cat.key}
+                className={`${styles.categoryButton} ${categoryFilter === cat.key ? styles.active : ""}`}
+                onClick={() => setCategoryFilter(cat.key === "All" ? null : cat.key)}
               >
-                {cat}
+                {cat.image}
               </button>
             ))}
           </div>
@@ -110,11 +127,11 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
               className={styles.filterToggle}
               onClick={() => setShowFilters(true)}
             >
-              ☰ filter
-            </button>
+              <Image src={filter} alt="Filter" width={30} height={30} />            </button>
           )}
         </div>
 
+        {/* Sidebar Filters */}
         <div className={`${styles.sidebarFilter} ${showFilters ? styles.open : ""}`}>
           <button
             className={styles.filterToggle}
@@ -124,15 +141,16 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             <Image src={close} alt="Close Menu" width={30} height={30} />
           </button>
 
-          {/* קטגוריות – רק במסכים קטנים */}
+          {/* Categories in mobile */}
           <div className={styles.categoryRowMobile}>
             {CATEGORIES.map((cat) => (
               <button
-                key={cat}
-                className={`${styles.categoryButton} ${categoryFilter === cat ? styles.active : ""}`}
-                onClick={() => setCategoryFilter(cat === "All" ? null : cat)}
+                key={cat.key}
+                className={`${styles.categoryButton} ${categoryFilter === cat.key ? styles.active : ""}`}
+                onClick={() => setCategoryFilter(cat.key === "All" ? null : cat.key)}
               >
-                {cat}
+                {cat.image}
+                {cat.key}
               </button>
             ))}
           </div>
@@ -182,6 +200,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           </div>
         </div>
 
+        {/* Closet content */}
         <div className={styles.closetContent}>
           {loading ? (
             <p className={styles.loading}>Loading...</p>
@@ -207,6 +226,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             </div>
           )}
         </div>
+
       </div>
     </div>
   );

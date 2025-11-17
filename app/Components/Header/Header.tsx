@@ -18,7 +18,7 @@ export default function Header() {
     <header className={styles.header}>
   <div className={styles.logoContainer}>
     <Link href="/">
-      <Image src={logo} alt="Project Logo" width={210} height={210} />
+          <Image src={logo} alt="Logo" width={250} height={150} />
     </Link>
   </div>
 

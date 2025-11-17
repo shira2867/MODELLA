@@ -17,7 +17,7 @@ export default function BurgerMenu() {
     <header className={styles.header}>
       <div className={styles.logoContainer}>
         <Link href="/">
-          <Image src={logo} alt="Logo" width={200} height={200} />
+          <Image src={logo} alt="Logo" width={200} height={100} />
         </Link>
       </div>
 

@@ -12,7 +12,8 @@
 .logoContainer {
   display: flex;
   align-items: center;
-
+margin-left: -60px;
+margin-top: -10;
 }
 
 .nav {
