@@ -1,8 +1,9 @@
 "use client";
 import Image from 'next/image';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./NewLook.module.css";
 import down from '../../../public/down.png';
+import { useUserStore } from "../../../store/userStore"; // אם את רוצה משם
 
 type ClothingItem = {
   _id: string;
@@ -27,6 +28,15 @@ export default function NewLook() {
   const [selectedItems, setSelectedItems] = useState<ClothingItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
+  // שליפה של userId מהסטור או לוקלסטורג
+  const userIdFromStore = useUserStore((state) => state.userId);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId") || userIdFromStore;
+    setUserId(storedUserId);
+  }, [userIdFromStore]);
+
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const data = event.dataTransfer.getData("application/json");
@@ -47,13 +57,18 @@ export default function NewLook() {
   };
 
   const saveLook = async () => {
+    if (!userId) {
+      alert("User not found. Please log in.");
+      return;
+    }
+
     if (selectedItems.length === 0) {
       alert("Add at least one clothing item before saving!");
       return;
     }
 
     const look: LookType = {
-      userId: "user_12345",
+      userId,
       items: selectedItems,
       createdAt: new Date().toISOString(),
       imageUrl: "",
@@ -84,14 +99,13 @@ export default function NewLook() {
 
   return (
     <div className={styles.container}>
-      {/* הכותרת והחץ במרכז, יופיעו רק כשהאזור סגור */}
       {!isOpen && (
         <>
           <h1 className={styles.title}>
             you want to create a new look? <br /> click here
           </h1>
           <Image src={down} alt="down arrow" width={60} height={60} />
-          <br></br>
+          <br />
           <button className={styles.openBtn} onClick={() => setIsOpen(true)}>
             Create New Look
           </button>
@@ -108,7 +122,6 @@ export default function NewLook() {
             ❌
           </button>
 
-          {/* אזור הדרופ */}
           <div
             className={styles.lookArea}
             onDrop={handleDrop}
@@ -126,10 +139,9 @@ export default function NewLook() {
             )}
           </div>
 
-          {/* כפתורי פעולה */}
           <div className={styles.buttons}>
             <button className={styles.saveBtn} onClick={saveLook}>
-              SAVE            
+              SAVE
             </button>
             <button
               className={styles.cancelBtn}

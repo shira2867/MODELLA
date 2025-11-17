@@ -65,7 +65,7 @@
 
 .categoryRow {
   display: flex;
-  gap: 75px;
+  gap: 50px;
   flex-wrap: wrap;
   margin-bottom: 50px;
 }

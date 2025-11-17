@@ -16,9 +16,7 @@ type DbLook = {
   createdAt?: Date;
 };
 
-// =========================
-//       CREATE LOOK (POST)
-// =========================
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as LookType;
@@ -49,51 +47,26 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// =========================
-//     GET LOOKS LIST (GET)
-// =========================
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
+    const url = new URL(req.url);
+    const userId = url.searchParams.get("userId")?.trim();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: "Missing userId" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "Missing userId" }, { status: 400 });
     }
 
     const collection = await looksCollection();
 
-    // בלי ג'נריק על find/project – רק cast בסוף
-    const looks = (await collection
-      .find({ userId })
-      .project({
-        _id: 1,
-        items: 1,
-        imageUrl: 1,
-        createdAt: 1,
-      })
-      .toArray()) as DbLook[];
+    const looks = await collection.find({ userId }).toArray();
 
-    const formatted: MyLookSummary[] = looks.map((look) => {
-      const first = look.items?.[0];
-
-      return {
-        _id: look._id,
-        imageUrl: look.imageUrl || first?.imageUrl || "",
-        style: first?.style || "casual",
-        colorName: first?.colorName || "Black",
-      };
-    });
-
-    return NextResponse.json(formatted);
+    return NextResponse.json(looks);
   } catch (error) {
     console.error("Error fetching Looks:", error);
     return NextResponse.json(
-      { error: "Failed to fetch Looks" },
+      { message: "Error fetching looks" },
       { status: 500 }
     );
   }
 }
+

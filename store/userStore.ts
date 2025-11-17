@@ -23,12 +23,22 @@ export const useUserStore = create<UserStore>()(
       userId: null,
 
       setUser: (user) => set({ user }),
-      setUserId: (id) => set({ userId: id }),
+      setUserId: (id) => {
+        set({ userId: id });
+        if (id) {
+          localStorage.setItem("userId", id); 
+        } else {
+          localStorage.removeItem("userId"); 
+        }
+      },
 
-      clearUser: () => set({ user: null, userId: null }),
+      clearUser: () => {
+        set({ user: null, userId: null });
+        localStorage.removeItem("userId"); 
+      },
     }),
     {
-      name: "user-storage"
+      name: "user-storage",
     }
   )
 );
