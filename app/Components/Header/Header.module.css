@@ -30,6 +30,7 @@ font-family: "Arial", sans-serif;
 
 .link:hover {
   font-weight: 700;
+  color: #5c1a1a;
 }
 
 .userButton {
