@@ -5,32 +5,45 @@
   margin-left: 50px;
 }
 
+/* אזור התוכן הראשי */
 .mainArea {
   display: flex;
   flex-direction: row;
-  gap: -30px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
   padding: 20px;
+  flex-wrap: wrap;
 }
 
+/* עמודת הלוק (צד שמאל) */
 .mainArea > :first-child {
-  position: fixed;
-  top: 300px;
-  width: 20%;
+ flex: 0 0 22%;
+  position: sticky;
+  align-self: flex-start;
 }
 
+/* אזור הגריד של הבגדים */
 .mainArea > :last-child {
-  margin-left: 20%; 
-  width: 75%;
+  flex: 1;
+  min-width: 300px;
 }
-@media (max-width: 768px) {
+
+/* מסכים קטנים */
+@media (max-width: 1024px) {
   .mainArea {
     flex-direction: column;
-    gap: 15px;
+    align-items: center;
   }
 
-  .mainArea > :first-child,
+  .mainArea > :first-child {
+    position: static;    /* מבטל sticky במסכים קטנים */
+    width: 100%;
+    max-height: none;
+    margin-bottom: 20px;
+  }
+
   .mainArea > :last-child {
-    width: 100%;       
-    margin-top: 0;     
+    width: 100%;
   }
 }

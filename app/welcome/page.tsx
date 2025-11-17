@@ -14,8 +14,8 @@ export default function Welcome() {
           className={styles.logo}
           src={logo}
           alt="Project Logo"
-          width={550}
-          height={550}
+          width={400}
+          height={200}
         />
         <h1 className={styles.title}>Dress. Style. Shine.</h1>
         <p className={styles.subtitle}>
