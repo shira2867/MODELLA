@@ -6,6 +6,7 @@ import Footer from "../Components/Footer/Footer";
 import BurgerMenu from '../Components/BurgerMenu/BurgerMenu';
 import { useEffect, useState } from "react";
 import styles from "./mycloset.module.css";
+import Header from "../Components/Header/Header";
 
 export default function ShowMyCloset() {
   
@@ -19,7 +20,7 @@ export default function ShowMyCloset() {
   }
   return (
    <div className={styles.pageContainer}>
-    <BurgerMenu />
+    <Header />
       <div className={styles.mainArea}>
         <NewLook />
         <MyCloset userId={userId} />
