@@ -5,7 +5,6 @@
   margin-left: 50px;
 }
 
-/* אזור התוכן הראשי */
 .mainArea {
   display: flex;
   flex-direction: row;

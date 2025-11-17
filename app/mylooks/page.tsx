@@ -2,6 +2,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import MyLooks from "@/app/Components/MyLooks/MyLooks";
+import BurgerMenu from "../Components/BurgerMenu/BurgerMenu";
+import Footer from "../Components/Footer/Footer";
 export default function ShowMyLooks() {
   const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
@@ -13,8 +15,11 @@ export default function ShowMyLooks() {
     return <div>Loading...</div>;  
   }
   return (
-    <div style={{ padding: "2rem" }}>
+    <div >
+          <BurgerMenu />
+      
       <MyLooks userId={userId} />
+      <Footer></Footer>
     </div>
   );
 }

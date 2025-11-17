@@ -1,0 +1,35 @@
+.card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #fff;
+  width: 100%; /* הכרטיס יתפוס את כל הרוחב של הקונטיינר */
+  max-width: 400px; /* אפשר להגביל רוחב מקסימלי */
+  margin: 0 auto; /* ממרכז את הכרטיס אם הרוחב קטן */
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* שתי תמונות בשורה */
+  gap: 16px; /* רווח בין התמונות */
+}
+
+.itemWrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* תמונה ריבועית */
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* תמונה ממלאת את הריבוע בלי לעוות את הפרופורציות */
+}
+.shareButton{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: larger;
+}
