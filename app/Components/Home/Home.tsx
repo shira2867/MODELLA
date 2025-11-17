@@ -1,9 +1,16 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { CldImage } from "next-cloudinary";
+import Image from "next/image";
 import styles from "./Home.module.css";
 import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
+import { FiStar } from "react-icons/fi";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import arrowDown from "../../../public/img/down.png";
+import sunIcon from "../../../public/img/sunny_17145991.png";
 import WeatherWidget from "../WeatherWidget/WeatherWidget";
 
 type StepProps = {
@@ -14,12 +21,11 @@ type StepProps = {
 };
 const heroImages = [
   "slider_1_jcj9jm",
-  "slider_2_w6kq3n",
-  "slider_3_cya9bm",
-  "slider_4_vhhgxa",
   "slider_5_z5v73p",
   "slider_6_fpl8b5",
   "slider_7_e93yg3",
+  "slider_9_j36kbz.avif",
+  "slider_8_lgv50b.avif",
 ];
 const videos = [
   "  https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762951355/video_1_jln9qa.mp4",
@@ -27,6 +33,7 @@ const videos = [
   "https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762951777/video_3_axlytt.mp4",
   "https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762952514/video_4_b0l3sb.mp4",
   "https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762951817/video_5_cgo17i.mp4",
+  "https://res.cloudinary.com/dfrgvh4hf/video/upload/v1763296347/video_8_uby9kc.mp4",
 ];
 function Step({ title, description, imageUrl, reverse }: StepProps) {
   return (
@@ -76,17 +83,104 @@ export default function HomePage() {
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showPopup, setShowPopup] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
 
+  const nextVideo = () => {
+    if (activeIndex !== null)
+      setActiveIndex((prev) => (prev! + 1) % videos.length);
+  };
+
+  const prevVideo = () => {
+    if (activeIndex !== null)
+      setActiveIndex((prev) => (prev! - 1 + videos.length) % videos.length);
+  };
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (activeIndex !== null) {
+        if (e.key === "ArrowDown") nextVideo();
+        else if (e.key === "ArrowUp") prevVideo();
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [activeIndex]);
+
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (activeIndex === null) return;
+      if (e.deltaY > 10) nextVideo();
+      else if (e.deltaY < -10) prevVideo();
+    };
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [activeIndex]);
+  useEffect(() => {
+    if (activeIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [activeIndex]);
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).classList.contains(styles.overlay)) {
+      setActiveIndex(null);
+    }
+  };
+  const scrollLeft = () => {
+    rowRef.current?.scrollBy({ left: -300, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    rowRef.current?.scrollBy({ left: 300, behavior: "smooth" });
+  };
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % heroImages.length);
     }, 4000);
+    const timer = setTimeout(() => setShowPopup(false), 3000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
   }, []);
+
   return (
     <div className={styles.container}>
       <Header />
+
+      {showPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popupContent}>
+            <button
+              className={styles.closeButton}
+              onClick={() => setShowPopup(false)}
+            ></button>
+            <div className={styles.welcomeIconWrapper}>
+              <FiStar className={styles.welcomeIcon} />
+            </div>
+            <h1 className={styles.title}>Good morning, Rachel </h1>
+            <p className={styles.subtitle}>Ready to style your day?</p>
+            <div className={styles.buttonContainer}>
+              <button
+                className={styles.button}
+                onClick={() => setShowPopup(false)}
+              >
+                Let's go!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className={styles.heroSection}>
         <div className={styles.sliderWrapper}>
@@ -110,9 +204,45 @@ export default function HomePage() {
               />
             ))}
           </div>
-
-          <div className={styles.weatherBanner}>
-            <WeatherWidget />
+          <div className={styles.weatherBannerWrapper}>
+            <div className={styles.weatherContainer}>
+              {!isOpen ? (
+                <div className={styles.closed}>
+                  <h1 className={styles.title}>
+                    What’s the weather today? <br /> Style your outfit
+                    accordingly!
+                  </h1>
+                  <div className={styles.iconsRow}>
+                    <Image
+                      src={arrowDown}
+                      alt="down arrow"
+                      width={40}
+                      height={40}
+                      className={styles.bounce}
+                    />
+                  </div>
+                  <button onClick={() => setIsOpen(true)}>
+                    <Image
+                      src={sunIcon}
+                      alt="sun icon"
+                      width={60}
+                      height={60}
+                      className={styles.bounce}
+                    />
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.opened}>
+                  <button
+                    className={styles.closeBtn}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    ✕
+                  </button>
+                  <WeatherWidget />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
@@ -136,22 +266,49 @@ export default function HomePage() {
           choosing what to wear – your perfect style is just a click away.
         </p>
       </section>
+
       <div className={styles.videosWrapper}>
-        <h2 className={styles.title}>Daily Outfit Inspo ✨</h2>
-        <div className={styles.videosRow}>
-          {videos.map((video, index) => (
-            <video
-              key={index}
-              src={video} // כאן נכנס הקישור מהמערך
-              muted
-              loop
-              className={styles.videoItem}
-              onMouseEnter={(e) => e.currentTarget.play()}
-              onMouseLeave={(e) => e.currentTarget.pause()}
-            />
-          ))}
+        <h2 className={styles.title}>Daily Outfit Inspo </h2>
+        <div className={styles.carouselContainer}>
+          <button className={styles.arrowLeft} onClick={scrollLeft}>
+            ◀
+          </button>
+          <div className={styles.videosRow} ref={rowRef}>
+            {videos.map((video, index) => (
+              <video
+                key={index}
+                src={video}
+                muted
+                loop
+                className={styles.videoItem}
+                onMouseEnter={(e) => e.currentTarget.play()}
+                onMouseLeave={(e) => e.currentTarget.pause()}
+                onClick={() => setActiveIndex(index)}
+              />
+            ))}
+          </div>
+          <button className={styles.arrowRight} onClick={scrollRight}>
+            ▶
+          </button>
         </div>
       </div>
+
+      {activeIndex !== null && (
+        <div className={styles.overlay} onClick={handleOverlayClick}>
+          <div className={styles.fullscreenContainer}>
+            <video
+              key={activeIndex}
+              src={videos[activeIndex]}
+              className={styles.fullscreenVideo}
+              autoPlay
+              loop
+              muted
+              playsInline
+            />
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

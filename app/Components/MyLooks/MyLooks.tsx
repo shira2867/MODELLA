@@ -2,20 +2,19 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import styles from "./MyLooks.module.css";
 
-type ClothingItem = {
+type LookCard = {
   _id: string;
-  imageUrl: string;
-  category: string;
-  thickness: string;
-  style: string;
-  colorName: string;
+  imageUrl: string;   // תמונת הקאבר של הלוק
+  style: string;      // casual / formal / sporty / party
+  colorName: string;  // צבע דומיננטי של הלוק (לפי הפריט הראשון)
 };
 
-type MyClosetProps = {
+type MyLooksProps = {
   userId: string;
 };
 
@@ -37,33 +36,33 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
 
 const styleOptions = ["All", "casual", "formal", "sporty", "party"];
 
-const MyLooks: React.FC<MyClosetProps> = ({ userId }) => {
-  const [clothes, setClothes] = useState<ClothingItem[]>([]);
+const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
+  const [looks, setLooks] = useState<LookCard[]>([]);
   const [loading, setLoading] = useState(true);
 
   // מסננים
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [styleFilter, setStyleFilter] = useState<string | null>(null);
   const [colorFilter, setColorFilter] = useState<string | null>(null);
-
   const [showColorFilter, setShowColorFilter] = useState(false);
 
   useEffect(() => {
-    const fetchClothes = async () => {
+    const fetchLooks = async () => {
       try {
-        const res = await axios.get(`/api/clothing?userId=${userId}`);
-        setClothes(res.data);
+        const res = await axios.get(`/api/looks?userId=${userId}`);
+        setLooks(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch looks", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchClothes();
+
+    fetchLooks();
   }, [userId]);
 
-  const filteredClothes = clothes.filter((item) => {
-    if (categoryFilter && item.category !== categoryFilter) return false;
-    if (colorFilter && item.colorName !== colorFilter) return false;
+  const filteredLooks = looks.filter((look) => {
+    if (styleFilter && look.style !== styleFilter) return false;
+    if (colorFilter && look.colorName !== colorFilter) return false;
     return true;
   });
 
@@ -74,21 +73,23 @@ const MyLooks: React.FC<MyClosetProps> = ({ userId }) => {
       <div className={styles.mainContent}>
         <h2 className={styles.title}>My Looks</h2>
 
+        {/* כפתורי סינון לפי סטייל */}
         <div className={styles.filterWrapper}>
-          {styleOptions.map((cat) => (
+          {styleOptions.map((opt) => (
             <button
-              key={cat}
+              key={opt}
               className={`${styles.filterButton} ${
-                (!categoryFilter && cat === "All") || categoryFilter === cat
+                (!styleFilter && opt === "All") || styleFilter === opt
                   ? styles.active
                   : ""
               }`}
-              onClick={() => setCategoryFilter(cat === "All" ? null : cat)}
+              onClick={() => setStyleFilter(opt === "All" ? null : opt)}
             >
-              {cat}
+              {opt}
             </button>
           ))}
 
+          {/* כפתור לפתיחת סינון צבע */}
           <button
             className={styles.filterButton}
             style={{ marginLeft: "auto" }}
@@ -98,6 +99,7 @@ const MyLooks: React.FC<MyClosetProps> = ({ userId }) => {
           </button>
         </div>
 
+        {/* פאנל בחירת צבע */}
         {showColorFilter && (
           <div className={styles.colorFilterWrapper}>
             {Object.keys(COLOR_MAP).map((color) => (
@@ -118,34 +120,40 @@ const MyLooks: React.FC<MyClosetProps> = ({ userId }) => {
           </div>
         )}
 
+        {/* תוכן ראשי */}
         {loading ? (
           <p className={styles.loading}>Loading...</p>
-        ) : filteredClothes.length === 0 ? (
-          <p className={styles.noClothes}>No items found.</p>
+        ) : filteredLooks.length === 0 ? (
+          <p className={styles.noClothes}>No looks found.</p>
         ) : (
           <div className={styles.cardsWrapper}>
-            {filteredClothes.map((item) => (
-              <div key={item._id} className={styles.card}>
+            {filteredLooks.map((look) => (
+              <Link
+                key={look._id}
+                href={`/mylooks/${look._id}`} // ⬅ לחיצה על כרטיס → עמוד לוק
+                className={styles.card}
+              >
                 <img
-                  src={item.imageUrl}
-                  alt={item.category}
+                  src={look.imageUrl}
+                  alt={look.style}
                   className={styles.clothImage}
                 />
                 <div className={styles.cardContent}>
                   <div
                     className={styles.colorPreview}
                     style={{
-                      backgroundColor: COLOR_MAP[item.colorName]
-                        ? `rgb(${COLOR_MAP[item.colorName].join(",")})`
-                        : "#ffffff", 
-                    }}                  
+                      backgroundColor: COLOR_MAP[look.colorName]
+                        ? `rgb(${COLOR_MAP[look.colorName].join(",")})`
+                        : "#ffffff",
+                    }}
                   />
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
       </div>
+
       <Footer />
     </div>
   );

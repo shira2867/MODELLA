@@ -18,6 +18,7 @@ export async function GET(req: Request) {
       return NextResponse.json({
         exists: true,
         user: {
+          id: user._id.toString(),
           name: user.name,
           email: user.email,
           profileImage: user.profileImage,

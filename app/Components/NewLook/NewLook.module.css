@@ -3,6 +3,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
+
+.container {
+  position: sticky;  /* עושה את הקונטיינר sticky */
+  top: 20px;         /* כמה פיקסלים מהחלק העליון של המסך */
+  flex: 0 0 22%;     /* רוחב הקומפוננטה בעמודה */
+  align-self: flex-start;
+}
+
 .lookWrapper {
   position: relative;
   top: auto;
@@ -14,18 +22,17 @@
 }
 
 .lookArea {
-  
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 15px;
-  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* שתי תמונות בכל שורה */
+  gap: 15px; /* רווח בין התמונות */
+  width: 90%;
   max-width: 100%;
+  height: 460px; /* גובה הקונטיינר */
+  margin: 20px auto 0;
   border: 2px dashed #ccc;
+  padding: 15px;
+  overflow-y: auto; /* גלילה אנכית */
+  overflow-x: hidden; /* אין גלילה אופקית */
   scroll-behavior: smooth;
 }
 
@@ -90,6 +97,7 @@
   background: linear-gradient(135deg, #000000, #333333);
   color: #fff;
   align-items: center;
+  margin-left: 80px;
 }
 
 .title {
@@ -182,6 +190,7 @@
 .lookItem {
 
   margin: 8px;
+  position: relative; /* מאפשר לכפתור להיות מונח מעל התמונה */
 
   flex-shrink: 0;
 
@@ -192,9 +201,7 @@
 
 .lookItem img {
   flex-shrink: 0;
-
   width: 150px;
-
   height: auto;
 
   border-radius: 8px;

@@ -9,10 +9,9 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
-  User,
 } from "firebase/auth";
-import { useUserStore } from "@/store/userStore";
 
+import { useUserStore } from "@/store/userStore";
 import styles from "./Login.module.css";
 
 const firebaseConfig = {
@@ -36,9 +35,15 @@ type FormData = {
 export default function LoginForm() {
   const { register, handleSubmit } = useForm<FormData>();
   const router = useRouter();
-  const setUserStore = useUserStore((state) => state.setUser);
+
+  const setUser = useUserStore((state) => state.setUser);
+  const setUserId = useUserStore((state) => state.setUserId);
+
   const [errorMessage, setErrorMessage] = useState("");
 
+  // --------------------------
+  // GOOGLE LOGIN
+  // --------------------------
   async function loginWithGoogle() {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -53,20 +58,27 @@ export default function LoginForm() {
         return;
       }
 
-      setUserStore({
+      if (data.user?.id) {
+        setUserId(data.user.id);       // <-- במקום localStorage
+      }
+
+      setUser({
         name: firebaseUser.displayName || null,
         email: firebaseUser.email || null,
         profileImage: firebaseUser.photoURL || null,
         gender: data.user?.gender || null,
       });
 
-      router.push("/home"); 
+      router.push("/home");
     } catch (err) {
       console.error(err);
       setErrorMessage("Google login failed.");
     }
   }
 
+  // --------------------------
+  // EMAIL + PASSWORD LOGIN
+  // --------------------------
   async function onSubmit(data: FormData) {
     try {
       const res = await fetch(`/api/user?email=${data.email}`);
@@ -82,9 +94,14 @@ export default function LoginForm() {
         data.email,
         data.password
       );
+
       const firebaseUser = userCredential.user;
 
-      setUserStore({
+      if (dbData.user?.id) {
+        setUserId(dbData.user.id);     // <-- Zustand
+      }
+
+      setUser({
         name: dbData.user?.name || "",
         email: firebaseUser.email || null,
         profileImage: dbData.user?.profileImage || "",
@@ -104,48 +121,48 @@ export default function LoginForm() {
 
   return (
     <div className={styles.loginPage}>
-  <div className={styles.localHeader}>
-    <Image src="/logo.png" alt="Project Logo" width={210} height={210} />
-  </div>
+      <div className={styles.localHeader}>
+        <Image src="/logo.png" alt="Project Logo" width={210} height={210} />
+      </div>
 
-  <div className={styles.container}>
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <h2>Login</h2>
+      <div className={styles.container}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+          <h2>Login</h2>
 
-        <button
-          type="button"
-          onClick={loginWithGoogle}
-          className={styles.googleButton}
-        >
-          <Image src="/google.png" alt="Google" width={18} height={18} />
-          Continue with Google
-        </button>
+          <button
+            type="button"
+            onClick={loginWithGoogle}
+            className={styles.googleButton}
+          >
+            <Image src="/google.png" alt="Google" width={18} height={18} />
+            Continue with Google
+          </button>
 
-        <div className={styles.orDivider}>Or</div>
+          <div className={styles.orDivider}>Or</div>
 
-        <input
-          {...register("email")}
-          placeholder="Email address"
-          className={styles.input}
-        />
-        <input
-          {...register("password")}
-          type="password"
-          placeholder="Password"
-          className={styles.input}
-        />
+          <input
+            {...register("email")}
+            placeholder="Email address"
+            className={styles.input}
+          />
+          <input
+            {...register("password")}
+            type="password"
+            placeholder="Password"
+            className={styles.input}
+          />
 
-        {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
 
-        <button type="submit" className={styles.button}>
-          Login
-        </button>
+          <button type="submit" className={styles.button}>
+            Login
+          </button>
 
-        <p className={styles.signupLink}>
-          Don't have an account? <a href="/register">Sign up here</a>
-        </p>
-      </form>
+          <p className={styles.signupLink}>
+            Don't have an account? <a href="/register">Sign up here</a>
+          </p>
+        </form>
+      </div>
     </div>
-</div>
   );
 }
