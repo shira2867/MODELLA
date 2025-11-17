@@ -1,3 +1,5 @@
+"use client";
+
 import AuthForm from "@/app/Components/SignupForm/SignupForm";
 
 export default function RegisterPage() {

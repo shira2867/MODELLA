@@ -1,8 +1,9 @@
 "use client";
+import Image from 'next/image';
 import React, { useState } from "react";
 import styles from "./NewLook.module.css";
+import down from '../../../public/down.png';
 
-// טיפוס של פריט בגד
 type ClothingItem = {
   _id: string;
   imageUrl: string;
@@ -15,7 +16,6 @@ type ClothingItem = {
   createdAt?: string;
 };
 
-// טיפוס של Look (לשליחה ל־API)
 type LookType = {
   userId: string;
   items: ClothingItem[];
@@ -25,6 +25,7 @@ type LookType = {
 
 export default function NewLook() {
   const [selectedItems, setSelectedItems] = useState<ClothingItem[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -52,10 +53,10 @@ export default function NewLook() {
     }
 
     const look: LookType = {
-      userId: "user_12345", 
+      userId: "user_12345",
       items: selectedItems,
       createdAt: new Date().toISOString(),
-      imageUrl: "", // אפשר לשים כאן תמונת Look כוללת אם יש
+      imageUrl: "",
     };
 
     try {
@@ -68,7 +69,8 @@ export default function NewLook() {
       const data = await response.json();
       if (response.ok) {
         console.log("Look saved:", data.look);
-        setSelectedItems([]); 
+        setSelectedItems([]);
+        setIsOpen(false);
         alert("Look saved successfully!");
       } else {
         console.error("Failed to save Look:", data.error);
@@ -82,37 +84,63 @@ export default function NewLook() {
 
   return (
     <div className={styles.container}>
-  <h2>Create New Look</h2>
+      {/* הכותרת והחץ במרכז, יופיעו רק כשהאזור סגור */}
+      {!isOpen && (
+        <>
+          <h1 className={styles.title}>
+            you want to create a new look? <br /> click here
+          </h1>
+          <Image src={down} alt="down arrow" width={50} height={50} />
+          <button className={styles.openBtn} onClick={() => setIsOpen(true)}>
+            Create New Look
+          </button>
+        </>
+      )}
 
-  <div
-    className={styles.lookArea}
-    onDrop={handleDrop}
-    onDragOver={handleDragOver}
-  >
-    {selectedItems.length === 0 ? (
-      <p className={styles.hint}>Drag clothes here</p>
-    ) : (
-      selectedItems.map((item) => (
-        <div key={item._id} className={styles.lookItem}>
-          <img src={item.imageUrl} alt={item.category} />
-          <button onClick={() => removeItem(item._id)}>🗑️</button>
+      {/* אזור ה-Look */}
+      {isOpen && (
+        <div className={styles.lookWrapper}>
+          {/* כפתור סגירה */}
+          <button
+            className={styles.closeBtn}
+            onClick={() => setIsOpen(false)}
+            title="Close Look Area"
+          >
+            ❌
+          </button>
+
+          {/* אזור הדרופ */}
+          <div
+            className={styles.lookArea}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+          >
+            {selectedItems.length === 0 ? (
+              <p className={styles.hint}>Drag clothes here</p>
+            ) : (
+              selectedItems.map((item) => (
+                <div key={item._id} className={styles.lookItem}>
+                  <img src={item.imageUrl} alt={item.category} />
+                  <button onClick={() => removeItem(item._id)}>🗑️</button>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* כפתורי פעולה */}
+          <div className={styles.buttons}>
+            <button className={styles.saveBtn} onClick={saveLook}>
+              SAVE            
+            </button>
+            <button
+              className={styles.cancelBtn}
+              onClick={() => setSelectedItems([])}
+            >
+              CANCEL
+            </button>
+          </div>
         </div>
-      ))
-    )}
-  </div>
-
-  <div className={styles.buttons}>
-    <button className={styles.saveBtn} onClick={saveLook}>
-      Save Look
-    </button>
-    <button
-      className={styles.cancelBtn}
-      onClick={() => setSelectedItems([])}
-    >
-      Cancel
-    </button>
-  </div>
-</div>
-
+      )}
+    </div>
   );
 }

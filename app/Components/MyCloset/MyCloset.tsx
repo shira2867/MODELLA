@@ -1,12 +1,10 @@
-
-
 "use client";
-
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import axios from "axios";
-import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import styles from "./MyCloset.module.css";
+import close from '../../../public/remove.png';
 
 type ClothingItem = {
   _id: string;
@@ -21,7 +19,6 @@ type MyClosetProps = {
   userId: string;
 };
 
-// צבעים
 const COLOR_MAP: Record<string, [number, number, number]> = {
   Red: [255, 0, 0],
   Pink: [255, 192, 203],
@@ -54,17 +51,11 @@ const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   const [clothes, setClothes] = useState<ClothingItem[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // מסננים
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [colorFilter, setColorFilter] = useState<string | null>(null);
   const [styleFilter, setStyleFilter] = useState<string | null>(null);
   const [seasonFilter, setSeasonFilter] = useState<string | null>(null);
-
-  const [showFilterSidebar, setShowFilterSidebar] = useState(false);
-  const [activeFilterSection, setActiveFilterSection] = useState<
-    "color" | "style" | "season" | null
-  >(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchClothes = async () => {
@@ -99,149 +90,123 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
 
   return (
     <div className={styles.container}>
-
       <div className={styles.mainContent}>
-        <h2 className={styles.title}>My Closet</h2>
+        <div className={styles.categoryFilterRow}>
+          <div className={styles.categoryRow}>
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                className={`${styles.categoryButton} ${categoryFilter === cat ? styles.active : ""}`}
+                onClick={() => setCategoryFilter(cat === "All" ? null : cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
 
-        {/* כפתורי קטגוריות */}
-        <div className={styles.categoriesWrapper}>
-          {CATEGORIES.map((cat) => (
+          {!showFilters && (
             <button
-              key={cat}
-              className={`${styles.categoryButton} ${
-                (!categoryFilter && cat === "All") || categoryFilter === cat
-                  ? styles.active
-                  : ""
-              }`}
-              onClick={() => setCategoryFilter(cat === "All" ? null : cat)}
+              className={styles.filterToggle}
+              onClick={() => setShowFilters(true)}
             >
-              {cat}
+              ☰ filter
             </button>
-          ))}
+          )}
+        </div>
 
-          {/* כפתור לפתיחת הפילטר בצד */}
+        <div className={`${styles.sidebarFilter} ${showFilters ? styles.open : ""}`}>
           <button
-            className={styles.openFilterButton}
-            onClick={() => setShowFilterSidebar(!showFilterSidebar)}
+            className={styles.filterToggle}
+            onClick={() => setShowFilters(false)}
+            style={{ alignSelf: "flex-end", marginBottom: "1rem" }}
           >
-            ☰ Filter
+            <Image src={close} alt="Close Menu" width={30} height={30} />
           </button>
+
+          {/* קטגוריות – רק במסכים קטנים */}
+          <div className={styles.categoryRowMobile}>
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                className={`${styles.categoryButton} ${categoryFilter === cat ? styles.active : ""}`}
+                onClick={() => setCategoryFilter(cat === "All" ? null : cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label>Color:</label>
+            <div className={styles.colorOptions}>
+              {Object.keys(COLOR_MAP).map((color) => (
+                <div
+                  key={color}
+                  className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""}`}
+                  style={{ backgroundColor: `rgb(${COLOR_MAP[color].join(",")})` }}
+                  onClick={() => setColorFilter(colorFilter === color ? null : color)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label>Style:</label>
+            <div className={styles.optionList}>
+              {STYLES.map((style) => (
+                <button
+                  key={style}
+                  className={`${styles.filterButton} ${styleFilter === style ? styles.active : ""}`}
+                  onClick={() => setStyleFilter(styleFilter === style ? null : style)}
+                >
+                  {style}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label>Season:</label>
+            <div className={styles.optionList}>
+              {SEASONS.map((season) => (
+                <button
+                  key={season}
+                  className={`${styles.filterButton} ${seasonFilter === season ? styles.active : ""}`}
+                  onClick={() => setSeasonFilter(seasonFilter === season ? null : season)}
+                >
+                  {season}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className={styles.closetContent}>
-          {/* סרגל פילטר בצד */}
-          {showFilterSidebar && (
-            <div className={styles.filterSidebar}>
-              <div className={styles.filterSection}>
-                <button
-                  onClick={() =>
-                    setActiveFilterSection(activeFilterSection === "color" ? null : "color")
-                  }
-                >
-                  Color
-                </button>
-                {activeFilterSection === "color" && (
-                  <div className={styles.colorOptions}>
-                    {Object.keys(COLOR_MAP).map((color) => (
-                      <div
-                        key={color}
-                        className={`${styles.colorCircle} ${
-                          colorFilter === color ? styles.activeColor : ""
-                        }`}
-                        style={{
-                          backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
-                        }}
-                        onClick={() =>
-                          setColorFilter(colorFilter === color ? null : color)
-                        }
-                      />
-                    ))}
+          {loading ? (
+            <p className={styles.loading}>Loading...</p>
+          ) : filteredClothes.length === 0 ? (
+            <p className={styles.noClothes}>No items found.</p>
+          ) : (
+            <div className={styles.cardsWrapper}>
+              {filteredClothes.map((item) => (
+                <div key={item._id} className={styles.card}>
+                  <div className={styles.imageWrapper}>
+                    <img
+                      src={item.imageUrl}
+                      alt={item.category}
+                      className={styles.clothImage}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("application/json", JSON.stringify(item));
+                      }}
+                    />
                   </div>
-                )}
-              </div>
-
-              <div className={styles.filterSection}>
-                <button
-                  onClick={() =>
-                    setActiveFilterSection(activeFilterSection === "style" ? null : "style")
-                  }
-                >
-                  Style
-                </button>
-                {activeFilterSection === "style" && (
-                  <div className={styles.optionList}>
-                    {STYLES.map((style) => (
-                      <button
-                        key={style}
-                        className={`${styles.optionButton} ${
-                          styleFilter === style ? styles.active : ""
-                        }`}
-                        onClick={() =>
-                          setStyleFilter(styleFilter === style ? null : style)
-                        }
-                      >
-                        {style}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className={styles.filterSection}>
-                <button
-                  onClick={() =>
-                    setActiveFilterSection(activeFilterSection === "season" ? null : "season")
-                  }
-                >
-                  Season
-                </button>
-                {activeFilterSection === "season" && (
-                  <div className={styles.optionList}>
-                    {SEASONS.map((season) => (
-                      <button
-                        key={season}
-                        className={`${styles.optionButton} ${
-                          seasonFilter === season ? styles.active : ""
-                        }`}
-                        onClick={() =>
-                          setSeasonFilter(seasonFilter === season ? null : season)
-                        }
-                      >
-                        {season}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                </div>
+              ))}
             </div>
           )}
-
-          {/* תצוגת תמונות */}
-              {loading ? (
-          <p className={styles.loading}>Loading...</p>
-        ) : filteredClothes.length === 0 ? (
-          <p className={styles.noClothes}>No items found.</p>
-        ) : (
-          <div className={styles.cardsWrapper}>
-            {filteredClothes.map((item) => (
-              <div key={item._id} className={styles.card}>
-                <img
-                  src={item.imageUrl}
-                  alt={item.category}
-                  className={styles.clothImage}
-                  draggable
-                  onDragStart={(e) => {
-                    e.dataTransfer.setData("application/json", JSON.stringify(item));
-                  }}
-                />
-            
-              </div>
-            ))}
-          </div>
-        )}
         </div>
       </div>
-
     </div>
   );
 };
