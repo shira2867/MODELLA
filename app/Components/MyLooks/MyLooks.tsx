@@ -48,7 +48,6 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
   useEffect(() => {
     const fetchLooks = async () => {
       try {
-        // ⬅ עכשיו מושכים לוקים, לא בגדים
         const res = await axios.get(`/api/looks?userId=${userId}`);
         setLooks(res.data);
       } catch (err) {

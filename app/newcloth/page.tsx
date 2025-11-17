@@ -1,14 +1,15 @@
 // app/add-item/page.tsx
 "use client";
 
+import { useUserStore } from "@/store/userStore";
 import NewCloth from "@/app/Components/NewCloth/NewCloth";
 
 export default function AddItemPage() {
-  const userId = "123"; // כאן תמשכי את ה-userId מהסשן או פרופס
+  const userId = useUserStore((state) => state.userId); 
 
   return (
     <div style={{ padding: "2rem" }}>
-      <NewCloth userId={userId} />
+      <NewCloth userId={userId || ""} />
     </div>
   );
 }
