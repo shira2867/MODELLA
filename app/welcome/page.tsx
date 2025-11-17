@@ -2,10 +2,13 @@
 import Image from "next/image";
 
 import styles from "./Welcome.module.css";
-import logo from "../../public/logo.png";
-import { useRouter } from "next/navigation";
+
+import logo from '../../public/logo.png';
+import { useRouter } from 'next/navigation';
 
 export default function Welcome() {
+
+
   const router = useRouter();
   return (
     <div className={styles.welcome}>
@@ -14,8 +17,9 @@ export default function Welcome() {
           className={styles.logo}
           src={logo}
           alt="Project Logo"
-          width={550}
-          height={550}
+          width={400}
+          height={200}
+
         />
         <h1 className={styles.title}>Dress. Style. Shine.</h1>
         <p className={styles.subtitle}>
@@ -38,5 +42,5 @@ export default function Welcome() {
         </div>
       </div>
     </div>
-  );
+    );
 }

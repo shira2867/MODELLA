@@ -90,17 +90,16 @@ export default function NewLook() {
           <h1 className={styles.title}>
             you want to create a new look? <br /> click here
           </h1>
-          <Image src={down} alt="down arrow" width={50} height={50} />
+          <Image src={down} alt="down arrow" width={60} height={60} />
+          <br></br>
           <button className={styles.openBtn} onClick={() => setIsOpen(true)}>
             Create New Look
           </button>
         </>
       )}
 
-      {/* אזור ה-Look */}
       {isOpen && (
         <div className={styles.lookWrapper}>
-          {/* כפתור סגירה */}
           <button
             className={styles.closeBtn}
             onClick={() => setIsOpen(false)}

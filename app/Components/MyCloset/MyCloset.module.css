@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: -52px;
 }
 
 .mainContent {
@@ -19,8 +20,9 @@
   color: #333;
 }
 
-/* Filter Toggle */
 .filterToggle {
+  background: none;
+  border: none;
   padding: 0.5rem 1.5rem;
   cursor: pointer;
   font-weight: 500;
@@ -29,8 +31,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 25px;
-  margin-left: 20px;
+  margin-left: 10px;
+  margin-top: -62px;
 }
 
 /* Filter Panel */
@@ -40,9 +42,7 @@
   opacity: 0;
   transform: translateY(-10px);
   transition: all 0.5s ease;
-  background-color: rgba(255, 255, 255, 0.9);
   margin: 1rem auto;
-  border: 1.5px solid #ccc;
   padding: 0;
   width: 90%;
 }
@@ -54,43 +54,44 @@
   padding: 1.5rem;
 }
 
-/* Category Row */
 .categoryFilterRow {
   display: flex;
   align-items: center;
   gap: 20px;
-  justify-content: space-between; 
+  justify-content: space-between;
   margin-bottom: 1rem;
+  
 }
 
 .categoryRow {
   display: flex;
-  gap: 8px;
+  gap: 75px;
   flex-wrap: wrap;
+  margin-bottom: 50px;
 }
 
 .categoryButton {
-  padding: 8px 18px;
-  font-size: medium;
-  color: #070707;
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
   outline: none;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 25px;
 }
 
-.categoryButton:hover {
+.categoryButton:hover,
+.categoryButton.active {
   font-weight: 700;
+  color: #000;
 }
 
-.categoryButton:active {
-  transform: scale(0.95);
+.categoryButton:focus {
+  outline: none;
+  box-shadow: none;
 }
+
 
 .categoryButton.active {
   font-weight: 700;
@@ -108,9 +109,10 @@
 
 .filterButton {
   padding: 0.4rem 1rem;
-  border-radius: 15px;
   cursor: pointer;
   transition: all 0.3s ease;
+   background: none;       
+  border: none; 
 }
 
 .filterButton:hover,
@@ -139,8 +141,8 @@
 /* Cards Grid */
 .cardsWrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-  gap: 12px; 
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
   justify-items: center;
   padding: 12px;
 }
@@ -149,15 +151,15 @@
   border: 1px solid #ccc;
   border-radius: 0.5rem;
   overflow: hidden;
-  width: 250px;        
-  height: 330px;       
-  display: flex;           
-  flex-direction: column;  
+  width: 250px;
+  height: 330px;
+  display: flex;
+  flex-direction: column;
   padding: 0;
 }
 
 .imageWrapper {
-  flex: 1;               
+  flex: 1;
   width: 100%;
   overflow: hidden;
 }
@@ -165,13 +167,13 @@
 .clothImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;    
+  object-fit: cover;
   display: block;
   transition: transform 0.3s ease;
 }
 
 .card:hover {
-  transform: scale(1.05); 
+  transform: scale(1.05);
 }
 
 .card:hover .clothImage {
@@ -187,31 +189,31 @@
 /* Sidebar Filter */
 .sidebarFilter {
   position: fixed;
-  top: 50%; 
-  right: -100%; 
-  transform: translateY(-50%); 
+  top: 50%;
+  right: -100%;
+  transform: translateY(-50%);
   width: 300px;
   max-height: 80vh;
   overflow-y: auto;
-  background-color: #f0efef94; 
-  padding: 4rem 3rem; 
-  box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+  background-color: #f0efefce;
+  padding: 4rem 3rem;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   transition: right 0.3s ease;
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; 
+  gap: 1.5rem;
 }
 
 .sidebarFilter.open {
-  right: 0; 
+  right: 0;
 }
 
 .filterGroup {
   display: flex;
   flex-direction: column;
-  align-items: center; 
-  gap: 0.8rem; 
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .filterGroup label {
@@ -223,10 +225,10 @@
 /* Mobile Category Row */
 .categoryRowMobile {
   display: none;
-  flex-direction: column; 
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 0.5rem;
-  justify-content: flex-start; 
+  justify-content: flex-start;
   margin-bottom: 1rem;
 }
 
@@ -248,28 +250,29 @@
   .sidebarFilter.open {
     right: 5%;
   }
-    .cardsWrapper {
-    grid-template-columns: 1fr; 
+
+  .cardsWrapper {
+    grid-template-columns: 1fr;
     gap: 5px;
   }
 
   .card {
     width: 100%;
-    max-width: 320px; 
-    height: 300px; 
+    max-width: 320px;
+    height: 300px;
   }
 }
 
 @media (max-width: 480px) {
   .cardsWrapper {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     gap: 5px;
   }
 
   .card {
     width: 100%;
-    max-width: 320px; 
-    height: 300px; 
+    max-width: 320px;
+    height: 300px;
   }
- 
+
 }
