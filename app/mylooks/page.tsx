@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import MyLooks from "@/app/Components/MyLooks/MyLooks";
-import BurgerMenu from "../Components/BurgerMenu/BurgerMenu";
+import Headers from "../Components/Header/Header";
 import Footer from "../Components/Footer/Footer";
 export default function ShowMyLooks() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -9,14 +9,14 @@ export default function ShowMyLooks() {
     const storedUserId = localStorage.getItem("userId");
     setUserId(storedUserId);
   }, []);
- 
+
   if (!userId) {
-    return <div>Loading...</div>;  
+    return <div>Loading...</div>;
   }
   return (
-    <div >
-          <BurgerMenu />
-      
+    <div>
+      <Headers />
+
       <MyLooks userId={userId} />
       <Footer></Footer>
     </div>
