@@ -3,22 +3,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./MyLooks.module.css";
 import LookCard from "../LookCard/LookCard";
+import {ClothingItem} from "@/types/clothTypes";
 
-type ClothingItem = {
-  _id: string;
-  imageUrl: string;
-  category: string;
-  thickness: "light" | "medium" | "heavy";
-  style: string;
-  colorName: string;
-};
+import { LookType } from "@/types/lookTypes";
 
-type Look = {
-  _id: string;
-  items: ClothingItem[];
-  style?: string;
-  colorName?: string;
-};
 
 type MyLooksProps = {
   userId: string;
@@ -43,7 +31,7 @@ const styleOptions = ["All", "casual", "formal", "sporty", "party"];
 const seasons = ["Spring", "Summer", "Autumn", "Winter"];
 
 const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
-  const [looks, setLooks] = useState<Look[]>([]);
+  const [looks, setLooks] = useState<LookType[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [styleFilter, setStyleFilter] = useState<string>("All");
@@ -55,7 +43,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
     const fetchLooks = async () => {
       try {
         const res = await axios.get(`/api/looks?userId=${userId}`);
-        const looksWithDominants: Look[] = res.data.map((look: Look) => {
+        const looksWithDominants: LookType[] = res.data.map((look: LookType) => {
           const colorCount: Record<string, number> = {};
           look.items.forEach((i) => {
             const name = i.colorName || "Black";

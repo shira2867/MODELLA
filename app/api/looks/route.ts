@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { looksCollection, LookType } from "../../../services/server/looks";
+import { looksCollection, } from "../../../services/server/looks";
+import {LookType} from "@/types/lookTypes";
+
+
+
 
 export async function POST(req: NextRequest) {
   try {

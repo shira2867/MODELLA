@@ -122,7 +122,9 @@ const NewCloth = ({ userId }: { userId: string }) => {
           });
 
           alert("Item added successfully!");
+
           router.push("/mycloset");
+
           setCategory("");
           setThickness("");
           setStyle("");

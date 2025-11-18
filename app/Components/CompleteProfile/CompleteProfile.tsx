@@ -2,16 +2,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import styles from "./CompleteProfile.module.css";
-
-type ProfileData = {
-  name: string;
-  gender: string;
-  profileImage?: string;
-};
+import { ProfileData } from "@/types/userTypes";
+import { useRouter } from "next/router";
+const Router = useRouter();
 
 export default function CompleteProfile({ userEmail }: { userEmail: string }) {
   const { register, handleSubmit, reset } = useForm<ProfileData>();
-
+  const router = Router;
   async function onSubmit(data: ProfileData) {
     try {
       const res = await fetch("/api/user/update", {
@@ -26,6 +23,7 @@ export default function CompleteProfile({ userEmail }: { userEmail: string }) {
       const result = await res.json();
       if (result.ok) {
         console.log("Profile updated successfully!");
+        router.push("/login");
         reset();
       } else {
         alert(result.error || "Error updating profile");
@@ -37,9 +35,9 @@ export default function CompleteProfile({ userEmail }: { userEmail: string }) {
   }
 
   return (
-    
+
     <div className={styles.container}>
-        <h1 className={styles.heading}>Almost done! Just a few more details.</h1>
+      <h1 className={styles.heading}>Almost done! Just a few more details.</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <h2>Complete Your Profile</h2>

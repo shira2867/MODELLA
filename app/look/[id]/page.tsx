@@ -5,27 +5,12 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import LookCard from "../../Components/LookCard/LookCard";
 import styles from "./lookId.module.css";
-type ClothingItem = {
-  _id: string;
-  imageUrl: string;
-  category: string;
-  colorName?: string;
-  style?: string;
-};
-
-type Look = {
-  _id: string;
-  items: ClothingItem[];
-  imageUrl?: string;
-  createdAt?: string;
-};
+import { LookType } from "@/types/lookTypes";
 
 const LookPage = () => {
   const params = useParams();
-  console.log(params); 
-
-  const lookId = params?.id; 
-  const [look, setLook] = useState<Look | null>(null);
+  const lookId = params?.id;
+  const [look, setLook] = useState<LookType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,8 +33,11 @@ const LookPage = () => {
   if (loading) return <p>Loading...</p>;
   if (!look) return <p>Look not found</p>;
 
-  return <div className={styles.container}>  <LookCard  items={look.items} lookId={look._id} />;
-</div>
+  return (
+    <div className={styles.container}>
+      <LookCard items={look.items } lookId={look._id} />
+    </div>
+  );
 };
 
 export default LookPage;

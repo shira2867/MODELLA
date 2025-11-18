@@ -5,24 +5,8 @@ import styles from "./NewLook.module.css";
 import down from '../../../public/down.png';
 import { useUserStore } from "../../../store/userStore"; 
 
-type ClothingItem = {
-  _id: string;
-  imageUrl: string;
-  categoryId: string;
-  category: string;
-  colorName: string;
-  thickness: "light" | "medium" | "heavy";
-  style: string;
-  tags?: string[];
-  createdAt?: string;
-};
-
-type LookType = {
-  userId: string;
-  items: ClothingItem[];
-  imageUrl?: string;
-  createdAt?: string;
-};
+import { ClothingItem } from "@/types/clothTypes";
+import { LookType } from "@/types/lookTypes";
 
 export default function NewLook() {
   const [selectedItems, setSelectedItems] = useState<ClothingItem[]>([]);
@@ -66,10 +50,10 @@ export default function NewLook() {
     }
 
     const look: LookType = {
+      _id: "", 
       userId,
       items: selectedItems,
-      createdAt: new Date().toISOString(),
-      imageUrl: "",
+      createdAt: new Date(),
     };
 
     try {

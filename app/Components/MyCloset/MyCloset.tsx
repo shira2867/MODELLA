@@ -11,63 +11,19 @@ import Accessories from "../../../public/accessories_5029392.png";
 import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal"; 
 import pants from "../../../public/short_13387117.png";
 import filter from "../../../public/filter_7420963.png";
+import{ClothingItem}from"@/types/clothTypes";
+// Icons
 import { FaTshirt, FaHatCowboy, FaUserTie, FaMale } from "react-icons/fa";
 import { GiClothes, GiLargeDress, GiSkirt } from "react-icons/gi";
 
-type ClothingItem = {
-  _id: string;
-  imageUrl: string;
-  category: string;
-  thickness: string;
-  style: string;
-  colorName: string;
-};
+
 
 type MyClosetProps = {
   userId: string;
 };
-type ConfirmDeleteProps = {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  lookNames: string[];
-};
 
-const ConfirmDelete: React.FC<ConfirmDeleteProps> = ({
-  open,
-  onClose,
-  onConfirm,
-  lookNames,
-}) => {
-  if (!open) return null;
 
-  return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <h2>Confirm Delete</h2>
-        {lookNames.length > 0 && (
-          <>
-            <p>This item is used in these looks:</p>
-            <ul>
-              {lookNames.map((name) => (
-                <li key={name}>{name}</li>
-              ))}
-            </ul>
-          </>
-        )}
-        <p>Are you sure you want to delete this item and all related looks?</p>
-        <div className={styles.modalActions}>
-          <button onClick={onConfirm} className={styles.confirmButton}>
-            Yes, Delete
-          </button>
-          <button onClick={onClose} className={styles.cancelButton}>
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+
 const COLOR_MAP: Record<string, [number, number, number]> = {
   Red: [255, 0, 0],
   Pink: [255, 192, 203],
@@ -129,8 +85,10 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   const [styleFilter, setStyleFilter] = useState<string | null>(null);
   const [seasonFilter, setSeasonFilter] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+
   const [selectedClothing, setSelectedClothing] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
     const fetchClothes = async () => {
       try {
@@ -193,6 +151,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             </button>
           )}
         </div>
+
         <div
           className={`${styles.sidebarFilter} ${
             showFilters ? styles.open : ""
@@ -300,6 +259,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
                       }}
                     />
                   </div>
+
                   <button
                     onClick={() => {
                       setSelectedClothing(item._id);
@@ -315,6 +275,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           )}
         </div>
       </div>
+
       {selectedClothing && (
         <DeleteHandleLooksModal
           clothingId={selectedClothing}
@@ -324,6 +285,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             setSelectedClothing(null);
           }}
           onComplete={({ updated, deleted }) => {
+
             setClothes((prev) =>
               prev.filter((c) => c._id !== selectedClothing)
             );

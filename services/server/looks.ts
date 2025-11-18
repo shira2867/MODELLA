@@ -1,24 +1,7 @@
 import type { Collection, Db } from "mongodb";
 import { getDb } from "./db";
 
-export type LookItem = {
-  _id: string;             
-  categoryId: string;     
-  imageUrl: string;      
-  colorName: string;     
-  thickness: "light" | "medium" | "heavy"; 
-  style: string;           
-  tags?: string[];        
-  createdAt?: Date;        
-};
-
-export type LookType = {
-  _id: string;        
-  userId: string;       
-  items: LookItem[];     
-  imageUrl?: string;    
-  createdAt?: Date;       
-};
+import { LookType } from "@/types/lookTypes";
 
 export async function looksCollection(): Promise<Collection<LookType>> {
   const db = (await getDb()) as Db;

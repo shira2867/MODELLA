@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { looksCollection } from "@/services/server/looks";
+import {RouteContext} from "@/types/types"; ;
 
-type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
-};
+
 
 export async function GET(
   req: NextRequest,
@@ -26,8 +23,8 @@ export async function GET(
     }
 
     return NextResponse.json({
-      _id: look._id, 
-      imageUrl: look.imageUrl ?? look.items?.[0]?.imageUrl ?? "",
+      _id: look._id, // כבר string, אין צורך ב-toString()
+      imageUrl: look.items?.[0]?.imageUrl ?? "",
       items: look.items ?? [],
       createdAt: look.createdAt,
     });

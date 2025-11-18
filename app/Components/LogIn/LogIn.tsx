@@ -13,6 +13,7 @@ import {
 
 import { useUserStore } from "@/store/userStore";
 import styles from "./Login.module.css";
+import { FormData } from "../../../types/userTypes";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDiO9v_BzyyJ8C0W_M_pNvGFHGOH0rcn0E",
@@ -27,10 +28,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-type FormData = {
-  email: string;
-  password: string;
-};
+
 
 export default function LoginForm() {
   const { register, handleSubmit } = useForm<FormData>();
