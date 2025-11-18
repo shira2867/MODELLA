@@ -113,10 +113,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
     const colorMatch = !colorFilter || itemColors.includes(colorFilter.toLowerCase());
     const seasonMatch =
       !seasonFilter || look.items.some((i) => isItemInSeason(i, seasonFilter));
-<<<<<<< HEAD
-=======
     console.log("Filtering look", "lookID", look._id, { styleMatch, colorMatch, seasonMatch });
->>>>>>> dd6eda212352b3705643ec06279cc53fbc6236f2
     return styleMatch && colorMatch && seasonMatch;
   });
 
