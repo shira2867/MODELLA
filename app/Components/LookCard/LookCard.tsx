@@ -4,14 +4,7 @@ import styles from "./LookCard.module.css";
 import { FiShare2, FiMail, FiMessageCircle } from "react-icons/fi";
 import { FaFacebookF } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-
-type ClothingItem = {
-  _id: string;
-  imageUrl: string;
-  category: string;
-  colorName?: string;
-  style?: string;
-};
+import { ClothingItem } from "@/types/clothTypes";
 
 type LookCardProps = {
   items: ClothingItem[];
@@ -20,8 +13,9 @@ type LookCardProps = {
 
 const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const router = useRouter();
-  const lookUrl = `${window.location.origin}/look/${lookId || ""}`;
-console.log("lookId",lookId)
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+  const lookUrl = `${BASE_URL}/look/${lookId}`;
+  console.log("lookId", lookId)
   const handleClick = () => {
     if (lookId) router.push(`/look/${lookId}`);
   };

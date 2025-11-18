@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { initializeApp } from "firebase/app";
 import logo from '../../../public/logo.png';
 import Link from 'next/link';
+import { FormData } from "@/types/userTypes";
 
 import {
   getAuth,
@@ -32,10 +33,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-type FormData = {
-  email: string;
-  password: string;
-};
+
 
 export default function AuthForm() {
   const [user, setUser] = useState<User | null>(null);

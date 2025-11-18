@@ -124,10 +124,8 @@ const NewCloth = ({ userId }: { userId: string }) => {
 
           alert("Item added successfully!");
 
-          // ניווט לעמוד MyLooks אחרי שהפריט נשמר
           router.push("/mycloset");
 
-          // איפוס השדות (לא חובה אם את נווטת מיד)
           setCategory("");
           setThickness("");
           setStyle("");

@@ -6,13 +6,4 @@ export async function usersCollection() {
   return db.collection("users");
 }
 
-// Type for convenience
-export type UserType = {
-  _id?: any;
-  name?: string;
-  email: string;
-  passwordHash?: string;
-  profileImage?: string;
-  gender?: "male" | "female";
-  createdAt?: Date;
-};
+

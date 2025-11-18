@@ -12,13 +12,8 @@ import "swiper/css/pagination";
 import arrowDown from "../../../public/img/down.png";
 import sunIcon from "../../../public/img/sunny_17145991.png";
 import WeatherWidget from "../WeatherWidget/WeatherWidget";
+import {StepProps} from "@/types/types";
 
-type StepProps = {
-  title: string;
-  description: string;
-  imageUrl?: string;
-  reverse?: boolean;
-};
 const heroImages = [
   "slider_1_jcj9jm",
   "slider_5_z5v73p",

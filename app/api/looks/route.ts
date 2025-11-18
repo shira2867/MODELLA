@@ -1,20 +1,8 @@
 // /app/api/looks/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { looksCollection, LookType, LookItem } from "../../../services/server/looks";
+import { looksCollection, } from "../../../services/server/looks";
+import {LookType} from "@/types/lookTypes";
 
-type MyLookSummary = {
-  _id: string;
-  imageUrl: string;
-  style: string;
-  colorName: string;
-};
-
-type DbLook = {
-  _id: string;
-  items?: LookItem[];
-  imageUrl?: string;
-  createdAt?: Date;
-};
 
 
 export async function POST(req: NextRequest) {
