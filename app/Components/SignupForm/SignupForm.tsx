@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { initializeApp } from "firebase/app";
-import logo from '../../../public/logo.png';
-import Link from 'next/link';
+import logo from "../../../public/logo.png";
+import Link from "next/link";
 
 import {
   getAuth,
@@ -48,39 +48,78 @@ export default function AuthForm() {
     console.log("Current user in store:", currentUser);
   }, [currentUser]);
 
+  // async function signInWithGoogle() {
+  //   try {
+  //     const result = await signInWithPopup(auth, provider);
+  //     const firebaseUser = result.user;
+  //     setUser(firebaseUser);
+
+  //     const res = await fetch("/api/user/register", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         name: firebaseUser.displayName,
+  //         email: firebaseUser.email,
+  //         profileImage: firebaseUser.photoURL,
+  //       }),
+  //     });
+
+  //     const data = await res.json();
+
+  //     setUserStore({
+  //       name: firebaseUser.displayName || null,
+  //       email: firebaseUser.email || null,
+  //       profileImage: firebaseUser.photoURL || null,
+  //       gender: null,
+  //     });
+
+  //     if (data.message === "User updated") {
+  //       alert("Email already registered. Redirecting to login.");
+  //       router.push("/login");
+  //     } else {
+  //       router.push("/complete-profile");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
   async function signInWithGoogle() {
     try {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
-      setUser(firebaseUser);
 
+      // 1) שמירת המשתמש ב־API שלך (Mongo)
       const res = await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: firebaseUser.displayName,
           email: firebaseUser.email,
-          profileImage: firebaseUser.photoURL,
+          profileImage: firebaseUser.photoURL, // ← התמונה מגוגל
         }),
       });
 
       const data = await res.json();
 
-      setUserStore({
+      // 2) שמירת משתמש ב־Zustand
+      useUserStore.getState().setUser({
         name: firebaseUser.displayName || null,
         email: firebaseUser.email || null,
         profileImage: firebaseUser.photoURL || null,
         gender: null,
       });
 
+      // שמירת ה־ID לפי Firebase UID
+      useUserStore.getState().setUserId(firebaseUser.uid);
+
+      // 3) ניווט נכון
       if (data.message === "User updated") {
-        alert("Email already registered. Redirecting to login.");
-        router.push("/login"); 
+        router.push("/home"); // כבר קיים, לא צריך להחזיר אותו ל-login
       } else {
-        router.push("/complete-profile");
+        router.push("/complete-profile"); // פעם ראשונה → השלמת פרופיל
       }
     } catch (error) {
-      console.error(error);
+      console.error("Google Login Error:", error);
     }
   }
 
@@ -139,72 +178,72 @@ export default function AuthForm() {
   }
   return (
     <div className={styles.signupPage}>
-             <div className={styles.localHeader}>
-          <Link href="/">
-            <Image src={logo} alt="Project Logo" width={210} height={210} />
-          </Link>
-        </div>
-  <div className={styles.container}>
-      {!user ? (
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-          <h2>Create Your Account</h2>
+      <div className={styles.localHeader}>
+        <Link href="/">
+          <Image src={logo} alt="Project Logo" width={210} height={210} />
+        </Link>
+      </div>
+      <div className={styles.container}>
+        {!user ? (
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+            <h2>Create Your Account</h2>
 
-          <button
-            type="button"
-            onClick={signInWithGoogle}
-            className={styles.googleButton}
-          >
-            <Image src="/google.png" alt="Google" width={18} height={18} />
-            Continue with Google
-          </button>
+            <button
+              type="button"
+              onClick={signInWithGoogle}
+              className={styles.googleButton}
+            >
+              <Image src="/google.png" alt="Google" width={18} height={18} />
+              Continue with Google
+            </button>
 
-          <div className={styles.orDivider}>Or</div>
+            <div className={styles.orDivider}>Or</div>
 
-          <input
-            {...register("email")}
-            placeholder="Email address"
-            className={styles.input}
-          />
-          <input
-            {...register("password")}
-            type="password"
-            placeholder="Password"
-            className={styles.input}
-          />
-
-          <label className={styles.checkboxContainer}>
-            <input type="checkbox" />
-            Receive news, updates and deals
-          </label>
-
-          <button type="submit" className={styles.button}>
-            Create Account
-          </button>
-
-          <p className={styles.terms}>
-            By creating an account, you agree to the{" "}
-            <a href="#">Terms of Service</a> and{" "}
-            <a href="#">Privacy Policy</a>.
-          </p>
-
-          <p className={styles.loginLink}>
-            Already have an account? <a href="/login">Log in here</a>
-          </p>
-        </form>
-      ) : (
-        <div className={styles.userInfo}>
-          <h2>Welcome, {user.displayName || user.email}</h2>
-          {user.photoURL && (
-            <Image
-              src={user.photoURL}
-              alt="Profile"
-              width={100}
-              height={100}
-              className={styles.profileImage}
+            <input
+              {...register("email")}
+              placeholder="Email address"
+              className={styles.input}
             />
-          )}
-        </div>
-      )}
+            <input
+              {...register("password")}
+              type="password"
+              placeholder="Password"
+              className={styles.input}
+            />
+
+            <label className={styles.checkboxContainer}>
+              <input type="checkbox" />
+              Receive news, updates and deals
+            </label>
+
+            <button type="submit" className={styles.button}>
+              Create Account
+            </button>
+
+            <p className={styles.terms}>
+              By creating an account, you agree to the{" "}
+              <a href="#">Terms of Service</a> and{" "}
+              <a href="#">Privacy Policy</a>.
+            </p>
+
+            <p className={styles.loginLink}>
+              Already have an account? <a href="/login">Log in here</a>
+            </p>
+          </form>
+        ) : (
+          <div className={styles.userInfo}>
+            <h2>Welcome, {user.displayName || user.email}</h2>
+            {user.photoURL && (
+              <Image
+                src={user.photoURL}
+                alt="Profile"
+                width={100}
+                height={100}
+                className={styles.profileImage}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -11,8 +11,8 @@
 .logoContainer {
   display: flex;
   align-items: center;
-margin-left: -30px;
-margin-top: -10;
+  margin-left: -30px;
+  margin-top: -10;
 }
 
 .nav {
@@ -22,7 +22,7 @@ margin-top: -10;
   position: fixed;
   top: 0;
   right: -100%;
-  width: 300px; 
+  width: 300px;
   height: 100vh;
   background-color: #ffffffb2;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
@@ -60,12 +60,24 @@ margin-top: -10;
   transform: translateX(0);
 }
 
-.nav.open .link:nth-child(1) { transition-delay: 0.1s; }
-.nav.open .link:nth-child(2) { transition-delay: 0.4s; }
-.nav.open .link:nth-child(3) { transition-delay: 0.7s; }
-.nav.open .link:nth-child(4) { transition-delay: 1s; }
-.nav.open .link:nth-child(5) { transition-delay: 1.3s; }
-.nav.open .link:nth-child(6) { transition-delay: 1.6s; }
+.nav.open .link:nth-child(1) {
+  transition-delay: 0.1s;
+}
+.nav.open .link:nth-child(2) {
+  transition-delay: 0.4s;
+}
+.nav.open .link:nth-child(3) {
+  transition-delay: 0.7s;
+}
+.nav.open .link:nth-child(4) {
+  transition-delay: 1s;
+}
+.nav.open .link:nth-child(5) {
+  transition-delay: 1.3s;
+}
+.nav.open .link:nth-child(6) {
+  transition-delay: 1.6s;
+}
 
 .hamburger {
   display: block;
@@ -80,7 +92,7 @@ margin-top: -10;
 .rightControls {
   display: flex;
   align-items: center;
-  gap: 10px; 
+  gap: 10px;
   z-index: 300;
   margin-bottom: 15px;
 }
@@ -94,6 +106,21 @@ margin-top: -10;
   margin-right: 25px;
 }
 
+.userInitial,
+.userImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  text-transform: uppercase;
+  overflow: hidden;
+}
 .overlay {
   position: fixed;
   top: 0;
