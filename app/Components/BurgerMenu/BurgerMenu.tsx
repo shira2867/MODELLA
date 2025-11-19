@@ -6,7 +6,7 @@ import styles from "./BurgerMenu.module.css";
 import logo from "../../../public/logo.png";
 import menu from "../../../public/menu.png";
 import close from "../../../public/remove.png";
-import { useUserStore } from "@/store/userStore"; 
+import { useUserStore } from "@/store/userStore";
 
 export default function BurgerMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,50 +23,24 @@ export default function BurgerMenu() {
       </div>
 
       <nav className={`${styles.nav} ${isOpen ? styles.open : ""}`}>
-        <Link
-          href="/home"
-          className={styles.link}
-          onClick={() => setIsOpen(false)}
-        >
-          Home
-        </Link>
-        <Link
-          href="/about"
-          className={styles.link}
-          onClick={() => setIsOpen(false)}
-        >
-          About
-        </Link>
-        <Link
-          href="/mycloset"
-          className={styles.link}
-          onClick={() => setIsOpen(false)}
-        >
-          My Closet
-        </Link>
-        <Link
-          href="/newcloth"
-          className={styles.link}
-          onClick={() => setIsOpen(false)}
-        >
-          New Cloth
-        </Link>
-        <Link
-          href="/mylooks"
-          className={styles.link}
-          onClick={() => setIsOpen(false)}
-        >
-          My Looks
-        </Link>
-        <Link
-          href="/stylefeed"
-          className={styles.link}
-          onClick={() => setIsOpen(false)}
-        >
-          Style Feed
-        </Link>
+        {[
+          "Home",
+          "About",
+          "My Closet",
+          "New Cloth",
+          "My Looks",
+          "Style Feed",
+        ].map((text, i) => (
+          <Link
+            key={i}
+            href={`/${text.toLowerCase().replace(/\s/g, "")}`}
+            className={styles.link}
+            onClick={() => setIsOpen(false)}
+          >
+            {text}
+          </Link>
+        ))}
       </nav>
-
       <div className={styles.rightControls}>
         <button className={styles.userButton}>
           {user?.profileImage ? (
