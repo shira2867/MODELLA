@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import styles from "./LookCard.module.css";
 import { FiShare2, FiMail, FiMessageCircle } from "react-icons/fi";
 import { FaFacebookF } from "react-icons/fa";
@@ -12,12 +12,17 @@ type LookCardProps = {
 };
 
 const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
-  const router = useRouter();
+  const [open, setOpen] = useState(false);
+
   const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const lookUrl = `${BASE_URL}/look/${lookId}`;
-  console.log("lookId", lookId);
+
   const handleClick = () => {
-    if (lookId) router.push(`/look/${lookId}`);
+    setOpen(true);
+  };
+
+  const openPopup = (url: string) => {
+    window.open(url, "_blank", "width=600,height=500,noopener,noreferrer");
   };
 
   const shareCopyLink = (e: React.MouseEvent) => {
@@ -28,25 +33,52 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
   const shareEmail = (e: React.MouseEvent) => {
     e.stopPropagation();
-    window.open(`mailto:?subject=Check out this look&body=${lookUrl}`);
+    openPopup(`mailto:?subject=Check out this look&body=${lookUrl}`);
   };
 
   const shareWhatsApp = (e: React.MouseEvent) => {
     e.stopPropagation();
-    window.open(`https://wa.me/?text=${encodeURIComponent(lookUrl)}`, "_blank");
+    openPopup(`https://wa.me/?text=${encodeURIComponent(lookUrl)}`);
   };
 
   const shareFacebook = (e: React.MouseEvent) => {
     e.stopPropagation();
-    window.open(
+    openPopup(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
         lookUrl
-      )}`,
-      "_blank"
+      )}`
     );
   };
 
   return (
+    <>
+      {/* הכרטיס */}
+      <div className={styles.card} onClick={handleClick} style={{ cursor: "pointer" }}>
+        <div className={styles.grid}>
+          {items.map((item) => (
+            <div key={item._id} className={styles.itemWrapper}>
+              <img src={item.imageUrl} alt={item.category} className={styles.image} />
+            </div>
+          ))}
+        </div>
+
+    
+      </div>
+
+  {open && (
+  <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
+    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+
+      <div className={styles.closeX} onClick={() => setOpen(false)}>
+        ✕
+      </div>
+
+      <h2 className={styles.modalTitle}>Look Preview</h2>
+
+      <div className={styles.modalGrid}>
+        {items.map((item) => (
+          <div key={item._id}>
+            <img src={item.imageUrl} alt={item.category} className={styles.modalImage} />
     <div
       className={styles.card}
       onClick={handleClick}
@@ -79,6 +111,10 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
         </button>
       </div>
     </div>
+  </div>
+)}
+
+    </>
   );
 };
 
