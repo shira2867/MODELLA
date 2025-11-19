@@ -50,11 +50,19 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   return (
     <>
       {/* הכרטיס */}
-      <div className={styles.card} onClick={handleClick} style={{ cursor: "pointer" }}>
+      <div
+        className={styles.card}
+        onClick={handleClick}
+        style={{ cursor: "pointer" }}
+      >
         <div className={styles.grid}>
           {items.map((item) => (
             <div key={item._id} className={styles.itemWrapper}>
-              <img src={item.imageUrl} alt={item.category} className={styles.image} />
+              <img
+                src={item.imageUrl}
+                alt={item.category}
+                className={styles.image}
+              />
             </div>
           ))}
         </div>
@@ -77,9 +85,14 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
       {/* פופ-אפ */}
       {open && (
-        <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
-          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            
+        <div
+          className={styles.modalBackdrop}
+          onClick={() => setOpen(false)}
+        >
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* איקס סגירה */}
             <div className={styles.closeX} onClick={() => setOpen(false)}>
               ✕
