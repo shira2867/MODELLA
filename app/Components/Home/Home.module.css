@@ -339,27 +339,33 @@
 
 .popupContent {
   background: rgba(249, 247, 246, 0.6);
-  padding: 80px 100px;
-  border-radius: 35px;
-  box-shadow: 0 0 20px #5c1a1a66, 0 16px 40px rgba(0, 0, 0, 0.25);
+  padding: clamp(30px, 5vw, 50px);
+  border-radius: 25px;
+  box-shadow: 0 0 20px #5c1a1a66, 0 12px 30px rgba(0, 0, 0, 0.25);
   text-align: center;
-  max-width: 900px;
-  width: 90%;
+  max-width: 800px;
+  width: 85%;
   font-family: "Montserrat", sans-serif;
-  transform: translateY(-100px);
+  transform: translateY(-50px);
   animation: slideDownGlow 1s ease forwards;
   position: relative;
-  animation-delay: 0.2s;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .popupContent h1.title {
   font-family: "Playfair Display", serif;
+  text-align: center;
   font-size: 4rem;
   font-weight: 700;
   color: #080808;
   margin-bottom: 20px;
   text-shadow: 2px 2px 6px #5c1a1a66, 4px 4px 12px #5c1a1a33;
   animation: glowPulse 2s infinite alternate;
+  white-space: nowrap;
+  max-width: 90%;
+  margin: 0 auto 20px auto;
+  font-size: clamp(2rem, 4vw, 4rem);
 }
 
 .popupContent p.subtitle {

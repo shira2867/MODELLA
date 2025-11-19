@@ -3,7 +3,6 @@ import { deleteClothing } from "@/services/server/clothing";
 import { looksCollection } from "@/services/server/looks";
 
 
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();

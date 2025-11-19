@@ -1,3 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
+
 .container {
   display: flex;
   flex-direction: column;
@@ -5,117 +9,144 @@
   min-height: 100vh;
 }
 
-.formContainer {
-  background-color: #ffffff52;
-  border: 3.5px solid #0b0b0b;
-  border-radius: 1rem;
-  padding: 2.5rem;
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  margin-left: 40%; 
-  margin-bottom: 200px;
-  margin-top: 200px;
+.pageWrapper {
+  padding: 2rem;
 }
 
-.formContainer h2 {
+.pageWrapper {
+  width: 100%;
+  padding: 0 20px;
   text-align: center;
-  font-size: 2rem;
-  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom: 40px;
+}
+
+.pageTitle {
+  font-family: "Playfair Display", serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #0b0b0b;
+  text-shadow: 2px 2px 6px #5c1a1a33;
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInSlide 0.9s forwards;
+}
+@keyframes fadeInSlide {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.subtitle {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.3rem;
   color: #222;
+  margin-bottom: 60px;
 }
 
-.label {
+.fieldsArea {
   display: flex;
   flex-direction: column;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #000;
+  gap: 35px;
   width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.select {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  background-color: #fff;
-  transition: border-color 0.2s ease;
-}
-
-.select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-
-.imageUploadLabel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.imageBox {
+  width: 100%;
+  height: 260px;
+  border: 2px dashed #bbb;
+  border-radius: 14px;
+  background-color: #f3f0ef;
   cursor: pointer;
-  border: 2px dashed #ccc;
-  padding: 20px;
-  border-radius: 10px;
-  width: 100%;
-  text-align: center;
-  transition: border 0.2s ease;
+  transition: border 0.25s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.imageUploadLabel:hover {
-  border-color: #3b82f6;
+.imageBox:hover {
+  border-color: #5c1a1a;
 }
 
-.imageUploadLabel img {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  margin-bottom: 8px;
-}
-
-.inputFile {
+.imageBox input {
   display: none;
 }
 
-.imagePreview {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 10px;
-  margin-top: 10px;
+.placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #555;
+  font-family: "Poppins", sans-serif;
 }
 
-.submitButton {
-  background-color: #222;
+.plusIcon {
+  font-size: 3.5rem;
+  margin-bottom: 10px;
+  color: #5c1a1a;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-family: "Poppins", sans-serif;
+}
+
+.field label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #000;
+}
+
+.field select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.5px solid #bbb;
+  background: white;
+  font-size: 1rem;
+  transition: border 0.2s ease;
+}
+
+.field select:focus {
+  border-color: #5c1a1a;
+  outline: none;
+}
+
+.submitBtn {
+  background-color: #000;
   color: white;
-  padding: 0.75rem;
+  padding: 14px;
+  border-radius: 10px;
   border: none;
-  border-radius: 6px;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
-  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: 0.25s;
 }
 
-.submitButton:hover:not(:disabled) {
-  background-color: #444;
+.submitBtn:hover:not(:disabled) {
+  background-color: #333;
+  transform: translateY(-2px);
 }
 
-.submitButton:disabled {
+.submitBtn:disabled {
   opacity: 0.6;
-  cursor: not-allowed;
 }
-
-@media (max-width: 768px) {
-  .formContainer {
-    width: 95%;
-    padding: 2rem;
-  }
-
-  .imagePreview {
-    max-height: 150px;
-  }
+.pageWrapper {
+  padding: 0 !important;
+}
+.NewCloth-module___m-_kW__container {
+  padding: 0 !important;
 }

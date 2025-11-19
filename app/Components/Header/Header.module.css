@@ -1,37 +1,41 @@
 .header {
-  height: 140px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 10px 30px;
   position: relative;
   z-index: 200;
+  background-color: #f9f7f6;
+  font-family: "Montserrat", sans-serif;
 }
 
-.logoContainer {
-  display: flex;
-  margin-left: -50px;
-  margin-top: -10px;
+.logoContainer img {
+  width: 180px;
+  height: auto;
 }
 
 .nav {
   display: flex;
-  gap: 40px;
-  position: static;
-  transform: none;
+  gap: 35px;
 }
 
 .link {
   text-decoration: none;
-  color: #060606;
+  color: #080808;
   font-weight: 500;
-  font-size: 20px;
-  font-family: "Arial", sans-serif;
+  font-size: 18px;
+  transition: all 0.3s ease;
 }
 
 .link:hover {
   font-weight: 700;
   color: #5c1a1a;
+}
+
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .userButton {
@@ -40,23 +44,21 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  margin-right: 25px;
 }
 
 .userInitial,
 .userImage {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%; 
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #000; 
-  color: #fff; 
+  background-color: #000;
+  color: #fff;
   font-weight: bold;
-  font-size: 20px;
-  text-transform: uppercase;
-  overflow: hidden; 
+  font-size: 18px;
+  overflow: hidden;
 }
 
 .hamburger {
@@ -64,16 +66,6 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 32px;
-  color: #000;
-  z-index: 300;
-}
-.rightControls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 300;
-  margin-bottom: 15px;
 }
 
 @media (max-width: 1024px) {
@@ -88,14 +80,13 @@
     position: fixed;
     top: 0;
     right: -100%;
-    width: 50%;
+    width: 60%;
     height: 100vh;
     background-color: #ffffffb2;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
-    padding-top: 120px;
-    gap: 35px;
+    padding-top: 100px;
+    gap: 30px;
     transition: right 0.4s ease-in-out;
-    z-index: 250;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
   }
 
   .nav.open {
@@ -103,46 +94,18 @@
   }
 
   .link {
-    font-size: 28px;
+    font-size: 24px;
     width: 100%;
     text-align: center;
   }
-  .nav .link {
-    opacity: 0;
-    transform: translateX(-30px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-  }
 
-  .nav.open .link {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .nav.open .link:nth-child(1) {
-    transition-delay: 0.1s;
-  }
-  .nav.open .link:nth-child(2) {
-    transition-delay: 0.4s;
-  }
-  .nav.open .link:nth-child(3) {
-    transition-delay: 0.7s;
-  }
-  .nav.open .link:nth-child(4) {
-    transition-delay: 1s;
-  }
-  .nav.open .link:nth-child(5) {
-    transition-delay: 1.3s;
-  }
-  .nav.open .link:nth-child(6) {
-    transition-delay: 1.6s;
-  }
   .overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.35);
     z-index: 150;
   }
 }

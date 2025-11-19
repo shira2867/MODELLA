@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useForm } from "react-hook-form";
+import Image from "next/image";
 import styles from "./CompleteProfile.module.css";
 import { ProfileData } from "@/types/userTypes";
 import { useRouter } from "next/navigation";
@@ -46,15 +47,15 @@ export default function CompleteProfile({ userEmail }: { userEmail: string }) {
     <div className={styles.container}>
       <h1 className={styles.heading}>Almost done! Just a few more details.</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <h2>Complete Your Profile</h2>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+          <h2>Complete Your Profile</h2>
 
-        <input {...register("name")} placeholder="Full name" required />
-        <select {...register("gender")} required>
-          <option value="">Select gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </select>
+          <input {...register("name")} placeholder="Full name" required />
+          <select {...register("gender")} required>
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
 
         <button
           type="submit"
