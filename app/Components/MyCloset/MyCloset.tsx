@@ -12,7 +12,6 @@ import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksM
 import pants from "../../../public/short_13387117.png";
 import filter from "../../../public/filter_7420963.png";
 import{ClothingItem}from"@/types/clothTypes";
-// Icons
 import { FaTshirt, FaHatCowboy, FaUserTie, FaMale } from "react-icons/fa";
 import { GiClothes, GiLargeDress, GiSkirt } from "react-icons/gi";
 

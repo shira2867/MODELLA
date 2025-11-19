@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { looksCollection, } from "../../../services/server/looks";
 import {LookType} from "@/types/lookTypes";
 
-
-
-
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as LookType;

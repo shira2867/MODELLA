@@ -2,7 +2,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 
-
 .container {
   display: flex;
   flex-direction: column;
@@ -14,20 +13,12 @@
   padding: 2rem;
 }
 
-/* .pageWrapper {
+.pageWrapper {
   width: 100%;
-  max-width: 900px;
-  margin: auto;
+  padding: 0 20px;
   text-align: center;
   font-family: "Montserrat", sans-serif;
   margin-bottom: 40px;
-} */
- .pageWrapper {
-  width: 100%;
-  padding: 0 20px; /* פנימי בלבד */
-  text-align: center;
-  font-family: "Montserrat", sans-serif;
-  margin-bottom: 40px; /* עדיין אפשר להפריד בין תוכן ל-footer */
 }
 
 .pageTitle {
@@ -37,8 +28,16 @@
   color: #0b0b0b;
   text-shadow: 2px 2px 6px #5c1a1a33;
   margin-bottom: 10px;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInSlide 0.9s forwards;
 }
-
+@keyframes fadeInSlide {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .subtitle {
   font-family: "Poppins", sans-serif;
   font-size: 1.3rem;
@@ -52,8 +51,7 @@
   gap: 35px;
   width: 100%;
   max-width: 600px;
-    margin: 0 auto; 
-
+  margin: 0 auto;
 }
 
 .imageBox {
@@ -95,7 +93,7 @@
 .previewImage {
   width: 100%;
   height: 100%;
-  object-fit: contain; 
+  object-fit: contain;
 }
 
 .field {

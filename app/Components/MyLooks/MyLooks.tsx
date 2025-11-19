@@ -107,6 +107,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.pageContainer}>
       <h2 className={styles.title}>My Looks</h2>
 
       <button
@@ -170,6 +171,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 };

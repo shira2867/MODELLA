@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { looksCollection } from "@/services/server/looks";
 import {RouteContext} from "@/types/types"; ;
 
-
-
 export async function GET(
   req: NextRequest,
   context: RouteContext
@@ -23,7 +21,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      _id: look._id, // כבר string, אין צורך ב-toString()
+      _id: look._id, 
       imageUrl: look.items?.[0]?.imageUrl ?? "",
       items: look.items ?? [],
       createdAt: look.createdAt,

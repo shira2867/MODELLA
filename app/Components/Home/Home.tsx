@@ -5,7 +5,7 @@ import Image from "next/image";
 import styles from "./Home.module.css";
 import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
-import { useUserStore } from "@/store/userStore"; 
+import { useUserStore } from "@/store/userStore";
 import { FiStar } from "react-icons/fi";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -155,7 +155,7 @@ export default function HomePage() {
     <div className={styles.container}>
       <Header />
 
-      {showPopup && (
+      {showPopup  && user&& (
         <div className={styles.popupOverlay}>
           <div className={styles.popupContent}>
             <button
@@ -165,7 +165,7 @@ export default function HomePage() {
             <div className={styles.welcomeIconWrapper}>
               <FiStar className={styles.welcomeIcon} />
             </div>
-            <h1 className={styles.title}>Good morning, {user?.name} </h1>
+            <h1 className={styles.title}>Hello, {user?.name} </h1>
             <p className={styles.subtitle}>Ready to style your day?</p>
             <div className={styles.buttonContainer}>
               <button

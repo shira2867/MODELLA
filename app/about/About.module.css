@@ -1,73 +1,6 @@
-/* .page {
-  font-family: "Arial", sans-serif;
-  background: #fff;
-}
-
-.hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;   
-  min-height: 85vh;
-  align-items: stretch;
-}
-
-.heroText {
-  padding: 56px 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.heroTextInner {
-  max-width: 400px; 
-  text-align: center;
-  direction: ltr;
-  margin: 0 auto;   
-}
-
-
-.title {
-  font-size: 3rem;
-  font-weight: 900;
-  text-align: center;
-  margin: 0 0 24px;
-}
-
-.lead {
-  font-size: 1.05rem;
-  line-height: 1.9;
-  color: #222;
-}
-.lead p + p {
-  margin-top: 10px;
-}
-
-.heroImage {
-  width: 100%;
-  height: 100%;
-}
-.heroImage img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;               
-  display: block;
-}
-
-@media (max-width: 900px) {
-  .hero {
-    grid-template-columns: 1fr;
-  }
-  .hero::before {
-    display: none;
-  }
-  .title {
-    font-size: 2.3rem;
-  }
-  .heroImage {
-    height: 40vh;
-  }
-} */
-
-
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 
 .page {
   font-family: "Arial", sans-serif;
@@ -96,15 +29,21 @@
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: 900;
   text-align: center;
-  margin: 0 0 24px;
+  font-size: 4rem;
+  color: #080808;
+  font-weight: 700;
+  font-family: "Playfair Display", serif;
+  line-height: 1.2;
+  text-shadow: 1px 1px 0 #5c1a1a33;
+  margin: 10px 0 0 0;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 0 #5c1a1a66, 2px 2px 4px #5c1a1a33;
 }
-
 .lead {
   font-size: 1.05rem;
   line-height: 1.9;
+  font-family: "Playfair Display", serif;
   color: #222;
 }
 
@@ -120,11 +59,10 @@
 .heroImage img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* ✅ desktop behaves the same */
+  object-fit: cover;
   display: block;
 }
 
-/* ✅ Recommended fix: Protect image on small screens */
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;
@@ -139,12 +77,12 @@
   }
 
   .heroImage {
-    height: auto; 
+    height: auto;
   }
 
   .heroImage img {
     width: 100%;
     height: auto !important;
-    object-fit: contain !important; 
+    object-fit: contain !important;
   }
 }
