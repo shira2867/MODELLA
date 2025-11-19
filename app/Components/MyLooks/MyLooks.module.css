@@ -6,40 +6,31 @@
   padding: 16px;
   position: relative;
 }
-
-.title {
-  font-size: 4rem;
-  color: #080808;
-  font-weight: 700;
-  font-family: "Playfair Display", serif;
-  line-height: 1.2;
-  text-shadow: 1px 1px 0 #5c1a1a33;
-  margin: 10px 0 0 0;
-  margin-bottom: 30px;
-  text-shadow: 1px 1px 0 #5c1a1a66, 2px 2px 4px #5c1a1a33;
-  opacity: 0;
-  transform: translateY(-20px); 
-  animation: fadeInSlide 0.9s forwards; 
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
 }
 
+.title {
+  font-family: "Playfair Display", serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #0b0b0b;
+  text-shadow: 2px 2px 6px #5c1a1a33;
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInSlide 0.9s forwards;
+}
 @keyframes fadeInSlide {
   to {
     opacity: 1;
     transform: translateY(0);
   }
-}
-.title {
-  font-size: 4rem;
-  color: #080808;
-  text-align: center;
-  font-weight: 700;
-  font-family: "Playfair Display", serif;
-  line-height: 1.2;
-  text-shadow: 1px 1px 0 #5c1a1a33;
-  margin: 10px 0 0 0;
-  margin-bottom: 40px;
-  margin-top: -30px;
-  text-shadow: 1px 1px 0 #5c1a1a66, 2px 2px 4px #5c1a1a33;
 }
 
 .filterTitle {
@@ -59,7 +50,7 @@
 
 .cardsWrapper {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* עד 4 כרטיסיות בשורה */
+  grid-template-columns: repeat(4, 1fr); 
   gap: 24px;
   margin-top: 16px;
   margin-bottom: 60px;

@@ -3,7 +3,6 @@
   background: #fff;
 }
 
-/* ---------- HERO ---------- */
 .hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -52,7 +51,6 @@
   display: block;
 }
 
-/* ---------- FAQ LIST ---------- */
 .faqSection {
   padding: 48px 24px 80px;
 }
