@@ -62,20 +62,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
           ))}
         </div>
 
-        <div className={styles.shareButtons}>
-          <button className={`${styles.shareButton} ${styles.copy}`} onClick={shareCopyLink}>
-            <FiShare2 size={18} />
-          </button>
-          <button className={`${styles.shareButton} ${styles.email}`} onClick={shareEmail}>
-            <FiMail size={18} />
-          </button>
-          <button className={`${styles.shareButton} ${styles.whatsapp}`} onClick={shareWhatsApp}>
-            <FiMessageCircle size={18} />
-          </button>
-          <button className={`${styles.shareButton} ${styles.facebook}`} onClick={shareFacebook}>
-            <FaFacebookF size={18} />
-          </button>
-        </div>
+    
       </div>
 
   {open && (
@@ -92,11 +79,37 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
         {items.map((item) => (
           <div key={item._id}>
             <img src={item.imageUrl} alt={item.category} className={styles.modalImage} />
+    <div
+      className={styles.card}
+      onClick={handleClick}
+      style={{ cursor: "pointer" }}
+    >
+      <div className={styles.grid}>
+        {items.map((item) => (
+          <div key={item._id} className={styles.itemWrapper}>
+            <img
+              src={item.imageUrl}
+              alt={item.category}
+              className={styles.image}
+            />
           </div>
         ))}
       </div>
 
-     
+      <div className={styles.shareButtons}>
+        <button className={styles.shareButton} onClick={shareCopyLink}>
+          <FiShare2 size={18} />
+        </button>
+        <button className={styles.shareButton} onClick={shareEmail}>
+          <FiMail size={18} />
+        </button>
+        <button className={styles.shareButton} onClick={shareWhatsApp}>
+          <FiMessageCircle size={18} />
+        </button>
+        <button className={styles.shareButton} onClick={shareFacebook}>
+          <FaFacebookF size={18} />
+        </button>
+      </div>
     </div>
   </div>
 )}
