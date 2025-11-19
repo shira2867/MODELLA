@@ -45,7 +45,6 @@ const NewCloth = ({ userId }: { userId: string }) => {
     Beige: [245, 245, 220],
   };
 
-
   function closestColor(rgb: RGB): string {
     let closest = "";
     let minDistance = Infinity;
@@ -107,7 +106,7 @@ const NewCloth = ({ userId }: { userId: string }) => {
             parseInt(rgbMatch[1]),
             parseInt(rgbMatch[2]),
           ];
-          colorName = closestColor(rgbArray); 
+          colorName = closestColor(rgbArray);
         }
         console.log("Mapped color name:", colorName);
         try {
@@ -118,7 +117,7 @@ const NewCloth = ({ userId }: { userId: string }) => {
             style,
             imageUrl,
             color: dominantColor,
-            colorName, 
+            colorName,
           });
 
           alert("Item added successfully!");
@@ -147,83 +146,66 @@ const NewCloth = ({ userId }: { userId: string }) => {
   return (
     <div className={styles.container}>
       <Header />
-      <form className={styles.formContainer} onSubmit={handleSubmit}>
-        <label className={styles.label}>
-          Category:
-          <select
-            className={styles.select}
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-          >
-            <option value="">Select category</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className={styles.pageWrapper}>
+        <h1 className={styles.pageTitle}>Add a New Item</h1>
+        <p className={styles.subtitle}>
+          Let’s make your closet even more fabulous 🖤
+        </p>
+        <form className={styles.fieldsArea} onSubmit={handleSubmit}>
+          <label className={styles.imageBox}>
+            {imagePreview ? (
+              <img src={imagePreview} className={styles.previewImage} />
+            ) : (
+              <div className={styles.placeholder}>
+                <span className={styles.plusIcon}>+</span>
+                <p>Click to upload image</p>
+              </div>
+            )}
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+          </label>
 
-        <label className={styles.label}>
-          Thickness:
-          <select
-            className={styles.select}
-            value={thickness}
-            onChange={(e) => setThickness(e.target.value)}
-            required
-          >
-            <option value="">Select thickness</option>
-            {thicknesses.map((th) => (
-              <option key={th} value={th}>
-                {th}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className={styles.label}>
-          Style:
-          <select
-            className={styles.select}
-            value={style}
-            onChange={(e) => setStyle(e.target.value)}
-            required
-          >
-            <option value="">Select style</option>
-            {styleOptions.map((st) => (
-              <option key={st} value={st}>
-                {st}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className={styles.label}>
-          Image:
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            required
-          />
-        </label>
-
-        {imagePreview && (
-          <div>
-            <p>Preview:</p>
-            <img
-              src={imagePreview}
-              alt="Preview"
-              style={{ maxWidth: "100%", maxHeight: "200px" }}
-            />
+          <div className={styles.field}>
+            <label>Category</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">Select category</option>
+              {categories.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
           </div>
-        )}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Uploading..." : "Add Item"}
-        </button>
-      </form>
+          <div className={styles.field}>
+            <label>Thickness</label>
+            <select
+              value={thickness}
+              onChange={(e) => setThickness(e.target.value)}
+            >
+              <option value="">Select thickness</option>
+              {thicknesses.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.field}>
+            <label>Style</label>
+            <select value={style} onChange={(e) => setStyle(e.target.value)}>
+              <option value="">Select style</option>
+              {styleOptions.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+
+          <button type="submit" className={styles.submitBtn} disabled={loading}>
+            {loading ? "Uploading..." : "Add Item"}
+          </button>
+        </form>
+      </div>
+
       <Footer />
     </div>
   );
