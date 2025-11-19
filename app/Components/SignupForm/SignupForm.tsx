@@ -48,60 +48,23 @@ export default function AuthForm() {
     console.log("Current user in store:", currentUser);
   }, [currentUser]);
 
-  // async function signInWithGoogle() {
-  //   try {
-  //     const result = await signInWithPopup(auth, provider);
-  //     const firebaseUser = result.user;
-  //     setUser(firebaseUser);
 
-  //     const res = await fetch("/api/user/register", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         name: firebaseUser.displayName,
-  //         email: firebaseUser.email,
-  //         profileImage: firebaseUser.photoURL,
-  //       }),
-  //     });
-
-  //     const data = await res.json();
-
-  //     setUserStore({
-  //       name: firebaseUser.displayName || null,
-  //       email: firebaseUser.email || null,
-  //       profileImage: firebaseUser.photoURL || null,
-  //       gender: null,
-  //     });
-
-  //     if (data.message === "User updated") {
-  //       alert("Email already registered. Redirecting to login.");
-  //       router.push("/login");
-  //     } else {
-  //       router.push("/complete-profile");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
   async function signInWithGoogle() {
     try {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
-
-      // 1) שמירת המשתמש ב־API שלך (Mongo)
       const res = await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: firebaseUser.displayName,
           email: firebaseUser.email,
-          profileImage: firebaseUser.photoURL, // ← התמונה מגוגל
+          profileImage: firebaseUser.photoURL, 
         }),
       });
 
       const data = await res.json();
 
-      // 2) שמירת משתמש ב־Zustand
       useUserStore.getState().setUser({
         name: firebaseUser.displayName || null,
         email: firebaseUser.email || null,
@@ -109,14 +72,12 @@ export default function AuthForm() {
         gender: null,
       });
 
-      // שמירת ה־ID לפי Firebase UID
       useUserStore.getState().setUserId(firebaseUser.uid);
 
-      // 3) ניווט נכון
       if (data.message === "User updated") {
-        router.push("/home"); // כבר קיים, לא צריך להחזיר אותו ל-login
+        router.push("/home"); 
       } else {
-        router.push("/complete-profile"); // פעם ראשונה → השלמת פרופיל
+        router.push("/complete-profile"); 
       }
     } catch (error) {
       console.error("Google Login Error:", error);

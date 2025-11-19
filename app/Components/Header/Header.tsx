@@ -4,10 +4,9 @@ import Link from "next/link";
 import { useState } from "react";
 import styles from "./Header.module.css";
 import logo from "../../../public/logo.png";
-import user from "../../../public/user.png";
 import menu from "../../../public/menu.png";
 import close from "../../../public/remove.png";
-import { useUserStore } from "@/store/userStore"; // תוודאי שהנתיב נכון
+import { useUserStore } from "@/store/userStore"; 
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
