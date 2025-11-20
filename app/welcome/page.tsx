@@ -3,13 +3,22 @@ import Image from "next/image";
 
 import styles from "./Welcome.module.css";
 
-import logo from '../../public/logo.png';
-import { useRouter } from 'next/navigation';
+import logo from "../../public/logo.png";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Welcome() {
-
-
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectLookId = searchParams.get("redirectLookId");
+
+  const handleRedirect = (path: string) => {
+    if (redirectLookId) {
+      localStorage.setItem("redirectLookId", redirectLookId);
+      console.log("Saved redirectLookId:", redirectLookId);
+    }
+    router.replace(path);
+  };
+
   return (
     <div className={styles.welcome}>
       <div className={styles.Container}>
@@ -28,18 +37,18 @@ export default function Welcome() {
         <div className={styles.buttonContainer}>
           <button
             className={styles.button}
-            onClick={() => router.push("/register")}
+            onClick={() => handleRedirect("/register")}
           >
             Join Us
           </button>
           <button
             className={styles.button}
-            onClick={() => router.push("/login")}
+            onClick={() => handleRedirect("/login")}
           >
             Member Login
           </button>
         </div>
       </div>
     </div>
-    );
+  );
 }
