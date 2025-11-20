@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import styles from "./LookCard.module.css";
 import { FiShare2, FiMail, FiMessageCircle } from "react-icons/fi";
 import { FaFacebookF } from "react-icons/fa";
-import { useRouter } from "next/navigation";
 import { ClothingItem } from "@/types/clothTypes";
 
 type LookCardProps = {
@@ -13,13 +12,13 @@ type LookCardProps = {
 
 const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const [open, setOpen] = useState(false);
+  const BASE_URL =
+    typeof window !== "undefined" ? `${window.location.origin}` : "";
 
-  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const lookUrl = `${BASE_URL}/look/${lookId}`;
 
-  const handleClick = () => {
-    setOpen(true);
-  };
+  const handleClick = () => setOpen(true);
 
   const openPopup = (url: string) => {
     window.open(url, "_blank", "width=600,height=500,noopener,noreferrer");
@@ -53,67 +52,67 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   return (
     <>
       {/* הכרטיס */}
-      <div className={styles.card} onClick={handleClick} style={{ cursor: "pointer" }}>
+      <div
+        className={styles.card}
+        onClick={handleClick}
+        style={{ cursor: "pointer" }}
+      >
         <div className={styles.grid}>
           {items.map((item) => (
             <div key={item._id} className={styles.itemWrapper}>
-              <img src={item.imageUrl} alt={item.category} className={styles.image} />
+              <img
+                src={item.imageUrl}
+                alt={item.category}
+                className={styles.image}
+              />
             </div>
           ))}
         </div>
 
-    
+        <div className={styles.shareButtons}>
+          <button className={styles.shareButton} onClick={shareCopyLink}>
+            <FiShare2 size={18} />
+          </button>
+          <button className={styles.shareButton} onClick={shareEmail}>
+            <FiMail size={18} />
+          </button>
+          <button className={styles.shareButton} onClick={shareWhatsApp}>
+            <FiMessageCircle size={18} />
+          </button>
+          <button className={styles.shareButton} onClick={shareFacebook}>
+            <FaFacebookF size={18} />
+          </button>
+        </div>
       </div>
 
-  {open && (
-  <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
-    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+      {/* פופ-אפ */}
+      {open && (
+        <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* איקס סגירה */}
+            <div className={styles.closeX} onClick={() => setOpen(false)}>
+              ✕
+            </div>
 
-      <div className={styles.closeX} onClick={() => setOpen(false)}>
-        ✕
-      </div>
+            <h2 className={styles.modalTitle}>Look Preview</h2>
 
-      <h2 className={styles.modalTitle}>Look Preview</h2>
-
-      <div className={styles.modalGrid}>
-        {items.map((item) => (
-          <div key={item._id}>
-            <img src={item.imageUrl} alt={item.category} className={styles.modalImage} />
-    <div
-      className={styles.card}
-      onClick={handleClick}
-      style={{ cursor: "pointer" }}
-    >
-      <div className={styles.grid}>
-        {items.map((item) => (
-          <div key={item._id} className={styles.itemWrapper}>
-            <img
-              src={item.imageUrl}
-              alt={item.category}
-              className={styles.image}
-            />
+            <div className={styles.modalGrid}>
+              {items.map((item) => (
+                <div key={item._id}>
+                  <img
+                    src={item.imageUrl}
+                    alt={item.category}
+                    className={styles.modalImage}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-
-      <div className={styles.shareButtons}>
-        <button className={styles.shareButton} onClick={shareCopyLink}>
-          <FiShare2 size={18} />
-        </button>
-        <button className={styles.shareButton} onClick={shareEmail}>
-          <FiMail size={18} />
-        </button>
-        <button className={styles.shareButton} onClick={shareWhatsApp}>
-          <FiMessageCircle size={18} />
-        </button>
-        <button className={styles.shareButton} onClick={shareFacebook}>
-          <FaFacebookF size={18} />
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+        </div>
+      )}
     </>
   );
 };

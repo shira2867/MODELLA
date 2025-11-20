@@ -50,13 +50,15 @@ export default function LoginForm() {
         const res = await fetch(`/api/user?email=${firebaseUser.email}`);
         const dbData = await res.json();
 
-        if (!dbData.exists) throw new Error("User not found. Please register first.");
+        if (!dbData.exists)
+          throw new Error("User not found. Please register first.");
 
         return { firebaseUser, dbData };
       } else {
         const res = await fetch(`/api/user?email=${data.email}`);
         const dbData = await res.json();
-        if (!dbData.exists) throw new Error("User not found. Please register first.");
+        if (!dbData.exists)
+          throw new Error("User not found. Please register first.");
 
         const userCredential = await signInWithEmailAndPassword(
           auth,
@@ -67,17 +69,47 @@ export default function LoginForm() {
         return { firebaseUser: userCredential.user, dbData };
       }
     },
-    onSuccess: ({ firebaseUser, dbData }) => {
-      if (dbData.user?.id) setUserId(dbData.user.id);
+    // onSuccess: ({ firebaseUser, dbData }) => {
+    //   if (dbData.user?.id) setUserId(dbData.user.id);
 
-      setUser({
-        name: dbData.user?.name || firebaseUser.displayName || "",
-        email: firebaseUser.email || null,
-        profileImage: dbData.user?.profileImage || firebaseUser.photoURL || "",
-        gender: dbData.user?.gender || null,
+    //   setUser({
+    //     name: dbData.user?.name || firebaseUser.displayName || "",
+    //     email: firebaseUser.email || null,
+    //     profileImage: dbData.user?.profileImage || firebaseUser.photoURL || "",
+    //     gender: dbData.user?.gender || null,
+    //   });
+    //   // --- פה נעשה redirect ללוק אם יש redirectLookId ---
+    //   const redirectLookId = localStorage.getItem("redirectLookId");
+    //   if (redirectLookId) {
+    //     localStorage.removeItem("redirectLookId"); // מנקה אחרי השימוש
+    //     router.push(`/look/${redirectLookId}`); // נווט ללוק שהתקבל בשיתוף
+    //   } else {
+    //     router.push("/home"); // אם אין שיתוף, נווט לבית
+    //   }
+    // },
+    // Login.tsx - בתוך onSuccess:
+    onSuccess: async ({ firebaseUser, dbData }) => {
+
+      const idToken = await firebaseUser.getIdToken(); 
+
+      const cookieRes = await fetch("/api/auth/set-cookie", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idToken }),
       });
+      if (!cookieRes.ok) {
+        throw new Error("Failed to set authentication cookie.");
+      } 
 
-      router.push("/home");
+      const redirectLookId = localStorage.getItem("redirectLookId");
+      if (redirectLookId) {
+        localStorage.removeItem("redirectLookId");
+        router.replace(`/look/${redirectLookId}`);
+      } else {
+        router.replace("/home");
+      }
     },
     onError: (err: any) => {
       console.error(err);
@@ -112,12 +144,15 @@ export default function LoginForm() {
             className={styles.googleButton}
             disabled={loginMutation.isPending}
           >
-            {loginMutation.isPending && loginMutation.variables?.method === "google"
-              ? "Logging in..."
-              : <>
-                  <Image src="/google.png" alt="Google" width={18} height={18} />
-                  Continue with Google
-                </>}
+            {loginMutation.isPending &&
+            loginMutation.variables?.method === "google" ? (
+              "Logging in..."
+            ) : (
+              <>
+                <Image src="/google.png" alt="Google" width={18} height={18} />
+                Continue with Google
+              </>
+            )}
           </button>
 
           <div className={styles.orDivider}>Or</div>
@@ -139,9 +174,13 @@ export default function LoginForm() {
           <button
             type="submit"
             className={styles.button}
-            disabled={loginMutation.isPending && loginMutation.variables?.method === "email"}
+            disabled={
+              loginMutation.isPending &&
+              loginMutation.variables?.method === "email"
+            }
           >
-            {loginMutation.isPending && loginMutation.variables?.method === "email"
+            {loginMutation.isPending &&
+            loginMutation.variables?.method === "email"
               ? "Logging in..."
               : "Login"}
           </button>
