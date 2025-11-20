@@ -87,7 +87,11 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
       {/* פופ-אפ */}
       {open && (
-        <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
+
+        <div
+          className={styles.modalBackdrop}
+          onClick={() => setOpen(false)}
+        >
           <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
