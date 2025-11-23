@@ -3,7 +3,7 @@
   password: string;
 };
 export type UserType = {
-  _id?: any;
+  _id?: string;
   name?: string;
   email: string;
   passwordHash?: string;

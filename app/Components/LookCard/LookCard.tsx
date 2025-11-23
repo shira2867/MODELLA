@@ -51,7 +51,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
   return (
     <>
-      {/* הכרטיס */}
       <div
         className={styles.card}
         onClick={handleClick}
@@ -85,7 +84,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
         </div>
       </div>
 
-      {/* פופ-אפ */}
+      {/* popup */}
       {open && (
 
         <div

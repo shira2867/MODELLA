@@ -40,7 +40,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
   const { data: looks = [], isLoading } = useQuery<LookType[], Error>({
     queryKey: ["looks", userId],
     queryFn: () => fetchLooks(userId),
-    staleTime: 5 * 60 * 1000, // 5 דקו
+    staleTime: 5 * 60 * 1000, 
   });
 
   const isItemInSeason = (item: ClothingItem, season: string) => {
