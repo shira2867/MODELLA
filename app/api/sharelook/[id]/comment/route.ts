@@ -16,14 +16,14 @@ export async function POST(
     const newComment = {
       userId,
       text,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(), 
     };
 
     const collection = await shareLooksCollection();
 
     const result = await collection.updateOne(
       { _id: id },
-      { $push: { comment: newComment } }
+      { $push: { comments: newComment } }  // ← ← ← תיקון כאן
     );
 
     console.log("Update result:", result);
@@ -34,7 +34,7 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      comment: newComment,
+      comments: newComment,
       matched: result.matchedCount,
       modified: result.modifiedCount,
     });

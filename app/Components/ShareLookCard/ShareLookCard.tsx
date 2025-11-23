@@ -8,7 +8,7 @@ import { ShareLookType } from "@/types/shareLookType";
 
 
 
- export function LikeButton({
+export function LikeButton({
   lookId,
   userId,
   likes,
@@ -22,7 +22,7 @@ import { ShareLookType } from "@/types/shareLookType";
   const handleLike = async () => {
     try {
       await axios.post(`/api/sharelook/${lookId}/like`, { userId });
-      onLike(); // רענון אחרי לייק
+      onLike(); 
     } catch (err) {
       console.error("Failed to like:", err);
     }
@@ -30,7 +30,7 @@ import { ShareLookType } from "@/types/shareLookType";
 
   return (
     <button onClick={handleLike} className={styles.likeButton}>
-      ❤️ {likes.length}
+      ❤️ {likes ? likes.length : 0}
     </button>
   );
 }
@@ -43,17 +43,20 @@ export function CommentForm({
 }: {
   lookId: string;
   userId: string;
-  onNewComment: (comment: any) => void;
+  onNewComment: (comments: any) => void;
 }) {
   const [text, setText] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Submitting comment for lookId:", lookId, "userId:", userId, "text:", text);
+
     try {
       const res = await axios.post(`/api/sharelook/${lookId}/comment`, {
         userId,
-  text      });
-      onNewComment(res.data.comment);
+        text
+      });
+      onNewComment(res.data.comments);
       setText("");
     } catch (err) {
       console.error("Failed to add comment:", err);
@@ -89,17 +92,17 @@ export default function SharedLookCard({ look }: Props) {
   return (
     <div className={styles.card} onClick={handleClick}>
       <div className={styles.imagesContainer}>
-       {look.items?.map((item, index) => (
-  <div key={item._id || index}>
-    <img className={styles.image} src={item.imageUrl} alt={item.category || "item"} />
-  </div>
-))}
+
+        {look.items?.map((item, index) => (
+          <div key={item._id || index}>
+            <img className={styles.image} src={item.imageUrl} alt={item.category || "item"} />
+          </div>
+        ))}
       </div>
 
       <div className={styles.info}>
-        <span>{look.items.length} פריטים</span>
-        <span>❤️ {look.likes?.length || 0}</span>
-      </div>
+        ❤️ {look.likes ? look.likes.length : 0}
+      </div>   
     </div>
   );
 }

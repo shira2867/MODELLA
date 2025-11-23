@@ -152,3 +152,16 @@
 .shareButton:active {
   transform: scale(1);
 }
+.shareButton.styleFeed {
+  border-color: #5c1a1a;
+  color: #5c1a1a;
+}
+
+.shareButton.styleFeed:hover {
+   background-color: #5c1a1a;
+  color: #fff;
+  border-color: #5c1a1a;
+  transform: scale(1.1);
+  transform: scale(1.1);
+}
+
