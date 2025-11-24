@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./LookCard.module.css";
 import { FiShare2, FiMail, FiMessageCircle, FiUpload } from "react-icons/fi";
-import { FaFacebookF } from "react-icons/fa";
+import { FaFacebookF, FaTimes } from "react-icons/fa";
 import { ClothingItem } from "@/types/clothTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -12,13 +12,9 @@ type LookCardProps = {
 };
 
 const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
-
-  const [open, setOpen] = useState(false);
-
-  const handleClick = () => setOpen(true);
-
   const [isShared, setIsShared] = useState(false);
   const [sharedLookId, setSharedLookId] = useState<string | null>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
   const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
@@ -42,7 +38,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     setSharedLookId(shareStatus.isShared ? shareStatus._id : null);
   }, [shareStatus]);
 
-
   const openPopup = (url: string) => {
     window.open(url, "_blank", "width=600,height=500,noopener,noreferrer");
   };
@@ -65,7 +60,11 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
   const shareFacebook = (e: React.MouseEvent) => {
     e.stopPropagation();
-    openPopup(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(lookUrl)}`);
+    openPopup(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        lookUrl
+      )}`
+    );
   };
 
   const addLookMutation = useMutation({
@@ -82,6 +81,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     onSuccess: (data) => {
       setIsShared(true);
       setSharedLookId(data._id);
+
       queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId] });
 
       alert("Look added to StyleFeed!");
@@ -102,7 +102,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     onSuccess: () => {
       setIsShared(false);
       setSharedLookId(null);
-
       queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId] });
 
       alert("Look removed from StyleFeed");
@@ -113,18 +112,20 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     <div className={styles.card} style={{ cursor: "pointer" }}>
       <div className={styles.grid}>
         {items.map((item) => (
-          <div key={item._id} className={styles.itemWrapper}>
-            <img src={item.imageUrl} alt={item.category} className={styles.image} />
+          <div
+            key={item._id}
+            className={styles.itemWrapper}
+            onClick={() => setIsPopupOpen(true)} // ← כאן!
+          >
+            <img
+              src={item.imageUrl}
+              alt={item.category}
+              className={styles.image}
+            />
           </div>
         ))}
       </div>
 
-      {/* popup */}
-      {open && (
-        <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
-          <div
-            className={styles.modalContent}
-            onClick={(e) => e.stopPropagation()}
       <div className={styles.shareButtons}>
         <button className={styles.shareButton} onClick={shareCopyLink}>
           <FiShare2 size={18} />
@@ -139,7 +140,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
           <FaFacebookF size={18} />
         </button>
 
-        {/* הכפתור שמשתנה לפי if shared */}
         {!isShared ? (
           <button
             className={`${styles.shareButton} ${styles.styleFeed}`}
@@ -162,6 +162,40 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
           </button>
         )}
       </div>
+      {/* Popup גדול של הלוק בלבד */}
+      {isPopupOpen && (
+        <div
+          className={styles.modalBackdrop}
+          onClick={() => setIsPopupOpen(false)}
+        >
+          <div
+            className={styles.modalContentLarge}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className={styles.closeButton}
+              onClick={() => setIsPopupOpen(false)}
+            >
+              <FaTimes />
+            </button>
+            <div className={styles.gridLarge}>
+              {items.map((item) => (
+                <div
+                  key={item._id}
+                  className={styles.itemWrapperLarge}
+                  onClick={() => setIsPopupOpen(true)} // ← כאן!
+                >
+                  <img
+                    src={item.imageUrl}
+                    alt={item.category}
+                    className={styles.imageLarge}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -60,14 +60,13 @@
   transform: scale(1.1);
 }
 
-
 .modalBackdrop {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
@@ -85,7 +84,7 @@
   max-height: 85vh;
   overflow-y: auto;
   animation: popIn 0.25s ease;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   position: relative;
 }
 
@@ -106,18 +105,18 @@
 
 .modalImage {
   width: 100%;
-  height: 250px;   
+  height: 250px;
   object-fit: cover;
   border-radius: 12px;
 }
 
-
-
-
-
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes popIn {
@@ -131,7 +130,6 @@
   }
 }
 .closeX {
- 
   position: absolute;
   top: 14px;
   right: 14px;
@@ -158,10 +156,60 @@
 }
 
 .shareButton.styleFeed:hover {
-   background-color: #5c1a1a;
+  background-color: #5c1a1a;
   color: #fff;
   border-color: #5c1a1a;
   transform: scale(1.1);
   transform: scale(1.1);
 }
 
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContentLarge {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.gridLarge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.itemWrapperLarge {
+  flex: 0 0 auto;
+  width: 200px;
+}
+
+.imageLarge {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
