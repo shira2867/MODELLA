@@ -1,93 +1,150 @@
+/* רקע שקוף של המודל */
 .modalBackdrop {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 999;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.25s ease;
 }
 
+/* קופסת המודל */
 .modalContent {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 800px;
+  background: #ffffff;
   width: 90%;
+  max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
+  border-radius: 16px;
+  padding: 20px;
   position: relative;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  animation: slideUp 0.3s ease;
 }
 
+/* כפתור X */
 .closeX {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
+  top: 12px;
+  right: 14px;
+  font-size: 22px;
   cursor: pointer;
+  color: #444;
+  transition: 0.2s;
+}
+.closeX:hover {
+  color: #000;
+  transform: scale(1.1);
 }
 
+/* כותרת */
 .modalTitle {
-  margin-bottom: 15px;
+  margin-top: 10px;
   text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #222;
 }
 
+/* גריד התמונות */
 .modalGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 20px;
 }
 
-.modalItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.modalImage {
+.modalItem img {
   width: 100%;
-  height: 120px;
+  height: 180px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 5px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: 0.25s;
 }
 
-.itemCategory {
-  font-size: 14px;
-  color: #555;
+.modalItem img:hover {
+  transform: scale(1.02);
 }
 
+/* אזור תגובות */
 .commentsSection {
-  border-top: 1px solid #eee;
-  padding-top: 15px;
+  margin-top: 25px;
+  padding: 15px;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px solid #ececec;
 }
 
+.commentsSection h3 {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* תגובה בודדת */
 .comment {
-  margin-bottom: 8px;
-}
-
-.commentForm {
   display: flex;
-  gap: 8px;
-  margin-top: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  gap: 10px;
 }
 
-.commentInput {
-  flex: 1;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.comment:last-child {
+  border-bottom: none;
 }
 
-.commentBtn {
-  padding: 8px 12px;
-  background: #333;
+/* תמונת פרופיל בתגובות */
+.profileImage {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* או אות */
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #252525;
   color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* טקסט "אין תגובות" */
+.noComments {
+  text-align: center;
+  color: #777;
+  padding: 12px;
+  font-size: 14px;
+}
+
+/* אנימציות */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

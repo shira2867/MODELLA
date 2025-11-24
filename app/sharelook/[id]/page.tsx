@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import SharedLookCard, { LikeButton, CommentForm } from "../../Components/ShareLookCard/ShareLookCard";
+import SharedLookCard from "../../Components/ShareLookCard/ShareLookCard";
+import { LikeButton, CommentForm } from "../../Components/LikeAndComment/LikeAndComment";
 import styles from "./shareLookId.module.css";
 
 import { ShareLookType } from "@/types/shareLookType";
@@ -31,12 +32,12 @@ export default function ShareLookPage() {
     enabled: !!lookId,
   });
 
-  const addCommentToState = (comment: any) => {
+  const addCommentToState = (comments: any[]) => {
     queryClient.setQueryData<ShareLookType>(["share-look", lookId], (old) => {
       if (!old) return old;
       return {
         ...old,
-        comments: [...(old.comments || []), comment],
+        comments,
       };
     });
   };
@@ -47,9 +48,10 @@ export default function ShareLookPage() {
 
   return (
     <div className={styles.container}>
-      
+      {/* כרטיס הלוק */}
       <SharedLookCard look={look} />
 
+      {/* לייקים */}
       <LikeButton
         lookId={look._id}
         userId={userId}
@@ -57,16 +59,18 @@ export default function ShareLookPage() {
         onLike={() => refetch()}
       />
 
+      {/* טופס תגובות */}
       <CommentForm
         lookId={look._id}
         userId={userId}
         onNewComment={addCommentToState}
       />
 
+      {/* רשימת תגובות */}
       <ul className={styles.commentList}>
         {look.comments?.map((c, i) => (
           <li key={i} className={styles.commentItem}>
-            {c.text}
+            <strong>{c.userId}</strong>: {c.text}
           </li>
         ))}
       </ul>

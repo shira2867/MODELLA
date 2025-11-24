@@ -1,0 +1,80 @@
+/* LikeAndComment.module.css */
+
+/* כפתור לייק פשוט, שחור, בלי מסגרת */
+.likeButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #000;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-size: 14px;
+}
+
+.likeButton:hover {
+  color: #555;
+}
+
+.likeButton span.count {
+  font-weight: 600;
+}
+
+/* תגובות */
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.commentItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.commentAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ccc; /* ברירת מחדל לאוואטר */
+  flex-shrink: 0;
+}
+
+.commentContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.commentAuthor {
+  font-weight: 600;
+  font-size: 14px;
+  color: #000;
+}
+
+.commentText {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.commentDate {
+  font-size: 12px;
+  color: #888;
+}
+
+/* לינק לצפייה בתגובות נוספות */
+.showReplies {
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
+  margin-left: 40px; /* להזחה מתאימה */
+}
+
+.showReplies:hover {
+  text-decoration: underline;
+}
