@@ -14,9 +14,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const [open, setOpen] = useState(false);
   const BASE_URL =
     typeof window !== "undefined" ? `${window.location.origin}` : "";
-
-  // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-  const lookUrl = `${BASE_URL}/look/${lookId}`;
+  const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
 
   const handleClick = () => setOpen(true);
 
@@ -86,11 +84,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
       {/* popup */}
       {open && (
-
-        <div
-          className={styles.modalBackdrop}
-          onClick={() => setOpen(false)}
-        >
+        <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
           <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
