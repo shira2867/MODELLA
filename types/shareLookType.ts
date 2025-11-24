@@ -2,17 +2,20 @@
 
 import{ClothingItem}from"./clothTypes";
 
-export type LookComment = {
-  userId: string;
-  comment: string;
-  createdAt: string | Date;
-};
+
+
+
 
 export type ShareLookType = {
-  _id: string;
-  userId: string;
-  items: ClothingItem[];      
-  createdAt: string | Date;
-  likes: string[];        
-  comment: LookComment[]; 
+  _id: string;             
+  lookId: string;           
+  userId?: string;          
+  createdAt: Date;          
+  items: ClothingItem[];   
+  likes: string[];          
+  comments: {
+    userId: string;
+    text: string;
+    createdAt: Date;
+  }[];                     
 };

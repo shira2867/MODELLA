@@ -36,10 +36,10 @@ export default function LookPopup({ look, onClose }: Props) {
         <div className={styles.commentsSection}>
           <h3>תגובות</h3>
 
-          {look.comments.length === 0 ? (
+          {look.comment.length === 0 ? (
             <p className={styles.noComments}>אין תגובות עדיין</p>
           ) : (
-            look.comments.map((c, i) => (
+            look.comment.map((c, i) => (
               <div key={i} className={styles.comment}>
                 <strong>{c.userId}</strong>: {c.comment}
               </div>

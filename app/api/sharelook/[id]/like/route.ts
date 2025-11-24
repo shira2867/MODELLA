@@ -6,7 +6,7 @@ export async function POST(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params; // ✅ כאן ה־params נפרק נכון
+    const { id } = await context.params; 
     const { userId } = await req.json();
 
     if (!userId) {

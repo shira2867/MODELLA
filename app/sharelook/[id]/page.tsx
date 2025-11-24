@@ -22,7 +22,6 @@ export default function ShareLookPage() {
     setUserId(storedUserId);
   }, []);
 
-  // Fetch Look With React Query
   const { data: look, isLoading, refetch } = useQuery({
     queryKey: ["share-look", lookId],
     queryFn: async () => {
@@ -32,13 +31,12 @@ export default function ShareLookPage() {
     enabled: !!lookId,
   });
 
-  // עדכון תגובה בלוקאלי (לא צריך meta)
   const addCommentToState = (comment: any) => {
     queryClient.setQueryData<ShareLookType>(["share-look", lookId], (old) => {
       if (!old) return old;
       return {
         ...old,
-        comments: [...(old.comment || []), comment],
+        comments: [...(old.comments || []), comment],
       };
     });
   };
@@ -49,6 +47,7 @@ export default function ShareLookPage() {
 
   return (
     <div className={styles.container}>
+      
       <SharedLookCard look={look} />
 
       <LikeButton
@@ -65,9 +64,9 @@ export default function ShareLookPage() {
       />
 
       <ul className={styles.commentList}>
-        {look.comment?.map((c, i) => (
+        {look.comments?.map((c, i) => (
           <li key={i} className={styles.commentItem}>
-            {c.comment}
+            {c.text}
           </li>
         ))}
       </ul>

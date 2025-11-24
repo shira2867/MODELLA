@@ -1,46 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import {ShareLookType} from "@/types/shareLookType";
 import { shareLooksCollection } from "@/services/server/shareLook";
+import { looksCollection } from "@/services/server/looks";
+import { ShareLookType } from "@/types/shareLookType";
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = (await req.json()) as ShareLookType;
+  const body = await req.json();
+  const { lookId, userId } = body;
 
-    if (!body.items || body.items.length === 0) {
-      return NextResponse.json(
-        { error: "Cannot create Look without items" },
-        { status: 400 }
-      );
-    }
+  if (!lookId) return NextResponse.json({ error: "Missing lookId" }, { status: 400 });
 
+  const lookCol = await looksCollection();
+  const originalLook = await lookCol.findOne({ _id: lookId });
+  if (!originalLook) return NextResponse.json({ error: "Look not found" }, { status: 404 });
 
-    const newShareLook: ShareLookType = {
-      ...body,
-      createdAt: new Date(),
-      likes: [],
-      comments: [],
-      _id: `shared_${Date.now()}`
-    };
+  const newShareLook: ShareLookType = {
+    ...originalLook,
+    lookId,
+    userId,
+    createdAt: new Date(),
+    likes: [],
+    comments: [],
+    _id: `shared_${Date.now()}`,
+  };
 
-    const collection = await shareLooksCollection();
-    await collection.insertOne(newShareLook);
+  const shareCol = await shareLooksCollection();
+  await shareCol.insertOne(newShareLook);
 
-    return NextResponse.json({ success: true, shareLook: newShareLook }, { status: 201 });
-  } catch (error) {
-    console.error("Error creating ShareLook:", error);
-    return NextResponse.json(
-      { error: "Failed to create ShareLook" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({ success: true, _id: newShareLook._id, shareLook: newShareLook }, { status: 201 });
 }
 
 export async function GET() {
-  try {
-    const collection = await shareLooksCollection();
-    const looks = await collection.find().sort({ createdAt: -1 }).toArray();
-    return NextResponse.json(looks);
-  } catch (err) {
-    return NextResponse.json({ error: "Failed to load looks" }, { status: 500 });
-  }
+  const collection = await shareLooksCollection();
+  const looks = await collection.find().sort({ createdAt: -1 }).toArray();
+  return NextResponse.json(looks);
 }
