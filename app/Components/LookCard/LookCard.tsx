@@ -12,16 +12,18 @@ type LookCardProps = {
 };
 
 const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
+
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => setOpen(true);
+
   const [isShared, setIsShared] = useState(false);
   const [sharedLookId, setSharedLookId] = useState<string | null>(null);
 
   const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
-  const lookUrl = `${BASE_URL}/look/${lookId}`;
+  const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
   const queryClient = useQueryClient();
 
-  // -------------------------------
-  // 1) CHECK IF LOOK IS SHARED
-  // -------------------------------
   const { data: shareStatus } = useQuery({
     queryKey: ["shareLookStatus", lookId],
     queryFn: async () => {
@@ -40,7 +42,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     setSharedLookId(shareStatus.isShared ? shareStatus._id : null);
   }, [shareStatus]);
 
- 
+
   const openPopup = (url: string) => {
     window.open(url, "_blank", "width=600,height=500,noopener,noreferrer");
   };
@@ -66,9 +68,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     openPopup(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(lookUrl)}`);
   };
 
-  // -------------------------------
-  // 2) ADD LOOK (POST)
-  // -------------------------------
   const addLookMutation = useMutation({
     mutationFn: async () => {
       const res = await fetch("/api/sharelook", {
@@ -83,17 +82,12 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     onSuccess: (data) => {
       setIsShared(true);
       setSharedLookId(data._id);
-
-      // חידוש הסטטוס
       queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId] });
 
       alert("Look added to StyleFeed!");
     },
   });
 
-  // -------------------------------
-  // 3) REMOVE LOOK (DELETE)
-  // -------------------------------
   const removeLookMutation = useMutation({
     mutationFn: async () => {
       if (!sharedLookId) throw new Error("Missing shared look ID");
@@ -109,16 +103,12 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
       setIsShared(false);
       setSharedLookId(null);
 
-      // חידוש הסטטוס
       queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId] });
 
       alert("Look removed from StyleFeed");
     },
   });
 
-  // -------------------------------
-  // UI
-  // -------------------------------
   return (
     <div className={styles.card} style={{ cursor: "pointer" }}>
       <div className={styles.grid}>
@@ -129,6 +119,12 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
         ))}
       </div>
 
+      {/* popup */}
+      {open && (
+        <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
       <div className={styles.shareButtons}>
         <button className={styles.shareButton} onClick={shareCopyLink}>
           <FiShare2 size={18} />

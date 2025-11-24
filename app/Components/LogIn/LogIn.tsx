@@ -69,28 +69,9 @@ export default function LoginForm() {
         return { firebaseUser: userCredential.user, dbData };
       }
     },
-    // onSuccess: ({ firebaseUser, dbData }) => {
-    //   if (dbData.user?.id) setUserId(dbData.user.id);
 
-    //   setUser({
-    //     name: dbData.user?.name || firebaseUser.displayName || "",
-    //     email: firebaseUser.email || null,
-    //     profileImage: dbData.user?.profileImage || firebaseUser.photoURL || "",
-    //     gender: dbData.user?.gender || null,
-    //   });
-    //   // --- פה נעשה redirect ללוק אם יש redirectLookId ---
-    //   const redirectLookId = localStorage.getItem("redirectLookId");
-    //   if (redirectLookId) {
-    //     localStorage.removeItem("redirectLookId"); // מנקה אחרי השימוש
-    //     router.push(`/look/${redirectLookId}`); // נווט ללוק שהתקבל בשיתוף
-    //   } else {
-    //     router.push("/home"); // אם אין שיתוף, נווט לבית
-    //   }
-    // },
-    // Login.tsx - בתוך onSuccess:
     onSuccess: async ({ firebaseUser, dbData }) => {
-
-      const idToken = await firebaseUser.getIdToken(); 
+      const idToken = await firebaseUser.getIdToken();
 
       const cookieRes = await fetch("/api/auth/set-cookie", {
         method: "POST",
@@ -101,12 +82,12 @@ export default function LoginForm() {
       });
       if (!cookieRes.ok) {
         throw new Error("Failed to set authentication cookie.");
-      } 
+      }
 
       const redirectLookId = localStorage.getItem("redirectLookId");
       if (redirectLookId) {
         localStorage.removeItem("redirectLookId");
-        router.replace(`/look/${redirectLookId}`);
+        router.replace(`/sharelookpersonal/${redirectLookId}`);
       } else {
         router.replace("/home");
       }
