@@ -4,9 +4,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import styles from "./ShareLookCard.module.css";
 import { ShareLookType } from "@/types/shareLookType";
-
-
-
+import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 
 export function LikeButton({
   lookId,
@@ -22,7 +21,7 @@ export function LikeButton({
   const handleLike = async () => {
     try {
       await axios.post(`/api/sharelook/${lookId}/like`, { userId });
-      onLike(); 
+      onLike();
     } catch (err) {
       console.error("Failed to like:", err);
     }
@@ -35,7 +34,6 @@ export function LikeButton({
   );
 }
 
-// קומפוננטת טופס תגובות
 export function CommentForm({
   lookId,
   userId,
@@ -49,12 +47,11 @@ export function CommentForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting comment for lookId:", lookId, "userId:", userId, "text:", text);
 
     try {
       const res = await axios.post(`/api/sharelook/${lookId}/comment`, {
         userId,
-        text
+        text,
       });
       onNewComment(res.data.comments);
       setText("");
@@ -64,6 +61,7 @@ export function CommentForm({
   };
 
   return (
+    
     <form onSubmit={handleSubmit} className={styles.commentForm}>
       <input
         value={text}
@@ -77,6 +75,7 @@ export function CommentForm({
     </form>
   );
 }
+
 type Props = {
   look: ShareLookType;
 };
@@ -88,21 +87,27 @@ export default function SharedLookCard({ look }: Props) {
     router.push(`/sharelook/${look._id}`);
   };
 
-
   return (
-    <div className={styles.card} onClick={handleClick}>
-      <div className={styles.imagesContainer}>
+   <div className={styles.container}>
+   
 
+    <div className={styles.card} onClick={handleClick}>
+      <div className={styles.grid}>
         {look.items?.map((item, index) => (
-          <div key={item._id || index}>
-            <img className={styles.image} src={item.imageUrl} alt={item.category || "item"} />
+          <div key={item._id || index} className={styles.itemWrapper}>
+            <img
+              className={styles.image}
+              src={item.imageUrl}
+              alt={item.category || "item"}
+            />
           </div>
         ))}
       </div>
 
       <div className={styles.info}>
         ❤️ {look.likes ? look.likes.length : 0}
-      </div>   
+      </div>
     </div>
+    </div> 
   );
 }

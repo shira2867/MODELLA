@@ -1,118 +1,38 @@
-/* ShareLookCard.module.css */
-
-/* קלף */
 .card {
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  max-width: 420px;
-  margin: 20px auto;
   display: flex;
   flex-direction: column;
-  cursor: pointer;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #ffffff;
+  width: fit-content;
+  box-sizing: border-box;
+  transition: transform 0.2s;
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
 }
 
-/* מיכל תמונות */
-.imagesContainer {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 8px;
-  padding: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 16px;
+  margin-bottom: 12px;
 }
 
-/* תמונה */
+.itemWrapper {
+  overflow: hidden;
+  border-radius: 10px;
+}
+
 .image {
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 12px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
-.image:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-}
-
-/* מידע על לייקים ותגובות */
 .info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #333333;
-}
-
-/* כפתור לייק */
-.likeButton {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background-color: #e8f0fe;
-  color: #1a73e8;
-  border: none;
-  border-radius: 12px;
-  padding: 6px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.likeButton:hover {
-  background-color: #cfe0fc;
-  transform: scale(1.05);
-}
-
-/* תגובות */
-.commentForm {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 16px;
-  border-top: 1px solid #eee;
-  background-color: #f9f9f9;
-}
-
-.commentInput {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.commentInput:focus {
-  outline: none;
-  border-color: #1a73e8;
-  box-shadow: 0 0 6px rgba(26, 115, 232, 0.3);
-}
-
-/* כפתור שליחה */
-.commentButton {
-  align-self: flex-end;
-  background-color: #1a73e8;
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 8px 18px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.commentButton:hover {
-  background-color: #1558b0;
-  transform: scale(1.05);
+  font-size: 18px;
+  margin-top: 8px;
 }
