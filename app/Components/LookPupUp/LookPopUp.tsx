@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ShareLookType } from "@/types/shareLookType";
 import styles from "./LookPopUp.module.css";
 import { LikeButton, CommentForm } from "../LikeAndComment/LikeAndComment";
@@ -12,6 +13,8 @@ type Props = {
 };
 
 export default function LookPopup({ look, onClose }: Props) {
+  const router = useRouter();
+
   const [comments, setComments] = useState<any[]>(
     Array.isArray(look.comments) ? look.comments : []
   );
@@ -27,6 +30,14 @@ export default function LookPopup({ look, onClose }: Props) {
     if (userIdFromStore) setUserId(userIdFromStore);
     if (user?.profileImage) setProfileImage(user.profileImage);
   }, [user, userIdFromStore]);
+
+  const handleShareAll = () => {
+    if (!look._id) {
+      alert("This look is not shared with everyone yet!");
+      return;
+    }
+    router.push(`/sharelookall/${look._id}`);
+  };
 
   return (
     <div className={styles.modalBackdrop} onClick={onClose}>
@@ -50,7 +61,9 @@ export default function LookPopup({ look, onClose }: Props) {
             ))}
         </div>
 
-       
+        <div className={styles.createLook}>
+          <button onClick={handleShareAll}>Share with everyone</button>
+        </div>
 
         <div className={styles.commentsSection}>
           <h3>תגובות</h3>

@@ -1,23 +1,22 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation"; 
 import axios from "axios";
-import { useParams } from "next/navigation";
 import Header from "@/app/Components/Header/Header";
 import Footer from "@/app/Components/Footer/Footer";
 import BuildSimilarLook from "@/app/Components/LookCreator/LookCreator";
 
-export default function ShareLookPersonalPage() {
+export default function ShareLookAllPage() {
   const params = useParams(); 
-  const lookId = params?.id || "";
-
+  let shareId = params?.id || ""; 
   const { data: look, isLoading, error } = useQuery({
-    queryKey: ["look", lookId],
+    queryKey: ["shareLook", shareId],
     queryFn: async () => {
-      const res = await axios.get(`/api/looks/${lookId}`);
+      const res = await axios.get(`/api/sharelook/${shareId}`);
       return res.data;
     },
-    enabled: !!lookId,
+    enabled: !!shareId,
   });
 
   if (isLoading) return <p>Loading...</p>;

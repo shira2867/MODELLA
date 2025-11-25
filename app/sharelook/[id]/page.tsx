@@ -16,10 +16,10 @@ export default function ShareLookPage() {
   const lookId = params?.id as string;
   const queryClient = useQueryClient();
 
-  // USER ID מה-localStorage עם useEffect
   const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
+
     setUserId(storedUserId);
   }, []);
 
@@ -48,10 +48,8 @@ export default function ShareLookPage() {
 
   return (
     <div className={styles.container}>
-      {/* כרטיס הלוק */}
       <SharedLookCard look={look} />
 
-      {/* לייקים */}
       <LikeButton
         lookId={look._id}
         userId={userId}
@@ -63,10 +61,10 @@ export default function ShareLookPage() {
       <CommentForm
         lookId={look._id}
         userId={userId}
+        userName={""}
         onNewComment={addCommentToState}
       />
 
-      {/* רשימת תגובות */}
       <ul className={styles.commentList}>
         {look.comments?.map((c, i) => (
           <li key={i} className={styles.commentItem}>

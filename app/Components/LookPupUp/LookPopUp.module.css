@@ -14,12 +14,12 @@
   animation: fadeIn 0.25s ease;
 }
 
-/* קופסת המודל */
 .modalContent {
   background: #ffffff;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
+  width: 80vw;      
+  max-width: 900px; 
+  height: 80vh;     
+  max-height: 900px;
   overflow-y: auto;
   border-radius: 16px;
   padding: 20px;
@@ -28,7 +28,7 @@
   animation: slideUp 0.3s ease;
 }
 
-/* כפתור X */
+
 .closeX {
   position: absolute;
   top: 12px;
