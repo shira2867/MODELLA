@@ -15,11 +15,7 @@
 }
 
 /* Popup container */
-.modalContent {
-  background: #ffffff;
-  width: 90%;
-  max-width: 900px;
-  max-height: 90vh;
+
 .modalContent {
   background: #ffffff;
   width: 80vw;      
