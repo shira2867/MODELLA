@@ -22,11 +22,16 @@ export default function SharedLookCard({ look }: Props) {
 
   if (!userId) return <div>Loading...</div>;
 
+  // Show up to 4 items inside the card (2x2 grid)
+  const previewItems = Array.isArray(look.items)
+    ? look.items.slice(0, 4)
+    : [];
+
   return (
     <div className={styles.container}>
       <div className={styles.card} onClick={() => setOpen(true)}>
         <div className={styles.grid}>
-          {look.items?.map((item, index) => (
+          {previewItems.map((item, index) => (
             <div key={item._id || index} className={styles.itemWrapper}>
               <img
                 className={styles.image}
@@ -36,10 +41,11 @@ export default function SharedLookCard({ look }: Props) {
             </div>
           ))}
         </div>
+
         <div className={styles.info}>
           <LikeButton
             lookId={look._id}
-            userId={userId}  // עכשיו תמיד מוגדר
+            userId={userId}
             likes={likes}
             onLike={handleLike}
           />
