@@ -7,7 +7,7 @@ export async function POST(
 ) {
   try {
     const { id } = await context.params; 
-    const { userId, text } = await req.json();
+    const { userId,userName,profileImage, text } = await req.json();
 
     if (!userId || !text) {
       return NextResponse.json({ error: "Missing userId or text" }, { status: 400 });
@@ -15,6 +15,8 @@ export async function POST(
 
     const newComment = {
       userId,
+      userName,
+      profileImage,
       text,
       createdAt: new Date(), 
     };
@@ -23,7 +25,7 @@ export async function POST(
 
     const result = await collection.updateOne(
       { _id: id },
-      { $push: { comments: newComment } }  // ← ← ← תיקון כאן
+      { $push: { comments: newComment } }  
     );
 
     console.log("Update result:", result);
@@ -40,6 +42,31 @@ export async function POST(
     });
   } catch (err) {
     console.error("Error adding comment:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await context.params;    const collection = await shareLooksCollection();
+    console.log("Fetching comments for lookId:", id);
+
+    let look = await collection.findOne({ _id: id });
+    if (!look) {
+      look = await collection.findOne({ lookId: id });
+      console.log("Look found by lookId:", look);
+    }
+
+    if (!look) {
+      return NextResponse.json({ comments: [] }, { status: 200 });
+    }
+
+    return NextResponse.json({ comments: look.comments || [] }, { status: 200 });
+  } catch (err) {
+    console.error("Error fetching comments:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

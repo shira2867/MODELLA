@@ -1,113 +1,297 @@
 .card {
   display: flex;
   flex-direction: column;
-  border-radius: 12px;
-  padding: 16px;
-  background-color: #ffffff;
-  width: fit-content;
-  box-sizing: border-box;
-  transition: transform 0.2s;
+  gap: clamp(1rem, 1.5vw, 1.5rem);
+  padding: clamp(1.25rem, 2vw, 2rem);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: linear-gradient(145deg, var(--color-surface), var(--color-surface-muted));
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--transition-base), box-shadow var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.card[data-shared="true"] {
+  border-color: rgba(92, 26, 26, 0.35);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-strong);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.cardSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cardEyebrow {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--color-text-muted);
+  margin: 0 0 0.35rem;
+}
+
+.cardTitle {
+  font-size: 1.35rem;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.cardHelper {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.badge {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: var(--color-surface-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+}
+
+.badgeSuccess {
+  background: rgba(92, 26, 26, 0.12);
+  color: #5c1a1a;
+}
+
+.cardBody {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
 }
 
 .grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 16px;
-  margin-bottom: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.grid li {
+  list-style: none;
 }
 
 .itemWrapper {
+  border-radius: var(--radius-md);
   overflow: hidden;
-  border-radius: 10px;
+  background: var(--color-surface-muted);
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  width: 100%;
+  padding: 0;
+  display: block;
+  aspect-ratio: 3 / 4;
+  transition: transform var(--transition-base), box-shadow var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.itemWrapper:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.itemWrapper:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-4px);
 }
 
 .image {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  display: block;
+  background: #fff;
+  transition: transform var(--transition-base);
+}
+
+.itemWrapper:hover .image {
+  transform: scale(1.05);
+}
+
+.cardFooter {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.shareLabel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  color: var(--color-text);
+}
+
+.shareDescription {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  max-width: 32ch;
 }
 
 .shareButtons {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-top: auto;
+  gap: 0.6rem;
+  justify-content: flex-end;
 }
 
 .shareButton {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  border: 1px solid #5c1a1a;
-  background-color: #ffffff;
-  color: #5c1a1a;
-  font-size: 20px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: all 0.3s ease;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  display: grid;
+  place-items: center;
   cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast),
+    border var(--transition-fast), color var(--transition-fast);
 }
 
 .shareButton:hover {
-  background-color: #5c1a1a;
+  transform: translateY(-2px);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
   color: #fff;
-  border-color: #5c1a1a;
-  transform: scale(1.1);
+}
+
+.shareButton.styleFeed {
+  border-color: rgba(92, 26, 26, 0.7);
+  color: #5c1a1a;
+}
+
+.shareButton.styleFeed:hover {
+  background: #5c1a1a;
+  color: #fff;
+}
+
+.deleteButton {
+  border-color: rgba(255, 82, 82, 0.4);
+  color: #f04d4d;
+}
+
+.deleteButton:hover {
+  background: #f04d4d;
+  color: #fff;
 }
 
 .modalBackdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.65));
+  backdrop-filter: blur(6px);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 2000;
   animation: fadeIn 0.25s ease;
+  overflow-y: auto;
+  padding: 2rem clamp(1rem, 3vw, 3rem);
 }
 
-.modalContent {
-  background: white;
-  padding: 24px;
-  border-radius: 16px;
-  width: 92%;
-  max-width: 650px;
-  max-height: 85vh;
+.backdropDismiss {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.backdropDismiss:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 6px;
+}
+
+.modalContentLarge {
+  width: min(90vw, 920px);
+  max-height: 92vh;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: none;
+  padding: clamp(1.25rem, 2vw, 2rem);
+  box-shadow: var(--shadow-strong);
   overflow-y: auto;
-  animation: popIn 0.25s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   position: relative;
+  animation: popIn 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background var(--transition-fast);
+}
+
+.closeButton:hover {
+  background: var(--color-accent-soft);
+}
+
+.modalHeader {
+  padding-top: 0.5rem;
 }
 
 .modalTitle {
-  margin-top: 0;
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 16px;
+  margin: 0.15rem 0;
+  font-size: 1.25rem;
 }
 
-/* -------- גריד תמונות במודל -------- */
+.modalDescription {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
 
-.modalGrid {
+.gridLarge {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
 }
 
-.modalImage {
+.itemWrapperLarge {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem;
+}
+
+.imageLarge {
   width: 100%;
-  height: 250px;
-  object-fit: cover;
-  border-radius: 12px;
+  height: 240px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: calc(var(--radius-md) - 6px);
 }
 
 @keyframes fadeIn {
@@ -122,94 +306,60 @@
 @keyframes popIn {
   from {
     opacity: 0;
-    transform: scale(0.93);
+    transform: translateY(10px) scale(0.99);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
-.closeX {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  color: black;
-  font-weight: 700;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s;
+
+@media (max-width: 768px) {
+  .cardHeader {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cardFooter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .shareButtons {
+    justify-content: flex-start;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .modalBackdrop {
+    padding: 1.5rem 1rem;
+  }
 }
 
-.shareButton:active {
-  transform: scale(1);
-}
-.shareButton.styleFeed {
-  border-color: #5c1a1a;
-  color: #5c1a1a;
+@media (max-width: 480px) {
+  .cardTitle {
+    font-size: 1.15rem;
+  }
+
+  .itemWrapper {
+    aspect-ratio: 2.5 / 4;
+  }
+
+  .shareButton {
+    width: 38px;
+    height: 38px;
+  }
 }
 
-.shareButton.styleFeed:hover {
-  background-color: #5c1a1a;
-  color: #fff;
-  border-color: #5c1a1a;
-  transform: scale(1.1);
-  transform: scale(1.1);
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .itemWrapper,
+  .shareButton,
+  .modalBackdrop {
+    transition: none;
+    animation: none;
+  }
 }
 
-.modalBackdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modalContentLarge {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 15px;
-  max-width: 90%;
-  max-height: 90%;
-  overflow: auto;
-  position: relative;
-}
-
-.closeButton {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.gridLarge {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-
-.itemWrapperLarge {
-  flex: 0 0 auto;
-  width: 200px;
-}
-
-.imageLarge {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}

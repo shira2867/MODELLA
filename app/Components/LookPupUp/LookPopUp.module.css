@@ -1,93 +1,138 @@
 .modalBackdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 2500;
+  animation: fadeIn 0.2s ease;
 }
 
 .modalContent {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 800px;
-  width: 90%;
-  max-height: 90vh;
+  width: min(92vw, 960px);
+  max-height: 92vh;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  box-shadow: var(--shadow-strong);
   overflow-y: auto;
   position: relative;
+  animation: slideUp 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .closeX {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
+  top: 1.2rem;
+  right: 1.2rem;
+  font-size: 1.4rem;
   cursor: pointer;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--color-surface);
+  transition: background var(--transition-fast);
+}
+
+.closeX:hover {
+  background: var(--color-accent-soft);
 }
 
 .modalTitle {
-  margin-bottom: 15px;
   text-align: center;
+  margin: 0;
 }
 
 .modalGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.modalItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
 }
 
 .modalImage {
   width: 100%;
-  height: 120px;
+  height: 220px;
+  border-radius: var(--radius-md);
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 5px;
+  box-shadow: var(--shadow-soft);
 }
 
-.itemCategory {
-  font-size: 14px;
-  color: #555;
+.createLook {
+  display: flex;
+  justify-content: center;
+}
+
+.createLook button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  background: #1f1f1f;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .commentsSection {
-  border-top: 1px solid #eee;
-  padding-top: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  background: var(--color-surface-muted);
 }
 
 .comment {
-  margin-bottom: 8px;
-}
-
-.commentForm {
   display: flex;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.commentInput {
-  flex: 1;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.comment:last-child {
+  border-bottom: none;
 }
 
-.commentBtn {
-  padding: 8px 12px;
-  background: #333;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.profileImage,
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--color-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
 }
+
+.noComments {
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

@@ -98,8 +98,13 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
   if (!open) return null;
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
+    <div className={styles.modalOverlay} role="presentation">
+      <div
+        className={styles.modalContent}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Delete or update looks"
+      >
         <h2>Item is used in these looks</h2>
 
         {isLoading ? (
@@ -144,6 +149,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
 
         <div className={styles.modalActions}>
           <button
+            type="button"
             className={styles.confirmButton}
             onClick={handleConfirm}
             disabled={mutation.isPending} 
@@ -151,6 +157,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
             {mutation.isPending ? "Processing..." : "Confirm"}
           </button>
           <button
+            type="button"
             className={styles.cancelButton}
             onClick={onClose}
             disabled={mutation.isPending}

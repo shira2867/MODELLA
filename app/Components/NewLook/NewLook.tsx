@@ -142,6 +142,9 @@ try {
     mutation.mutate(look);
   };
 
+  const selectedCount = selectedItems.length;
+  const hasItems = selectedCount > 0;
+
   return (
     <div className={styles.container}>
       {!isOpen ? (
@@ -172,8 +175,22 @@ try {
             className={styles.closeBtn}
             onClick={handleClose}
             title="Close Look Area"
+    <section className={styles.container} aria-live="polite">
+      <div
+        className={`${styles.panel} ${isOpen ? styles.panelExpanded : styles.panelCollapsed}`}
+      >
+        {!isOpen ? (
+          <button
+            type="button"
+            className={styles.openCard}
+            onClick={() => setIsOpen(true)}
+            aria-expanded={isOpen}
+            aria-controls="create-look-panel"
           >
-            ❌
+            <p className={styles.cardEyebrow}>Create a new look</p>
+            <h2 className={styles.cardTitle}>Tap to curate your next outfit</h2>
+            <p className={styles.cardHint}>Drag pieces from your closet once the panel opens.</p>
+            <Image src={down} alt="Open look builder" width={52} height={52} />
           </button>
 
           {lookMode === "inspiration" && (
@@ -225,19 +242,78 @@ try {
               className={styles.saveBtn}
               onClick={saveLook}
               disabled={mutation.isPending}
+        ) : (
+          <div id="create-look-panel" className={styles.lookWrapper}>
+            <header className={styles.panelHeader}>
+              <div>
+                <p className={styles.panelEyebrow}>Create look</p>
+                <h3 className={styles.panelTitle}>Build a balanced outfit</h3>
+                <p className={styles.panelMeta}>
+                  {hasItems ? `${selectedCount} item${selectedCount === 1 ? "" : "s"} selected` : "No items yet"}
+                </p>
+              </div>
+              <button
+                type="button"
+                className={styles.closeBtn}
+                onClick={() => setIsOpen(false)}
+                aria-label="Close look builder"
+              >
+                ✕
+              </button>
+            </header>
+
+            <p className={styles.helperText}>
+              Drag &amp; drop garments from the closet grid. Remove items any time.
+            </p>
+
+            <div
+              className={`${styles.lookArea} ${hasItems ? styles.lookAreaFilled : ""}`}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
             >
-              {mutation.isPending ? "Saving..." : "SAVE"}
-            </button>
-            <button
-              className={styles.cancelBtn}
-              onClick={() => setSelectedItems([])}
-            >
-              CANCEL
-            </button>
+              {hasItems ? (
+                selectedItems.map((item) => (
+                  <div key={item._id} className={styles.lookItem}>
+                    <img src={item.imageUrl} alt={item.category} loading="lazy" />
+                    <button
+                      type="button"
+                      onClick={() => removeItem(item._id)}
+                      aria-label={`Remove ${item.category}`}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className={styles.emptyState}>
+                  <p>Drag garments here to start styling.</p>
+                  <span>Tip: mix textures &amp; tones for balance.</span>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.actionBar}>
+              <button
+                type="button"
+                className={styles.primaryButton}
+                onClick={saveLook}
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? "Saving..." : "Save look"}
+              </button>
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={() => setSelectedItems([])}
+                disabled={!hasItems || mutation.isPending}
+              >
+                Reset
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </section>
   );
 };
 

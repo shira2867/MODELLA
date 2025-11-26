@@ -36,7 +36,6 @@ export default function LoginForm() {
   const setUserId = useUserStore((state) => state.setUserId);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // ---------- React Query mutation ----------
   const loginMutation = useMutation<
     { firebaseUser: User; dbData: any },
     any,
@@ -98,7 +97,6 @@ export default function LoginForm() {
     },
   });
 
-  // ---------- Handlers ----------
   const handleGoogleLogin = () => {
     setErrorMessage("");
     loginMutation.mutate({ method: "google", email: "", password: "" });
