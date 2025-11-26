@@ -8,12 +8,13 @@ import close from "../../../public/remove.png";
 import all from "../../../public/summer_11907165.png";
 import coat from "../../../public/clothes_15930120.png";
 import shirt from "../../../public/crop-top_10339535.png";
-
 import accessories from "../../../public/accessories_5029392.png";
 import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal";
 import pants from "../../../public/short_13387117.png";
 import { ClothingItem } from "@/types/clothTypes";
 import { FaTrash } from "react-icons/fa";
+import { FaTshirt, FaHatCowboy, FaUserTie, FaMale } from "react-icons/fa";
+import { GiClothes, GiLargeDress, GiSkirt } from "react-icons/gi";
 import { fetchClothes } from "@/services/client/closet";
 
 const COLOR_MAP: Record<string, [number, number, number]> = {

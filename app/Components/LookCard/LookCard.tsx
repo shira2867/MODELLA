@@ -10,6 +10,8 @@ import { useUserStore } from "@/store/userStore";
 type LookCardProps = {
   items: ClothingItem[];
   lookId?: string;
+  userId:string;
+  profileImage?:string
 };
 
 const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
@@ -79,7 +81,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
       const res = await fetch("/api/sharelook", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lookId }),
+        body: JSON.stringify({ lookId ,userId}),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not share look");
@@ -123,7 +125,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
       if (!res.ok) throw new Error(data.error || "Failed to delete look");
 
       alert("Look deleted successfully!");
-      setIsDeleted(true); // ← מוסיף כאן כדי להסתיר את הלוק
+      setIsDeleted(true); 
       queryClient.invalidateQueries({ queryKey: ["userLooks", userId] });
       setIsPopupOpen(false);
     } catch (err: any) {
@@ -131,7 +133,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     }
   };
 
-  // ← אם הלוק נמחק, לא מציגים אותו בכלל
   if (isDeleted) return null;
 
   const shareStateLabel = isShared ? "Shared to StyleFeed" : "Private look";

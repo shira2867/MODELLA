@@ -9,7 +9,8 @@ import{ClothingItem}from"./clothTypes";
 export type ShareLookType = {
   _id: string;             
   lookId: string;           
-  userId?: string;          
+  userId?: string;  
+  profileImage?:string,        
   createdAt: Date;          
   items: ClothingItem[];   
   likes: string[];          

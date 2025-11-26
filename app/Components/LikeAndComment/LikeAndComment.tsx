@@ -1,7 +1,7 @@
-
-
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
+import type React from "react";
 import axios from "axios";
 import styles from "./LikeAndComment.module.css";
 
@@ -17,11 +17,13 @@ export function LikeButton({
   onLike: (newLikes: string[]) => void;
 }) {
   const handleLike = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // מונע את onClick של הקלף
+    // Prevents the card's onClick from firing
+    e.stopPropagation();
     if (!userId) {
       console.error("Missing userId");
       return;
     }
+
     try {
       const res = await axios.post(`/api/sharelook/${lookId}/like`, { userId });
       const updatedLikes = res.data.likes || [];
@@ -33,17 +35,16 @@ export function LikeButton({
 
   return (
     <button
-  onClick={handleLike}
-  className={`${styles.likeButton} ${likes.includes(userId) ? styles.liked : ""}`}
->
-  <span className="icon">❤️</span>
-  <span className="count">{likes?.length || 0}</span>
-</button>
-
+      onClick={handleLike}
+      className={`${styles.likeButton} ${
+        userId && likes.includes(userId) ? styles.liked : ""
+      }`}
+    >
+      <span className={styles.likeIcon}>❤️</span>
+      <span className={styles.likeCount}>{likes?.length || 0}</span>
+    </button>
   );
 }
-
-
 
 export function CommentForm({
   lookId,
@@ -75,22 +76,20 @@ export function CommentForm({
 
     setLoading(true);
     try {
-        console.log("Sending request for lookId:", lookId);
+      console.log("Sending request for lookId:", lookId);
 
       await axios.post(`/api/sharelook/${lookId}/comment`, {
         userId,
         userName,
         text: text.trim(),
       });
-        console.log("Sending request for lookId:", lookId);
 
-     const res = await axios.get(`/api/sharelook/${lookId}/comment`);
-   const comments = res.data.comments || [];
-console.log("GET comments response:", res.data);
+      const res = await axios.get(`/api/sharelook/${lookId}/comment`);
+      const comments = res.data.comments || [];
+      console.log("GET comments response:", res.data);
 
       onNewComment(comments);
-
-      setText(""); 
+      setText("");
     } catch (err) {
       console.error("Failed to add comment:", err);
     } finally {
@@ -100,15 +99,33 @@ console.log("GET comments response:", res.data);
 
   return (
     <form onSubmit={handleSubmit} className={styles.commentForm}>
+      {/* Small user avatar next to the input */}
+      {profileImage ? (
+        <img
+          src={profileImage}
+          alt={userName}
+          className={styles.commentAvatar}
+        />
+      ) : (
+        <div className={styles.commentAvatarFallback}>
+          {userName?.charAt(0).toUpperCase() || "U"}
+        </div>
+      )}
+
       <input
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="הוסף תגובה..."
+        placeholder="Add a comment..."
         className={styles.commentInput}
         disabled={loading}
       />
-      <button type="submit" className={styles.commentButton} disabled={loading}>
-        {loading ? "שולח..." : "שלח"}
+
+      <button
+        type="submit"
+        className={styles.commentButton}
+        disabled={loading}
+      >
+        {loading ? "Sending..." : "Send"}
       </button>
     </form>
   );

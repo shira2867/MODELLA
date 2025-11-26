@@ -9,6 +9,8 @@ import BurgerMenu from "../Components/BurgerMenu/BurgerMenu";
 
 type LookCreationMode = "default" | "inspiration";
 
+type LookCreationMode = "default" | "inspiration";
+
 export default function ShowMyCloset() {
   const [userId, setUserId] = useState<string | null>(null);
   const [inspirationColors, setInspirationColors] = useState<string[]>([]);
