@@ -8,6 +8,7 @@ import close from "../../../public/remove.png";
 import all from "../../../public/summer_11907165.png";
 import coat from "../../../public/clothes_15930120.png";
 import shirt from "../../../public/crop-top_10339535.png";
+
 import accessories from "../../../public/accessories_5029392.png";
 import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal";
 import pants from "../../../public/short_13387117.png";
@@ -31,6 +32,7 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
 };
 
 const CATEGORIES = [
+
   { key: "All", image: <Image src={all} alt="All clothes" width={30} height={30} /> },
   { key: "shirt", image: <Image src={shirt} alt="shirt" width={30} height={30} /> },
   { key: "pants", image: <Image src={pants} alt="pants" width={30} height={30} /> },
@@ -44,9 +46,12 @@ const CATEGORIES = [
 const STYLES = ["casual", "sporty", "formal"];
 const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 
-type MyClosetProps = { userId: string };
+type MyClosetProps = {
+  userId: string;
+  inspirationColors: string[];
+};
 
-const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
+const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [colorFilter, setColorFilter] = useState<string | null>(null);
   const [styleFilter, setStyleFilter] = useState<string | null>(null);
@@ -63,8 +68,23 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   });
 
   const filteredClothes = clothes.filter((item) => {
-    if (categoryFilter && categoryFilter !== "All" && item.category !== categoryFilter) return false;
-    if (colorFilter && item.colorName !== colorFilter) return false;
+    if (
+      categoryFilter &&
+      categoryFilter !== "All" &&
+      item.category !== categoryFilter
+    )
+      return false;
+    if (
+      inspirationColors.length === 0 &&
+      colorFilter &&
+      item.colorName !== colorFilter
+    )
+      return false;
+    if (inspirationColors.length > 0) {
+      if (!item.colorName || !inspirationColors.includes(item.colorName)) {
+        return false;
+      }
+    }
     if (styleFilter && item.style !== styleFilter) return false;
     if (seasonFilter && item.thickness) {
       const thicknessSeasonMap: Record<string, string[]> = {
@@ -167,23 +187,44 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             <Image src={close} alt="Close Menu" width={30} height={30} />
             <span>Close</span>
           </button>
-
-          <div className={styles.filterGroup}>
-            <p className={styles.filterLabel}>Color</p>
-            <div className={styles.colorOptions}>
-              {Object.keys(COLOR_MAP).map((color) => (
-                <button
-                  key={color}
-                  className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""}`}
-                  type="button"
-                  style={{ backgroundColor: `rgb(${COLOR_MAP[color].join(",")})` }}
-                  onClick={() => setColorFilter(colorFilter === color ? null : color)}
-                  aria-pressed={colorFilter === color}
-                  aria-label={`Filter by ${color}`}
-                />
-              ))}
+          {inspirationColors.length > 0 && (
+            <div className={styles.filterGroup}>
+              <label className={styles.inspirationLabel}>
+                🎨 Inspired Look Active:
+                <span style={{ fontWeight: "bold", color: "#5c1a1a" }}>
+                  Filtering by {inspirationColors.length} colors!
+                </span>
+              </label>
+              <div className={styles.optionList}>
+                {inspirationColors.map((color) => (
+                  <span key={color} className={styles.inspirationColorTag}>
+                    {color}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+          {inspirationColors.length === 0 && (
+            <div className={styles.filterGroup}>
+              <label>Color:</label>
+              <div className={styles.colorOptions}>
+                {Object.keys(COLOR_MAP).map((color) => (
+                  <div
+                    key={color}
+                    className={`${styles.colorCircle} ${
+                      colorFilter === color ? styles.activeColor : ""
+                    }`}
+                    style={{
+                      backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
+                    }}
+                    onClick={() =>
+                      setColorFilter(colorFilter === color ? null : color)
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className={styles.filterGroup}>
             <p className={styles.filterLabel}>Style</p>
@@ -227,7 +268,43 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           />
         )}
 
-        <div className={styles.closetContent}>{closetContent}</div>
+        <div className={styles.closetContent}>
+          {isLoading ? (
+            <p className={styles.loading}>Loading...</p>
+          ) : filteredClothes.length === 0 ? (
+            <p className={styles.noClothes}>No items found.</p>
+          ) : (
+            <div className={styles.cardsWrapper}>
+              {filteredClothes.map((item) => (
+                <div key={item._id} className={styles.card}>
+                  <div className={styles.imageWrapper}>
+                    <img
+                      src={item.imageUrl}
+                      alt={item.category}
+                      className={styles.clothImage}
+                      draggable
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData(
+                          "application/json",
+                          JSON.stringify(item)
+                        );
+                      }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedClothing(item._id);
+                      setModalOpen(true);
+                    }}
+                    className={styles.deleteButton}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {selectedClothing && (

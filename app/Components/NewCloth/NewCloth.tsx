@@ -14,7 +14,6 @@ type NewClothProps = {
   userId: string;
 };
 
-
 type RGB = [number, number, number];
 
 const COLOR_MAP: Record<string, RGB> = {
@@ -39,8 +38,8 @@ function closestColor(rgb: RGB): string {
   for (const [colorName, colorRgb] of Object.entries(COLOR_MAP)) {
     const distance = Math.sqrt(
       (rgb[0] - colorRgb[0]) ** 2 +
-      (rgb[1] - colorRgb[1]) ** 2 +
-      (rgb[2] - colorRgb[2]) ** 2
+        (rgb[1] - colorRgb[1]) ** 2 +
+        (rgb[2] - colorRgb[2]) ** 2
     );
     if (distance < minDistance) {
       minDistance = distance;
@@ -52,7 +51,9 @@ function closestColor(rgb: RGB): string {
 
 const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
   const [category, setCategory] = useState<string>("");
-  const [thickness, setThickness] = useState<"light" | "medium" | "heavy">("light");
+  const [thickness, setThickness] = useState<"light" | "medium" | "heavy">(
+    "light"
+  );
   const [style, setStyle] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -70,7 +71,11 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
     "Accessories",
   ];
   const styleOptions = ["casual", "formal", "sporty", "party"];
-  const thicknessOptions: ("light" | "medium" | "heavy")[] = ["light", "medium", "heavy"];
+  const thicknessOptions: ("light" | "medium" | "heavy")[] = [
+    "light",
+    "medium",
+    "heavy",
+  ];
 
   const mutation = useMutation<void, Error, ClothingItemPayload>({
     mutationFn: async (newCloth) => {
@@ -176,7 +181,9 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
             <label>Thickness</label>
             <select
               value={thickness}
-              onChange={(e) => setThickness(e.target.value as "light" | "medium" | "heavy")}
+              onChange={(e) =>
+                setThickness(e.target.value as "light" | "medium" | "heavy")
+              }
             >
               <option value="">Select thickness</option>
               {thicknessOptions.map((c) => (

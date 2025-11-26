@@ -475,6 +475,7 @@
   text-align: center;
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 25px rgba(92, 26, 26, 0.3);
+  background-color: #ffffff30;
 }
 
 .closed .title {
