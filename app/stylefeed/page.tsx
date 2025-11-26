@@ -19,7 +19,7 @@ export default function StyleFeedPage() {
 
   const looks: ShareLookType[] = data || [];
 
-  if (isLoading) return <p>טוען...</p>;
+  if (isLoading) return <p>...</p>;
   if (isError) return <p>אירעה שגיאה בטעינת הלוקים</p>;
 
   return (
@@ -27,10 +27,13 @@ export default function StyleFeedPage() {
      <Header></Header>
     <h1 className={styles.title}>style feed</h1>
     <div className={styles.grid}>
-      {looks.map((look) => (
-        <SharedLookCard key={look._id} look={look} />
-      ))}
+  {looks.map((look) => (
+    <div key={look._id} className={styles.card}>
+      <SharedLookCard look={look} />
     </div>
+  ))}
+</div>
+
      <Footer></Footer>
     </div>
   );
