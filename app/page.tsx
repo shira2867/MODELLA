@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import Welcome from "./welcome/page";
+
 export default function Home() {
   return (
-    <div>
+    <Suspense fallback={<div>Loading...</div>}>
       <Welcome />
-    </div>
+    </Suspense>
   );
 }
