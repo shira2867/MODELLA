@@ -6,7 +6,6 @@ import { FaFacebookF, FaTimes, FaTrash } from "react-icons/fa";
 import { ClothingItem } from "@/types/clothTypes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserStore } from "@/store/userStore";
-import { useRouter } from "next/navigation";
 
 type LookCardProps = {
   items: ClothingItem[];
@@ -18,11 +17,10 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const [sharedLookId, setSharedLookId] = useState<string | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false); // ← הוספתי
-  const BASE_URL = typeof window !== "undefined" ? window.location.origin : "";
+  const BASE_URL = globalThis?.location?.origin ?? "";
   const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
   const queryClient = useQueryClient();
   const userId = useUserStore((state) => state.userId);
-  const router = useRouter();
 
   const { data: shareStatus } = useQuery({
     queryKey: ["shareLookStatus", lookId],
@@ -36,20 +34,25 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   });
 
   useEffect(() => {
-    if (!shareStatus) return;
-
-    setIsShared(shareStatus.isShared);
-    setSharedLookId(shareStatus.isShared ? shareStatus._id : null);
+    if (shareStatus) {
+      setIsShared(shareStatus.isShared);
+      setSharedLookId(shareStatus.isShared ? shareStatus._id : null);
+    }
   }, [shareStatus]);
 
   const openPopup = (url: string) => {
-    window.open(url, "_blank", "width=600,height=500,noopener,noreferrer");
+    if (typeof globalThis === "undefined" || typeof globalThis.open !== "function") {
+      return;
+    }
+    globalThis.open(url, "_blank", "width=600,height=500,noopener,noreferrer");
   };
 
   const shareCopyLink = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(lookUrl);
-    alert("Link copied!");
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(lookUrl);
+      alert("Link copied!");
+    }
   };
 
   const shareEmail = (e: React.MouseEvent) => {
@@ -131,100 +134,193 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   // ← אם הלוק נמחק, לא מציגים אותו בכלל
   if (isDeleted) return null;
 
+  const shareStateLabel = isShared ? "Shared to StyleFeed" : "Private look";
+  const closePreview = () => setIsPopupOpen(false);
+  const togglePreview = () => setIsPopupOpen(true);
+
   return (
-    <div className={styles.card} style={{ cursor: "pointer" }}>
-      <div className={styles.grid}>
-        {items.map((item) => (
-          <div
-            key={item._id}
-            className={styles.itemWrapper}
-            onClick={() => setIsPopupOpen(true)}
-          >
-            <img src={item.imageUrl} alt={item.category} className={styles.image} />
-          </div>
-        ))}
+    <article className={styles.card} data-shared={isShared}>
+      <header className={styles.cardHeader}>
+        <div className={styles.cardSummary}>
+          <p className={styles.cardEyebrow}>Look</p>
+          <h3 className={styles.cardTitle}>{items.length} curated items</h3>
+          <p className={styles.cardHelper}>Tap any piece for a full-screen preview.</p>
+        </div>
+        <span
+          className={`${styles.badge} ${isShared ? styles.badgeSuccess : ""}`}
+          aria-live="polite"
+        >
+          {shareStateLabel}
+        </span>
+      </header>
+
+      <div className={styles.cardBody}>
+        <ul className={styles.grid} aria-label="Look items">
+          {items.map((item) => (
+            <li key={item._id}>
+              <button
+                className={styles.itemWrapper}
+                onClick={togglePreview}
+                type="button"
+                aria-label={`Preview ${item.category}`}
+              >
+                <img
+                  src={item.imageUrl}
+                  alt={item.category}
+                  className={styles.image}
+                  loading="lazy"
+                />
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <div className={styles.shareButtons}>
-        <button className={styles.shareButton} onClick={shareCopyLink}>
-          <FiShare2 size={18} />
-        </button>
-        <button className={styles.shareButton} onClick={shareEmail}>
-          <FiMail size={18} />
-        </button>
-        <button className={styles.shareButton} onClick={shareWhatsApp}>
-          <FiMessageCircle size={18} />
-        </button>
-        <button className={styles.shareButton} onClick={shareFacebook}>
-          <FaFacebookF size={18} />
-        </button>
+      <footer className={styles.cardFooter}>
+        <div>
+          <p className={styles.shareLabel}>Share or manage look</p>
+          <p className={styles.shareDescription}>
+            Copy a link or push to StyleFeed. Removing will hide it from followers.
+          </p>
+        </div>
+        <div className={styles.shareButtons} aria-label="Share look options">
+          <button
+            type="button"
+            className={styles.shareButton}
+            onClick={shareCopyLink}
+            aria-label="Copy share link"
+            title="Copy share link"
+          >
+            <FiShare2 size={18} />
+          </button>
+          <button
+            type="button"
+            className={styles.shareButton}
+            onClick={shareEmail}
+            aria-label="Share via email"
+            title="Share via email"
+          >
+            <FiMail size={18} />
+          </button>
+          <button
+            type="button"
+            className={styles.shareButton}
+            onClick={shareWhatsApp}
+            aria-label="Share via WhatsApp"
+            title="Share via WhatsApp"
+          >
+            <FiMessageCircle size={18} />
+          </button>
+          <button
+            type="button"
+            className={styles.shareButton}
+            onClick={shareFacebook}
+            aria-label="Share on Facebook"
+            title="Share on Facebook"
+          >
+            <FaFacebookF size={18} />
+          </button>
 
-        {!isShared ? (
-          <button
-            className={`${styles.shareButton} ${styles.styleFeed}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              addLookMutation.mutate();
-            }}
-          >
-            <FiUpload size={18} />
-          </button>
-        ) : (
-          <button
-            className={`${styles.shareButton} ${styles.styleFeed}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              removeLookMutation.mutate();
-            }}
-          >
-            ✖
-          </button>
-        )}
+          {isShared ? (
+            <button
+              type="button"
+              className={`${styles.shareButton} ${styles.styleFeed}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                removeLookMutation.mutate();
+              }}
+              aria-label="Remove from StyleFeed"
+              title="Remove from StyleFeed"
+            >
+              ✖
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`${styles.shareButton} ${styles.styleFeed}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                addLookMutation.mutate();
+              }}
+              aria-label="Share to StyleFeed"
+              title="Share to StyleFeed"
+            >
+              <FiUpload size={18} />
+            </button>
+          )}
 
-        {lookId && (
-          <button
-            className={`${styles.shareButton} ${styles.deleteButton}`}
-            onClick={deleteLook}
-          >
-            <FaTrash size={18} />
-          </button>
-        )}
-      </div>
+          {lookId && (
+            <button
+              type="button"
+              className={`${styles.shareButton} ${styles.deleteButton}`}
+              onClick={deleteLook}
+              aria-label="Delete look"
+              title="Delete look"
+            >
+              <FaTrash size={18} />
+            </button>
+          )}
+        </div>
+      </footer>
 
       {isPopupOpen && (
-        <div
-          className={styles.modalBackdrop}
-          onClick={() => setIsPopupOpen(false)}
-        >
-          <div
+        <div className={styles.modalBackdrop} aria-live="polite">
+          <button
+            type="button"
+            className={styles.backdropDismiss}
+            aria-label="Close look preview"
+            onClick={closePreview}
+            onKeyDown={(event) => {
+              if (event.key === "Escape" || event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                closePreview();
+              }
+            }}
+            tabIndex={-1}
+          />
+          <dialog
+            open
             className={styles.modalContentLarge}
-            onClick={(e) => e.stopPropagation()}
+            aria-label="Look preview"
+            aria-modal="true"
+            onCancel={(event) => {
+              event.preventDefault();
+              closePreview();
+            }}
           >
             <button
+              type="button"
               className={styles.closeButton}
-              onClick={() => setIsPopupOpen(false)}
+              onClick={closePreview}
+              aria-label="Close preview"
             >
               <FaTimes />
             </button>
+
+            <header className={styles.modalHeader}>
+              <p className={styles.cardEyebrow}>Full look</p>
+              <h4 className={styles.modalTitle}>{items.length} curated items</h4>
+              <p className={styles.modalDescription}>
+                Scroll through every piece in a larger canvas to examine textures and fit.
+              </p>
+            </header>
+
             <div className={styles.gridLarge}>
               {items.map((item) => (
-                <div
-                  key={item._id}
-                  className={styles.itemWrapperLarge}
-                  onClick={() => setIsPopupOpen(true)}
-                >
+                <div key={item._id} className={styles.itemWrapperLarge}>
                   <img
                     src={item.imageUrl}
                     alt={item.category}
                     className={styles.imageLarge}
+                    loading="lazy"
                   />
                 </div>
               ))}
             </div>
-          </div>
+          </dialog>
         </div>
       )}
-    </div>
+    </article>
   );
 };
 

@@ -40,11 +40,17 @@ export default function LookPopup({ look, onClose }: Props) {
   };
 
   return (
-    <div className={styles.modalBackdrop} onClick={onClose}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.closeX} onClick={onClose}>
+    <div className={styles.modalBackdrop} onClick={onClose} role="presentation">
+      <div
+        className={styles.modalContent}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Look preview"
+      >
+        <button className={styles.closeX} onClick={onClose} aria-label="Close look preview" type="button">
           ✕
-        </div>
+        </button>
 
         <h2 className={styles.modalTitle}>Look Preview</h2>
 
@@ -62,7 +68,9 @@ export default function LookPopup({ look, onClose }: Props) {
         </div>
 
         <div className={styles.createLook}>
-          <button onClick={handleShareAll}>Share with everyone</button>
+          <button type="button" onClick={handleShareAll}>
+            Share with everyone
+          </button>
         </div>
 
         <div className={styles.commentsSection}>

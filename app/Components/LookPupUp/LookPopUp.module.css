@@ -1,150 +1,138 @@
-/* רקע שקוף של המודל */
 .modalBackdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
   backdrop-filter: blur(6px);
-  animation: fadeIn 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500;
+  animation: fadeIn 0.2s ease;
 }
 
 .modalContent {
-  background: #ffffff;
-  width: 80vw;      
-  max-width: 900px; 
-  height: 80vh;     
-  max-height: 900px;
+  width: min(92vw, 960px);
+  max-height: 92vh;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  box-shadow: var(--shadow-strong);
   overflow-y: auto;
-  border-radius: 16px;
-  padding: 20px;
   position: relative;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
   animation: slideUp 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
-
 
 .closeX {
   position: absolute;
-  top: 12px;
-  right: 14px;
-  font-size: 22px;
+  top: 1.2rem;
+  right: 1.2rem;
+  font-size: 1.4rem;
   cursor: pointer;
-  color: #444;
-  transition: 0.2s;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--color-surface);
+  transition: background var(--transition-fast);
 }
+
 .closeX:hover {
-  color: #000;
-  transform: scale(1.1);
+  background: var(--color-accent-soft);
 }
 
-/* כותרת */
 .modalTitle {
-  margin-top: 10px;
   text-align: center;
-  font-size: 22px;
-  font-weight: 600;
-  color: #222;
+  margin: 0;
 }
 
-/* גריד התמונות */
 .modalGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
 }
 
-.modalItem img {
+.modalImage {
   width: 100%;
-  height: 180px;
+  height: 220px;
+  border-radius: var(--radius-md);
   object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transition: 0.25s;
+  box-shadow: var(--shadow-soft);
 }
 
-.modalItem img:hover {
-  transform: scale(1.02);
+.createLook {
+  display: flex;
+  justify-content: center;
 }
 
-/* אזור תגובות */
-.commentsSection {
-  margin-top: 25px;
-  padding: 15px;
-  background: #fafafa;
-  border-radius: 12px;
-  border: 1px solid #ececec;
-}
-
-.commentsSection h3 {
-  margin-bottom: 12px;
-  font-size: 18px;
+.createLook button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  border: none;
+  background: #1f1f1f;
+  color: #fff;
   font-weight: 600;
-  color: #333;
+  cursor: pointer;
 }
 
-/* תגובה בודדת */
+.commentsSection {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  background: var(--color-surface-muted);
+}
+
 .comment {
   display: flex;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-  gap: 10px;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .comment:last-child {
   border-bottom: none;
 }
 
-/* תמונת פרופיל בתגובות */
-.profileImage {
-  width: 36px;
-  height: 36px;
+.profileImage,
+.userAvatar {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   object-fit: cover;
-}
-
-/* או אות */
-.userAvatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #252525;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: var(--color-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
   font-weight: 600;
-  font-size: 16px;
 }
 
-/* טקסט "אין תגובות" */
 .noComments {
   text-align: center;
-  color: #777;
-  padding: 12px;
-  font-size: 14px;
+  color: var(--color-text-muted);
 }
 
-/* אנימציות */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(15px);
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
   }
 }
+

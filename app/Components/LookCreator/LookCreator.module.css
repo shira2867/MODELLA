@@ -3,34 +3,76 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 
 .container {
-  padding: 40px 20px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(1rem, 5vw, 3rem);
   font-family: "Montserrat", sans-serif;
-  background-color: #f9f7f6;
+  background: linear-gradient(135deg, #f9f7f6, #fff);
   min-height: 100vh;
   color: #080808;
 }
 
-.header {
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin-bottom: 30px;
-  gap: 15px;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.8rem;
+  color: #5c1a1a;
+  margin: 0;
 }
 
 .title {
   font-family: "Playfair Display", serif;
-  font-size: 2.8rem;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
   text-align: center;
   line-height: 1.2;
-  text-shadow: 1px 1px 0 #5c1a1a33, 2px 2px 4px #5c1a1a33;
+  margin: 0;
+}
+
+.description {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  color: rgba(8, 8, 8, 0.75);
+  margin: 0 auto;
+  max-width: 46ch;
+}
+
+.toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(92, 26, 26, 0.25);
+  background: rgba(92, 26, 26, 0.06);
+  border-radius: 999px;
+  padding: 0.9rem 1.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.toggle:hover {
+  background: rgba(92, 26, 26, 0.12);
+  transform: translateY(-1px);
+}
+
+.toggleOpen {
+  background: rgba(92, 26, 26, 0.2);
 }
 
 .arrow {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   transition: transform 0.3s ease;
 }
 
@@ -38,136 +80,270 @@
   transform: rotate(180deg);
 }
 
+.panel {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: max-height 0.6s ease, opacity 0.3s ease, margin-top 0.3s ease;
+  pointer-events: none;
+}
+
+.panelOpen {
+  max-height: 5000px;
+  opacity: 1;
+  margin-top: 1.5rem;
+  pointer-events: auto;
+}
+
+.panelBody {
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px rgba(8, 8, 8, 0.08);
+}
 
 .lookRow {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  margin-bottom: 30px;
-}
-
-.lookRow::-webkit-scrollbar {
-  height: 8px;
-}
-
-.lookRow::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.25rem;
 }
 
 .lookImage {
-  width: 120px;
-  height: 160px;
-  object-fit: cover;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  padding: 5px;
-  transition: all 0.3s ease;
+  border: none;
+  background: #f9f7f6;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
   cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lookImage img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+}
+
+.lookLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
 }
 
 .lookImage:hover {
-  transform: scale(1.05);
-  border-color: #888;
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 .activeCategory {
-  border: 2px solid #5c1a1a;
+  box-shadow: 0 0 0 2px #5c1a1a, 0 25px 40px rgba(92, 26, 26, 0.2);
 }
 
 .selectionContainer {
+  background: #fdfbfb;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.selectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.selectionTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.selectionHint {
+  margin: 0;
+  color: rgba(8, 8, 8, 0.65);
+  font-size: 0.9rem;
+}
+
+.selectionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
 }
 
 .userItem {
-  border: 1px solid #ccc;
-  width: 120px;
-  height: 160px;
-  border-radius: 6px;
-  padding: 3px;
-  transition: all 0.2s ease;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 0.75rem;
+  background: #fff;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.userItem img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
 }
 
 .userItem:hover {
-  transform: scale(1.05);
-  border-color: #888;
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 .selectedItem {
-  border: 2px solid #5c1a1a !important;
+  border-color: #5c1a1a;
+  box-shadow: 0 15px 35px rgba(92, 26, 26, 0.25);
+}
+
+.emptyState {
+  text-align: center;
+  color: #5c1a1a;
+  font-weight: 600;
+  margin: 0;
+}
+
+.previewSection {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.previewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  margin: 0;
 }
 
 .previewContainer {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
 }
 
-.previewContainer img {
-  border: 2px solid #5c1a1a;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+.previewItem {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: #fdfbfb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.previewItem img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+}
+
+.previewPlaceholder {
+  margin: 0;
+  color: rgba(8, 8, 8, 0.7);
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
 }
 
 .buttonContainer {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-  margin-bottom: 30px;
 }
 
 .button {
-  background-color: #000;
+  background-color: #5c1a1a;
   color: #fff;
   border: none;
-  border-radius: 10px;
-  padding: 14px 35px;
-  font-size: 1.1rem;
+  border-radius: 999px;
+  padding: 0.95rem 2.75rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 15px 35px rgba(92, 26, 26, 0.25);
 }
 
 .button:hover {
-  background-color: #333;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 25px 45px rgba(92, 26, 26, 0.3);
 }
 
 .button:active {
   transform: translateY(0);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 480px) {
-  .title {
-    font-size: 2rem;
+@media (max-width: 768px) {
+  .panelBody {
+    padding: 1.25rem;
   }
 
   .lookRow {
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
 
-  .selectionContainer {
-    gap: 10px;
+  .previewHeader {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .previewContainer {
-    gap: 10px;
+  .toggle {
+    border-radius: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .selectionContainer,
+  .previewSection {
+    padding: 1.25rem;
+  }
+
+  .userItem img,
+  .previewItem img,
+  .lookImage img {
+    height: 130px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .panel,
+  .lookImage,
+  .userItem,
+  .button {
+    transition: none;
   }
 }

@@ -1,211 +1,260 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
-
 .container {
   position: sticky;
-  top: 20px;
-  flex: 0 0 22%;
-  align-self: flex-start;
+  top: clamp(1rem, 3vw, 2rem);
+}
+
+.panel {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1.5rem, 3vw, 2rem);
+  transition: border var(--transition-fast), box-shadow var(--transition-base),
+    transform var(--transition-base);
+}
+
+.panelCollapsed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panelExpanded {
+  transform: translateY(0);
+}
+
+.openCard {
+  width: 100%;
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  border: 1px dashed var(--color-border-strong);
+  background: linear-gradient(145deg, rgba(92, 26, 26, 0.08), rgba(255, 255, 255, 0.9));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.openCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.cardEyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 0;
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  margin: 0;
+  color: var(--color-text);
+}
+
+.cardHint {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0;
 }
 
 .lookWrapper {
-  position: relative;
-  top: auto;
-  left: auto;
-  transform: none;
-  z-index: auto;
-  animation: fadeIn 0.4s ease;
-  border: #000000 2px solid;
-  width: 100%;
-}
-
-.lookArea {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  width: 90%;
-  max-width: 100%;
-  height: 520px;
-  border: 2px dashed #ccc;
-  padding: 15px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-.hint {
-  text-align: center;
-  width: 100%;
-  color: #888;
-  font-size: 1.2rem;
-}
-
-.buttons {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-  height: 45px;
-  margin-top: 0;
+  flex-direction: column;
+  gap: 1.2rem;
+  animation: fadeIn 0.3s ease;
 }
 
-.saveBtn,
-.cancelBtn {
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 28px;
-  cursor: pointer;
-  border: none;
-  transition: all 0.3s ease;
-  min-width: 120px;
-  width: 50%;
-  height: 45px;
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
 }
 
-.saveBtn {
-  background: linear-gradient(135deg, #000000, #333333);
-  color: #fff;
+.panelEyebrow {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.4rem;
 }
 
-.saveBtn:hover {
-  background: linear-gradient(135deg, #333333, #000000);
-  transform: scale(1.05);
+.panelTitle {
+  font-size: 1.4rem;
+  margin: 0;
 }
 
-.openBtn {
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 28px;
-  cursor: pointer;
-  border: none;
-  transition: all 0.3s ease;
-  min-width: 120px;
-  width: 50%;
-  height: 60px;
-  border-radius: 15px;
-  background: linear-gradient(135deg, #000000, #333333);
-  color: #fff;
-  align-items: center;
-  margin-left: 80px;
-}
-.openBtn:hover {
-  background: linear-gradient(135deg, #5c1a1a, #3a0f0f);
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: 600;
-  text-align: center;
-  color: #333;
-  margin: 10px 0;
-  line-height: 1.4;
-}
-
-.title br {
-  display: none;
-}
-
-@media (min-width: 600px) {
-  .title br {
-    display: inline;
-  }
-}
-
-.title + img {
-  display: block;
-  margin: 10px auto 20px;
-  animation: bounce 1.5s infinite ease-in-out;
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(10px);
-  }
-}
-
-.openBtn:hover {
-  transform: translateY(-3px);
-  background-color: #e0e0e0;
-  color: black;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.cancelBtn {
-  background: #f2f2f2;
-  color: #333;
-}
-
-.cancelBtn:hover {
-  background: #e0e0e0;
-  transform: scale(1.05);
+.panelMeta {
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
 }
 
 .closeBtn {
-  background: none;
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  border: none;
-  width: 35px;
-  height: 35px;
-  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 1;
+  transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
 .closeBtn:hover {
+  background: var(--color-accent-soft);
   transform: rotate(90deg);
+}
+
+.helperText {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.lookArea {
+  min-height: 420px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  border: 1.5px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  background: var(--color-surface-muted);
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.lookAreaFilled {
+  background: var(--color-surface);
+  border-color: var(--color-accent);
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 2.5rem 1rem;
+}
+
+.emptyState span {
+  font-size: 0.9rem;
+}
+
+.lookItem {
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+.lookItem img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.lookItem button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.75rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.lookItem button:hover {
+  background: rgba(92, 26, 26, 0.9);
+}
+
+.actionBar {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.primaryButton,
+.secondaryButton {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.primaryButton {
+  background: linear-gradient(130deg, #1b1b1b, #4a3932);
+  color: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.primaryButton:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.secondaryButton {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.secondaryButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.lookItem {
-  margin: 8px;
-  position: relative;
-  flex-shrink: 0;
-}
+@media (max-width: 700px) {
+  .container {
+    position: static;
+  }
 
-.lookItem img {
-  flex-shrink: 0;
-  width: 150px;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+  .panel {
+    padding: 1.25rem;
+  }
 
-.lookItem button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: #fff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 0.9rem;
-  padding: 2px 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
-}
+  .panelHeader {
+    flex-direction: column;
+  }
 
-.lookItem button:hover {
-  background: #e74c3c;
-  color: #fff;
-  transform: rotate(15deg);
+  .closeBtn {
+    align-self: flex-end;
+  }
+
+  .lookArea {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
 }
