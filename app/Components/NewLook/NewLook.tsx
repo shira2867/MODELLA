@@ -1,42 +1,95 @@
 "use client";
 
-import React, { useState, FC } from "react";
+import React, { useState, FC, useCallback } from "react";
 import Image from "next/image";
 import styles from "./NewLook.module.css";
-import down from '../../../public/down.png';
-import { useUserStore } from "../../../store/userStore"; 
+import down from "../../../public/down.png";
+import { useUserStore } from "../../../store/userStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ClothingItem } from "@/types/clothTypes";
 import { LookType } from "@/types/lookTypes";
+import { analyzeImageColors } from '@/services/client/imageAnalysis';
 
-// פונקציה ששולחת את ה-look לשרת
 const postLook = async (look: LookType) => {
   const res = await fetch("/api/looks", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(look),
   });
-
   if (!res.ok) {
     const errorData = await res.json();
     throw new Error(errorData.error || "Failed to save look");
   }
-
   return res.json();
 };
 
-const NewLook: FC = () => {
+interface NewLookProps {
+  setInspirationColors: (colors: string[]) => void;
+  lookMode: "default" | "inspiration";
+  onModeChange: (mode: "default" | "inspiration") => void;
+}
+
+const NewLook: FC<NewLookProps> = ({
+  setInspirationColors,
+  lookMode,
+  onModeChange,
+}) => {
   const [selectedItems, setSelectedItems] = useState<ClothingItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const userId = useUserStore((state) => state.userId); // נטען ישירות מה-store
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const userId = useUserStore((state) => state.userId);
   const queryClient = useQueryClient();
 
+  const handleOpen = useCallback(
+    (mode: "default" | "inspiration") => {
+      onModeChange(mode);
+      setIsOpen(true);
+      setUploadedImage(null);
+      setInspirationColors([]);
+    },
+    [onModeChange, setInspirationColors]
+  );
+
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+    onModeChange("default");
+    setUploadedImage(null);
+    setInspirationColors([]);
+  }, [onModeChange, setInspirationColors]);
+
+  const handleImageUpload: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUploadedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    setIsAnalyzing(true);
+    setInspirationColors([]); 
+    
+try {
+      const colors = await analyzeImageColors(file); 
+      setInspirationColors(colors); 
+      console.log("Colors for filtering:", colors);
+    } catch (error) {
+      console.error("Image analysis failed", error);
+      alert("Failed to analyze image colors.");
+      setInspirationColors([]);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
   const mutation = useMutation({
     mutationFn: postLook,
     onSuccess: (data) => {
       console.log("Look saved:", data.look);
       setSelectedItems([]);
-      setIsOpen(false);
+      handleClose();
       alert("Look saved successfully!");
       queryClient.invalidateQueries({ queryKey: ["looks"] });
     },
@@ -98,19 +151,57 @@ const NewLook: FC = () => {
           </h1>
           <Image src={down} alt="down arrow" width={60} height={60} />
           <br />
-          <button className={styles.openBtn} onClick={() => setIsOpen(true)}>
-            Create New Look
-          </button>
+          <div className={styles.initialButtons}>
+            <button
+              className={styles.openBtn}
+              onClick={() => handleOpen("default")}
+            >
+              Create New Look
+            </button>
+            <button
+              className={styles.openInspirationBtn}
+              onClick={() => handleOpen("inspiration")}
+            >
+              Look From Inspiration
+            </button>
+          </div>
         </>
       ) : (
         <div className={styles.lookWrapper}>
           <button
             className={styles.closeBtn}
-            onClick={() => setIsOpen(false)}
+            onClick={handleClose}
             title="Close Look Area"
           >
             ❌
           </button>
+
+          {lookMode === "inspiration" && (
+            <div className={styles.inspirationArea}>
+              <h3>Look From Inspiration </h3>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={isAnalyzing}
+                className={styles.fileInput}
+              />
+              {isAnalyzing && (
+                <p className={styles.analysisStatus}>
+                  Analyzing image... Hang tight! ⏳
+                </p>
+              )}
+              {uploadedImage && (
+                <div className={styles.uploadedImageWrapper}>
+                  <img
+                    src={uploadedImage}
+                    alt="Inspiration"
+                    className={styles.uploadedImage}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           <div
             className={styles.lookArea}

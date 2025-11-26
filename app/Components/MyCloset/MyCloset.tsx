@@ -9,20 +9,14 @@ import all from "../../../public/summer_11907165.png";
 import coat from "../../../public/clothes_15930120.png";
 import shirt from "../../../public/crop-top_10339535.png";
 import Accessories from "../../../public/accessories_5029392.png";
-import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal"; 
+import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal";
 import pants from "../../../public/short_13387117.png";
 import filter from "../../../public/filter_7420963.png";
 import { ClothingItem } from "@/types/clothTypes";
 import { FaTshirt, FaHatCowboy, FaUserTie, FaMale } from "react-icons/fa";
 import { GiClothes, GiLargeDress, GiSkirt } from "react-icons/gi";
+import { fetchClothes } from "@/services/client/closet";
 
-
-
-
-
-
-
-// קבועים
 const COLOR_MAP: Record<string, [number, number, number]> = {
   Red: [255, 0, 0],
   Pink: [255, 192, 203],
@@ -39,24 +33,49 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
 };
 
 const CATEGORIES = [
-  { key: "All", image: <Image src={all} alt="All clothes" width={30} height={30} /> },
-  { key: "shirt", image: <Image src={shirt} alt="shirt" width={30} height={30} /> },
-  { key: "pants", image: <Image src={pants} alt="pants" width={30} height={30} /> },
-  { key: "Jacket&coat", image: <Image src={coat} alt="coat" width={30} height={30} /> },
-  { key: "dress", image: <Image src={all} alt="dress" width={30} height={30} /> },
-  { key: "Skirts", image: <Image src={all} alt="skirt" width={30} height={30} /> },
-  { key: "Shoes", image: <Image src={all} alt="shoes" width={30} height={30} /> },
-  { key: "Accessories", image: <Image src={Accessories} alt="Accessories" width={30} height={30} /> },
+  {
+    key: "All",
+    image: <Image src={all} alt="All clothes" width={30} height={30} />,
+  },
+  {
+    key: "shirt",
+    image: <Image src={shirt} alt="shirt" width={30} height={30} />,
+  },
+  {
+    key: "pants",
+    image: <Image src={pants} alt="pants" width={30} height={30} />,
+  },
+  {
+    key: "Jacket&coat",
+    image: <Image src={coat} alt="coat" width={30} height={30} />,
+  },
+  {
+    key: "dress",
+    image: <Image src={all} alt="dress" width={30} height={30} />,
+  },
+  {
+    key: "Skirts",
+    image: <Image src={all} alt="skirt" width={30} height={30} />,
+  },
+  {
+    key: "Shoes",
+    image: <Image src={all} alt="shoes" width={30} height={30} />,
+  },
+  {
+    key: "Accessories",
+    image: <Image src={Accessories} alt="Accessories" width={30} height={30} />,
+  },
 ];
 
 const STYLES = ["casual", "sporty", "formal"];
 const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
-import {fetchClothes} from "@/services/client/closet"
-type MyClosetProps = { userId: string; };
 
+type MyClosetProps = {
+  userId: string;
+  inspirationColors: string[];
+};
 
-
-const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
+const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [colorFilter, setColorFilter] = useState<string | null>(null);
   const [styleFilter, setStyleFilter] = useState<string | null>(null);
@@ -72,8 +91,23 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   });
 
   const filteredClothes = clothes.filter((item) => {
-    if (categoryFilter && categoryFilter !== "All" && item.category !== categoryFilter) return false;
-    if (colorFilter && item.colorName !== colorFilter) return false;
+    if (
+      categoryFilter &&
+      categoryFilter !== "All" &&
+      item.category !== categoryFilter
+    )
+      return false;
+    if (
+      inspirationColors.length === 0 &&
+      colorFilter &&
+      item.colorName !== colorFilter
+    )
+      return false;
+    if (inspirationColors.length > 0) {
+      if (!item.colorName || !inspirationColors.includes(item.colorName)) {
+        return false;
+      }
+    }
     if (styleFilter && item.style !== styleFilter) return false;
     if (seasonFilter && item.thickness) {
       const thicknessSeasonMap: Record<string, string[]> = {
@@ -90,28 +124,36 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
-        {/* category */}
         <div className={styles.categoryFilterRow}>
           <div className={styles.categoryRow}>
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.key}
-                className={`${styles.categoryButton} ${categoryFilter === cat.key ? styles.active : ""}`}
-                onClick={() => setCategoryFilter(cat.key === "All" ? null : cat.key)}
+                className={`${styles.categoryButton} ${
+                  categoryFilter === cat.key ? styles.active : ""
+                }`}
+                onClick={() =>
+                  setCategoryFilter(cat.key === "All" ? null : cat.key)
+                }
               >
                 {cat.image}
               </button>
             ))}
           </div>
           {!showFilters && (
-            <button className={styles.filterToggle} onClick={() => setShowFilters(true)}>
+            <button
+              className={styles.filterToggle}
+              onClick={() => setShowFilters(true)}
+            >
               <Image src={filter} alt="Filter" width={30} height={30} />
             </button>
           )}
         </div>
-
-        {/* Sidebar filters */}
-        <div className={`${styles.sidebarFilter} ${showFilters ? styles.open : ""}`}>
+        <div
+          className={`${styles.sidebarFilter} ${
+            showFilters ? styles.open : ""
+          }`}
+        >
           <button
             className={styles.filterToggle}
             onClick={() => setShowFilters(false)}
@@ -119,47 +161,75 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
           >
             <Image src={close} alt="Close Menu" width={30} height={30} />
           </button>
-
-          {/* צבע */}
-          <div className={styles.filterGroup}>
-            <label>Color:</label>
-            <div className={styles.colorOptions}>
-              {Object.keys(COLOR_MAP).map((color) => (
-                <div
-                  key={color}
-                  className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""}`}
-                  style={{ backgroundColor: `rgb(${COLOR_MAP[color].join(",")})` }}
-                  onClick={() => setColorFilter(colorFilter === color ? null : color)}
-                />
-              ))}
+          {inspirationColors.length > 0 && (
+            <div className={styles.filterGroup}>
+              <label className={styles.inspirationLabel}>
+                🎨 Inspired Look Active:
+                <span style={{ fontWeight: "bold", color: "#5c1a1a" }}>
+                  Filtering by {inspirationColors.length} colors!
+                </span>
+              </label>
+              <div className={styles.optionList}>
+                {inspirationColors.map((color) => (
+                  <span key={color} className={styles.inspirationColorTag}>
+                    {color}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+          {inspirationColors.length === 0 && (
+            <div className={styles.filterGroup}>
+              <label>Color:</label>
+              <div className={styles.colorOptions}>
+                {Object.keys(COLOR_MAP).map((color) => (
+                  <div
+                    key={color}
+                    className={`${styles.colorCircle} ${
+                      colorFilter === color ? styles.activeColor : ""
+                    }`}
+                    style={{
+                      backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
+                    }}
+                    onClick={() =>
+                      setColorFilter(colorFilter === color ? null : color)
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
-          {/* Style */}
           <div className={styles.filterGroup}>
             <label>Style:</label>
             <div className={styles.optionList}>
               {STYLES.map((style) => (
                 <button
                   key={style}
-                  className={`${styles.filterButton} ${styleFilter === style ? styles.active : ""}`}
-                  onClick={() => setStyleFilter(styleFilter === style ? null : style)}
+                  className={`${styles.filterButton} ${
+                    styleFilter === style ? styles.active : ""
+                  }`}
+                  onClick={() =>
+                    setStyleFilter(styleFilter === style ? null : style)
+                  }
                 >
                   {style}
                 </button>
               ))}
             </div>
           </div>
-
-          {/* Season */}
           <div className={styles.filterGroup}>
             <label>Season:</label>
             <div className={styles.optionList}>
               {SEASONS.map((season) => (
                 <button
                   key={season}
-                  className={`${styles.filterButton} ${seasonFilter === season ? styles.active : ""}`}
-                  onClick={() => setSeasonFilter(seasonFilter === season ? null : season)}
+                  className={`${styles.filterButton} ${
+                    seasonFilter === season ? styles.active : ""
+                  }`}
+                  onClick={() =>
+                    setSeasonFilter(seasonFilter === season ? null : season)
+                  }
                 >
                   {season}
                 </button>
@@ -184,7 +254,10 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
                       className={styles.clothImage}
                       draggable
                       onDragStart={(e) => {
-                        e.dataTransfer.setData("application/json", JSON.stringify(item));
+                        e.dataTransfer.setData(
+                          "application/json",
+                          JSON.stringify(item)
+                        );
                       }}
                     />
                   </div>
@@ -213,7 +286,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
             setSelectedClothing(null);
           }}
           onComplete={({ updated, deleted }) => {
-            
             alert(
               updated.length + deleted.length > 0
                 ? `Updated ${updated.length} looks, deleted ${deleted.length} looks.`
@@ -227,3 +299,4 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId }) => {
 };
 
 export default MyCloset;
+

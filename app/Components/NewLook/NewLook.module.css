@@ -34,13 +34,6 @@
   scroll-behavior: smooth;
 }
 
-.hint {
-  text-align: center;
-  width: 100%;
-  color: #888;
-  font-size: 1.2rem;
-}
-
 .buttons {
   display: flex;
   flex-direction: row;
@@ -208,4 +201,67 @@
   background: #e74c3c;
   color: #fff;
   transform: rotate(15deg);
+}
+
+.initialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.openInspirationBtn {
+  composes: openBtn;
+}
+
+.openInspirationBtn:hover {
+  background: linear-gradient(135deg, #5c1a1a, #7a2a2a);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.inspirationArea {
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.inspirationArea h3 {
+  margin-top: 0;
+  color: #333;
+  font-family: "Poppins", sans-serif;
+}
+
+.fileInput {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 80%;
+}
+
+.uploadedImageWrapper {
+  margin-top: 10px;
+}
+
+.uploadedImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  object-fit: cover;
+}
+
+.analysisStatus {
+  color: #555;
+  font-style: italic;
+  margin: 10px 0;
+}
+
+.openBtn {
+  margin-left: 0;
+  width: 70%;
 }
