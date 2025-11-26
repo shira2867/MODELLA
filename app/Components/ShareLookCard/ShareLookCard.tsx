@@ -10,11 +10,11 @@ type Props = {
   look: ShareLookType;
 };
 
-export default function SharedLookCard({ look }: Props) {
+export default function ShareLookCard({ look }: Props) {
   const [open, setOpen] = useState(false);
   const [likes, setLikes] = useState<string[]>(look.likes || []);
-
   const userId = useUserStore((state) => state.userId);
+  const profileImage = useUserStore((state) => state.user?.profileImage);
 
   const handleLike = (updatedLikes: string[]) => {
     setLikes(updatedLikes);
@@ -25,24 +25,33 @@ export default function SharedLookCard({ look }: Props) {
   return (
     <div className={styles.container}>
       <div className={styles.card} onClick={() => setOpen(true)}>
-        <div className={styles.grid}>
-          {look.items?.map((item, index) => (
-            <div key={item._id || index} className={styles.itemWrapper}>
-              <img
-                className={styles.image}
-                src={item.imageUrl}
-                alt={item.category || "item"}
-              />
-            </div>
-          ))}
+        <div className={styles.cardHeader}>
+          {profileImage && (
+            <img
+              src={profileImage}
+              alt="User profile"
+              className={styles.profileImage}
+            />
+          )}
+
+          <div className={styles.cardSummary}>
+            <h3 className={styles.cardTitle}>{look.items?.length} curated items</h3>
+            <p className={styles.cardHelper}>Tap any piece for a full-screen preview.</p>
+          </div>
         </div>
-        <div className={styles.info}>
-          <LikeButton
-            lookId={look._id}
-            userId={userId}  // עכשיו תמיד מוגדר
-            likes={likes}
-            onLike={handleLike}
-          />
+
+        <div className={styles.cardBody}>
+          <div className={styles.grid}>
+            {look.items?.map((item) => (
+              <div key={item._id} className={styles.itemWrapper}>
+                <img className={styles.image} src={item.imageUrl} alt={item.category || "item"} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.cardFooter}>
+          <LikeButton lookId={look._id} userId={userId} likes={likes} onLike={handleLike} />
         </div>
       </div>
 
