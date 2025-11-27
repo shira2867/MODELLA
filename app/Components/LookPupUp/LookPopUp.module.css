@@ -108,7 +108,6 @@
   cursor: pointer;
 }
 
-/* Alternate full-width button (if used) */
 .createButton {
   margin-top: 20px;
   padding: 12px 18px;
@@ -129,78 +128,95 @@
   transform: translateY(-2px);
 }
 
-/* Comments section */
 .commentsSection {
   margin-top: 22px;
   padding: 1.25rem;
-  background: var(--color-surface-muted);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
   direction: ltr;
   text-align: left;
 }
 
-/* Single comment row */
 .comment {
   display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fafafa62; 
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); 
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 10px;
+  transition: background 0.2s ease, transform 0.2s ease;
+  position: relative;
 }
 
-.comment:last-child {
-  border-bottom: none;
+.comment:hover {
+  background: #f0f0f0;
+  transform: translateY(-1px);
 }
 
-/* Avatar image */
-.profileImage {
-  width: 36px;
-  height: 36px;
+.commentAvatar {
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
-/* Fallback avatar */
-.userAvatar {
-  width: 40px;
-  height: 40px;
+.commentAvatarFallback {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  object-fit: cover;
-  background: var(--color-accent);
+  background: #5c1a1a;
   color: #fff;
+  font-weight: 600;
   display: grid;
   place-items: center;
-  font-weight: 600;
+  flex-shrink: 0;
+  font-size: 18px;
 }
 
-/* Comment text wrapper */
 .commentContent {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  padding-top: 3px; 
 }
 
-/* Name line */
 .commentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.commentUserName {
   font-weight: 600;
   font-size: 14px;
   color: #222;
-  margin-bottom: 2px;
 }
 
-/* Comment text */
+.commentDate {
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .commentText {
   font-size: 14px;
-  color: #555;
-  line-height: 1.4;
+  color: #060606;
+  line-height: 1.5;
+  word-break: break-word;
 }
 
-/* "No comments yet" */
 .noComments {
   text-align: center;
-  color: var(--color-text-muted);
-  padding: 10px 0 4px;
+  color: #999;
   font-size: 14px;
+  padding: 10px 0;
 }
+
 
 /* Animations */
 @keyframes fadeIn {
@@ -239,4 +255,86 @@
   .modalGrid {
     grid-template-columns: 1fr;
   }
+}
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(1rem, 5vw, 3rem);
+  font-family: "Montserrat", sans-serif;
+  background: linear-gradient(135deg, #f9f7f6, #fff);
+  min-height: 50vh;
+  color: #080808;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.8rem;
+  color: #5c1a1a;
+  margin: 0;
+}
+
+.title {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.description {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  color: rgba(8, 8, 8, 0.75);
+  margin: 0 auto;
+  max-width: 46ch;
+}
+
+.toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(92, 26, 26, 0.25);
+  background: rgba(92, 26, 26, 0.06);
+  border-radius: 999px;
+  padding: 0.9rem 1.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.toggle:hover {
+  background: rgba(92, 26, 26, 0.12);
+  transform: translateY(-1px);
+}
+
+.toggleOpen {
+  background: rgba(92, 26, 26, 0.2);
+}
+
+.arrow {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.3s ease;
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+.commentDate {
+  font-size: 12px;
+  color: #999;
+  margin-left: 10px;
 }

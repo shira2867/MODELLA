@@ -93,35 +93,7 @@ export default function BuildSimilarLook({ look }: Props) {
 
   return (
     <section className={styles.container}>
-      <header className={styles.sectionHeader}>
-        <p className={styles.eyebrow}>Closet remix</p>
-        <h1 className={styles.title}>Do you want to create a new look?</h1>
-        <p className={styles.description}>
-          Replace inspiration pieces with items from your closet to build a personalised edit.
-        </p>
-      </header>
-
-      <button
-        type="button"
-        className={`${styles.toggle} ${isOpen ? styles.toggleOpen : ""}`}
-        onClick={togglePanel}
-        aria-expanded={isOpen}
-        aria-controls="look-creator-panel"
-      >
-        <span>{isOpen ? "Hide look builder" : "Show look builder"}</span>
-        <Image
-          src={down}
-          alt="Toggle look builder"
-          className={`${styles.arrow} ${isOpen ? styles.open : ""}`}
-        />
-      </button>
-
-      <section
-        id="look-creator-panel"
-        className={`${styles.panel} ${isOpen ? styles.panelOpen : ""}`}
-        aria-hidden={!isOpen}
-        aria-label="Look builder panel"
-      >
+      <section>
         <div className={styles.panelBody}>
           <div className={styles.lookRow}>
             {look.items.map((item) => (

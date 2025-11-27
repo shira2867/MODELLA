@@ -14,15 +14,13 @@ export default function ShareLookCard({ look }: Props) {
   const [open, setOpen] = useState(false);
   const [likes, setLikes] = useState<string[]>(look.likes || []);
   const userId = useUserStore((state) => state.userId);
-  const profileImage = useUserStore((state) => state.user?.profileImage);
 
   const handleLike = (updatedLikes: string[]) => {
     setLikes(updatedLikes);
   };
-
+console.log(look.profileImage)
   if (!userId) return <div>Loading...</div>;
 
-  // Show up to 4 items inside the card (2x2 grid)
   const previewItems = Array.isArray(look.items)
     ? look.items.slice(0, 4)
     : [];

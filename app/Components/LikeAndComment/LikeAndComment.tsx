@@ -17,7 +17,6 @@ export function LikeButton({
   onLike: (newLikes: string[]) => void;
 }) {
   const handleLike = async (e: React.MouseEvent) => {
-    // Prevents the card's onClick from firing
     e.stopPropagation();
     if (!userId) {
       console.error("Missing userId");
@@ -81,6 +80,7 @@ export function CommentForm({
       await axios.post(`/api/sharelook/${lookId}/comment`, {
         userId,
         userName,
+        profileImage,
         text: text.trim(),
       });
 
@@ -99,8 +99,23 @@ export function CommentForm({
 
   return (
     <form onSubmit={handleSubmit} className={styles.commentForm}>
-      {/* Small user avatar next to the input */}
-      {profileImage ? (
+       <button
+        type="submit"
+        className={styles.commentButton}
+        disabled={loading}
+      >
+        {loading ? "Sending..." : "Send"}
+      </button>
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Add a comment..."
+        className={styles.commentInput}
+        disabled={loading}
+      />
+
+   
+          {profileImage ? (
         <img
           src={profileImage}
           alt={userName}
@@ -111,22 +126,6 @@ export function CommentForm({
           {userName?.charAt(0).toUpperCase() || "U"}
         </div>
       )}
-
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Add a comment..."
-        className={styles.commentInput}
-        disabled={loading}
-      />
-
-      <button
-        type="submit"
-        className={styles.commentButton}
-        disabled={loading}
-      >
-        {loading ? "Sending..." : "Send"}
-      </button>
     </form>
   );
 }
