@@ -29,11 +29,7 @@ interface NewLookProps {
   onModeChange: (mode: "default" | "inspiration") => void;
 }
 
-const NewLook: FC<NewLookProps> = ({
-  setInspirationColors,
-  lookMode,
-  onModeChange,
-}) => {
+const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChange }) => {
   const [selectedItems, setSelectedItems] = useState<ClothingItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -66,9 +62,7 @@ const NewLook: FC<NewLookProps> = ({
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setUploadedImage(reader.result as string);
-    };
+    reader.onloadend = () => setUploadedImage(reader.result as string);
     reader.readAsDataURL(file);
 
     setIsAnalyzing(true);
@@ -90,7 +84,6 @@ const NewLook: FC<NewLookProps> = ({
   const mutation = useMutation({
     mutationFn: postLook,
     onSuccess: (data) => {
-      console.log("Look saved:", data.look);
       setSelectedItems([]);
       handleClose();
       alert("Look saved successfully!");
@@ -126,14 +119,8 @@ const NewLook: FC<NewLookProps> = ({
   };
 
   const saveLook = () => {
-    if (!userId) {
-      alert("User not found. Please log in.");
-      return;
-    }
-    if (selectedItems.length === 0) {
-      alert("Add at least one clothing item before saving!");
-      return;
-    }
+    if (!userId) return alert("User not found. Please log in.");
+    if (selectedItems.length === 0) return alert("Add at least one clothing item before saving!");
 
     const look: LookType = {
       _id: "",
@@ -295,27 +282,17 @@ const NewLook: FC<NewLookProps> = ({
             </div>
 
             <div className={styles.actionBar}>
-              <button
-                type="button"
-                className={styles.primaryButton}
-                onClick={saveLook}
-                disabled={mutation.isPending}
-              >
+              <button type="button" onClick={saveLook} disabled={mutation.isPending}>
                 {mutation.isPending ? "Saving..." : "Save look"}
               </button>
-              <button
-                type="button"
-                className={styles.secondaryButton}
-                onClick={() => setSelectedItems([])}
-                disabled={!hasItems || mutation.isPending}
-              >
+              <button type="button" onClick={() => setSelectedItems([])} disabled={!hasItems || mutation.isPending}>
                 Reset
               </button>
             </div>
           </div>
-        )}
-      </div>
-    </section>
+        </section>
+      )}
+    </div>
   );
 };
 

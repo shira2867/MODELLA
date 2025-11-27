@@ -31,13 +31,7 @@ export default function ShareLookCard({ look }: Props) {
     <div className={styles.container}>
       <div className={styles.card} onClick={() => setOpen(true)}>
         <div className={styles.cardHeader}>
-          {profileImage && (
-            <img
-              src={profileImage}
-              alt="User profile"
-              className={styles.profileImage}
-            />
-          )}
+          
 
           <div className={styles.cardSummary}>
             <h3 className={styles.cardTitle}>{look.items?.length} curated items</h3>
@@ -57,6 +51,9 @@ export default function ShareLookCard({ look }: Props) {
 
         <div className={styles.cardFooter}>
           <LikeButton lookId={look._id} userId={userId} likes={likes} onLike={handleLike} />
+        </div>
+         <div className={styles.profileImage}>
+          <img src={look.profileImage} alt="profileImage" />
         </div>
       </div>
 
