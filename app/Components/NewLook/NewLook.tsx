@@ -29,7 +29,11 @@ interface NewLookProps {
   onModeChange: (mode: "default" | "inspiration") => void;
 }
 
-const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChange }) => {
+const NewLook: FC<NewLookProps> = ({
+  setInspirationColors,
+  lookMode,
+  onModeChange,
+}) => {
   const [selectedItems, setSelectedItems] = useState<ClothingItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -83,7 +87,7 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
 
   const mutation = useMutation({
     mutationFn: postLook,
-    onSuccess: (data) => {
+    onSuccess: () => {
       setSelectedItems([]);
       handleClose();
       alert("Look saved successfully!");
@@ -120,7 +124,8 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
 
   const saveLook = () => {
     if (!userId) return alert("User not found. Please log in.");
-    if (selectedItems.length === 0) return alert("Add at least one clothing item before saving!");
+    if (selectedItems.length === 0)
+      return alert("Add at least one clothing item before saving!");
 
     const look: LookType = {
       _id: "",
@@ -138,11 +143,9 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
   return (
     <section className={styles.container} aria-live="polite">
       <div className={styles.shell}>
-          {!isOpen ? (
+        {!isOpen ? (
           <div className={styles.introCard}>
-            <div
-              className={styles.introContent}
-            >
+            <div className={styles.introContent}>
               <div className={styles.introCopy}>
                 <p className={styles.cardEyebrow}>Create a look</p>
                 <h1 className={styles.cardTitle}>Craft your next outfit</h1>
@@ -203,6 +206,7 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
                 Drag &amp; drop garments from your closet grid. Remove items any
                 time.
               </p>
+
               {lookMode === "inspiration" && (
                 <div className={styles.inspirationArea}>
                   {uploadedImage ? (
@@ -228,6 +232,7 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
                         <h3>Look From Inspiration</h3>
                         <p>Upload a mood image to pull guiding colors.</p>
                       </div>
+
                       <label className={styles.fileField}>
                         <span>
                           {isAnalyzing ? "Analyzing..." : "Upload image"}
@@ -239,6 +244,7 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
                           disabled={isAnalyzing}
                         />
                       </label>
+
                       {isAnalyzing && (
                         <p className={styles.analysisStatus}>
                           Analyzing image... Hang tight! ⏳
@@ -248,6 +254,7 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
                   )}
                 </div>
               )}
+
               <div
                 className={`${styles.lookArea} ${
                   hasItems ? styles.lookAreaFilled : ""
@@ -282,17 +289,25 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
             </div>
 
             <div className={styles.actionBar}>
-              <button type="button" onClick={saveLook} disabled={mutation.isPending}>
+              <button
+                type="button"
+                onClick={saveLook}
+                disabled={mutation.isPending}
+              >
                 {mutation.isPending ? "Saving..." : "Save look"}
               </button>
-              <button type="button" onClick={() => setSelectedItems([])} disabled={!hasItems || mutation.isPending}>
+              <button
+                type="button"
+                onClick={() => setSelectedItems([])}
+                disabled={!hasItems || mutation.isPending}
+              >
                 Reset
               </button>
             </div>
           </div>
-        </section>
-      )}
-    </div>
+        )}
+      </div>
+    </section>
   );
 };
 

@@ -27,7 +27,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
 
   if (!userId) console.warn("User ID is null! Sharing disabled.");
-  console.log("userId",userId)
 
   const { data: shareStatus } = useQuery({
     queryKey: ["shareLookStatus", lookId],
