@@ -237,6 +237,8 @@ export default function AuthForm() {
       return res.json();
     },
     onSuccess: (data, variables) => {
+        console.log("profileImage from variables:", variables.profileImage);
+
       setUserStore({
         name: variables.name || "",
         email: variables.email || null,
