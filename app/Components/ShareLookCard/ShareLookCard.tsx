@@ -22,6 +22,11 @@ export default function ShareLookCard({ look }: Props) {
 
   if (!userId) return <div>Loading...</div>;
 
+  // Show up to 4 items inside the card (2x2 grid)
+  const previewItems = Array.isArray(look.items)
+    ? look.items.slice(0, 4)
+    : [];
+
   return (
     <div className={styles.container}>
       <div className={styles.card} onClick={() => setOpen(true)}>

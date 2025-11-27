@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import styles from "./DeleteHandleLooksModal.module.css";
@@ -9,6 +9,8 @@ type Props = {
   open: boolean;
   onClose: () => void;
   onComplete: (result: { updated: string[]; deleted: string[] }) => void;
+  itemImageUrl?: string;
+  itemCategory?: string;
 };
 
 type MutationResponse = {
@@ -33,6 +35,8 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
   open,
   onClose,
   onComplete,
+  itemImageUrl,
+  itemCategory,
 }) => {
   const queryClient = useQueryClient();
   const [actions, setActions] = useState<Record<string, "update" | "delete">>(
@@ -97,6 +101,23 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
 
   if (!open) return null;
 
+  const previewImageUrl = useMemo(() => {
+    if (itemImageUrl) return itemImageUrl;
+
+    const containingLook = looks.find((look) =>
+      look.items.some((item) => item._id === clothingId)
+    );
+
+    const matchedItem = containingLook?.items.find(
+      (item) => item._id === clothingId
+    );
+
+    if (matchedItem?.imageUrl) return matchedItem.imageUrl;
+
+    const firstItem = looks[0]?.items[0];
+    return firstItem?.imageUrl ?? null;
+  }, [looks, clothingId, itemImageUrl]);
+
   return (
     <div className={styles.modalOverlay} role="presentation">
       <div
@@ -105,15 +126,36 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
         aria-modal="true"
         aria-label="Delete or update looks"
       >
-        <h2>Item is used in these looks</h2>
+        <h2>Confirm deletion</h2>
+        <div className={styles.previewSection}>
+          <div className={styles.previewImageFrame}>
+            {previewImageUrl ? (
+              <img
+                src={previewImageUrl}
+                alt={itemCategory || "Selected closet item"}
+                className={styles.previewImage}
+              />
+            ) : (
+              <span className={styles.previewFallback}>
+                No preview available
+              </span>
+            )}
+          </div>
+          <div className={styles.previewCopy}>
+            <p>This is the item you are about to delete.</p>
+            <p className={styles.previewSubcopy}>
+              Review each look below and decide how it should be handled.
+            </p>
+          </div>
+        </div>
 
         {isLoading ? (
           <p>Loading related looks...</p>
         ) : looks.length === 0 ? (
-          <p>
-            This item isn't used in any look. Are you sure you want to delete
-            it?
-          </p>
+          <div className={styles.emptyState}>
+            <p>This item isn't used in any look.</p>
+            <p>Click confirm below to permanently delete it.</p>
+          </div>
         ) : (
           <div className={styles.looksContainer}>
             {looks.map((look) => (
@@ -129,19 +171,47 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
                     </div>
                   ))}
                 </div>
-                <select
-                  className={styles.select}
-                  value={actions[look._id]}
-                  onChange={(e) =>
-                    handleActionChange(
-                      look._id,
-                      e.target.value as "update" | "delete"
-                    )
-                  }
-                >
-                  <option value="update">Remove item from look</option>
-                  <option value="delete">Delete entire look</option>
-                </select>
+
+                <div className={styles.checkboxGroup} role="group">
+                  <label
+                    className={`${styles.checkboxOption} ${
+                      actions[look._id] === "update"
+                        ? styles.checkboxOptionActive
+                        : ""
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={actions[look._id] === "update"}
+                      onChange={() => handleActionChange(look._id, "update")}
+                      aria-label="Remove item from look"
+                    />
+                    <div className={styles.checkboxCopy}>
+                      <span>Remove item from look</span>
+                      <small>Keep the look but take this item out of it.</small>
+                    </div>
+                  </label>
+                  <label
+                    className={`${styles.checkboxOption} ${
+                      actions[look._id] === "delete"
+                        ? styles.checkboxOptionActive
+                        : ""
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={actions[look._id] === "delete"}
+                      onChange={() => handleActionChange(look._id, "delete")}
+                      aria-label="Delete entire look"
+                    />
+                    <div className={styles.checkboxCopy}>
+                      <span>Delete entire look</span>
+                      <small>
+                        Permanently remove the entire look from your closet.
+                      </small>
+                    </div>
+                  </label>
+                </div>
               </div>
             ))}
           </div>
@@ -152,7 +222,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
             type="button"
             className={styles.confirmButton}
             onClick={handleConfirm}
-            disabled={mutation.isPending} 
+            disabled={mutation.isPending}
           >
             {mutation.isPending ? "Processing..." : "Confirm"}
           </button>

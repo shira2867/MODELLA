@@ -11,7 +11,7 @@
 }
 
 .modalContent {
-  width: min(90vw, 540px);
+  width: min(95vw, 600px);
   max-height: 85vh;
   background: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -20,10 +20,51 @@
   box-shadow: var(--shadow-strong);
   overflow-y: auto;
   animation: popIn 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .modalContent h2 {
   margin-bottom: 1rem;
+}
+
+.previewSection {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.previewImageFrame {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.previewCopy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--color-text);
+}
+
+.previewCopy p:first-child {
+  font-weight: 600;
+}
+
+.previewSubcopy {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
 }
 
 .looksContainer {
@@ -44,8 +85,8 @@
 
 .lookGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: 0.4rem;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 0.5rem;
 }
 
 .itemWrapper {
@@ -61,13 +102,46 @@
   object-fit: cover;
 }
 
-.select {
-  width: 100%;
-  border-radius: var(--radius-sm);
+.checkboxGroup {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.checkboxOption {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  padding: 0.5rem;
   border: 1px solid var(--color-border);
-  padding: 0.5rem 0.75rem;
-  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  gap: 0.5rem;
   background: var(--color-surface);
+}
+
+.checkboxOptionActive {
+  border-color: #5c1a1a;
+  background: rgba(92, 26, 26, 0.1);
+}
+
+.checkboxOption input {
+  margin-top: 0.2rem;
+}
+
+.checkboxCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.checkboxCopy span {
+  font-weight: 500;
+}
+
+.checkboxCopy small {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
 }
 
 .modalActions {
@@ -122,4 +196,3 @@
     transform: translateY(0);
   }
 }
-

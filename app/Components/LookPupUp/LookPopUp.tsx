@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { ShareLookType } from "@/types/shareLookType";
 import styles from "./LookPopUp.module.css";
 import { LikeButton, CommentForm } from "../LikeAndComment/LikeAndComment";
 import { useUserStore } from "@/store/userStore";
+import down from "../../../public/img/down.png";
 
 type Props = {
   look: ShareLookType;
@@ -13,11 +15,13 @@ type Props = {
 };
 
 export default function LookPopup({ look, onClose }: Props) {
+  const itemsArray = Array.isArray(look.items) ? look.items : [];
   const router = useRouter();
 
   const [comments, setComments] = useState<any[]>(
     Array.isArray(look.comments) ? look.comments : []
   );
+
   const [name, setName] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -54,17 +58,17 @@ export default function LookPopup({ look, onClose }: Props) {
 
         <h2 className={styles.modalTitle}>Look Preview</h2>
 
+        {/* Items grid */}
         <div className={styles.modalGrid}>
-          {Array.isArray(look.items) &&
-            look.items.map((item) => (
-              <div key={item._id} className={styles.modalItem}>
-                <img
-                  src={item.imageUrl || "/placeholder.png"}
-                  alt={item.category || "item"}
-                  className={styles.modalImage}
-                />
-              </div>
-            ))}
+          {itemsArray.map((item) => (
+            <div key={item._id} className={styles.modalItem}>
+              <img
+                src={item.imageUrl || "/placeholder.png"}
+                alt={item.category || "item"}
+                className={styles.modalImage}
+              />
+            </div>
+          ))}
         </div>
 
         <div className={styles.createLook}>
@@ -73,8 +77,18 @@ export default function LookPopup({ look, onClose }: Props) {
           </button>
         </div>
 
+
+        {/* Comments section */}
         <div className={styles.commentsSection}>
-          <h3>תגובות</h3>
+          <CommentForm
+            lookId={look._id}
+            userId={userId || ""}
+            userName={name || "Guest"}
+            profileImage={profileImage || undefined}
+            onNewComment={(newComments) =>
+              setComments(Array.isArray(newComments) ? newComments : [])
+            }
+          />
 
           {Array.isArray(comments) && comments.length > 0 ? (
             comments.map((c: any, i: number) => (
@@ -90,21 +104,16 @@ export default function LookPopup({ look, onClose }: Props) {
                     {c.userName?.charAt(0).toUpperCase() || "U"}
                   </div>
                 )}
-                <strong>{c.userName}</strong>: {c.text}
+
+                <div className={styles.commentContent}>
+                  <div className={styles.commentHeader}>{c.userName}</div>
+                  <p className={styles.commentText}>{c.text}</p>
+                </div>
               </div>
             ))
           ) : (
-            <p className={styles.noComments}>אין תגובות עדיין</p>
+            <p className={styles.noComments}>No comments yet</p>
           )}
-
-          <CommentForm
-            lookId={look._id}
-            userId={userId || ""}
-            userName={name || "Guest"}
-            onNewComment={(newComments) =>
-              setComments(Array.isArray(newComments) ? newComments : [])
-            }
-          />
         </div>
       </div>
     </div>
