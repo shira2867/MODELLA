@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { shareLooksCollection } from "@/services/server/shareLook";
 import { looksCollection } from "@/services/server/looks";
+import { usersCollection } from "@/services/server/users";
+
 import { ShareLookType } from "@/types/shareLookType";
 import user from "../../../public/user.png";
 
@@ -46,3 +48,4 @@ export async function GET() {
   const looks = await collection.find().sort({ createdAt: -1 }).toArray();
   return NextResponse.json(looks);
 }
+

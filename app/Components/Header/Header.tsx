@@ -11,7 +11,8 @@ import { useUserStore } from "@/store/userStore";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const user = useUserStore((state) => state.user);
-
+const profileImage=user?.profileImage;
+console.log("profileImage",profileImage)
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
@@ -47,7 +48,7 @@ export default function Header() {
           {user?.profileImage ? (
             <Image
               src={user.profileImage}
-              alt="User Icon"
+              alt="profileImage"
               width={50}
               height={50}
               className={styles.userImage}

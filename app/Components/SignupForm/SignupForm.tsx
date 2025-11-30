@@ -237,16 +237,17 @@ export default function AuthForm() {
       return res.json();
     },
     onSuccess: (data, variables) => {
-        console.log("profileImage from variables:", variables.profileImage);
 
       setUserStore({
         name: variables.name || "",
         email: variables.email || null,
-        profileImage: variables.profileImage || "",
+        profileImage:  variables.profileImage ?? null,
+
         gender: null,
       });
 
       if (data.message === "User updated") {
+        alert("you need to login")
         router.push("/login");
       } else {
         router.push("/complete-profile");
@@ -258,22 +259,30 @@ export default function AuthForm() {
   });
 
   // ---------- Google Sign-In ----------  
-  async function signInWithGoogle() {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const firebaseUser = result.user;
+async function signInWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const firebaseUser = result.user;
 
-      registerUserMutation.mutate({
-        name: firebaseUser.displayName,
-        email: firebaseUser.email,
-        profileImage: firebaseUser.photoURL,
-      });
+    console.log("firebaseUser:", firebaseUser);
+    console.log("Sending to backend:", {
+      name: firebaseUser.displayName,
+      email: firebaseUser.email,
+      profileImage: firebaseUser.photoURL,
+    });
 
-      setUser(firebaseUser);
-    } catch (error) {
-      console.error("Google Login Error:", error);
-    }
+    // קריאה אחת בלבד למוטציה
+    registerUserMutation.mutate({
+      name: firebaseUser.displayName ?? "",
+      email: firebaseUser.email ?? "",
+      profileImage: firebaseUser.photoURL ?? "",
+    });
+
+    setUser(firebaseUser);
+  } catch (error) {
+    console.error("Google Login Error:", error);
   }
+}
 
   // ---------- Email/Password Sign-Up ----------  
   async function onSubmit(data: FormData) {
@@ -368,16 +377,7 @@ export default function AuthForm() {
           </form>
         ) : (
           <div className={styles.userInfo}>
-            <h2>Welcome, {user.displayName || user.email}</h2>
-            {user.photoURL && (
-              <Image
-                src={user.photoURL}
-                alt="Profile"
-                width={100}
-                height={100}
-                className={styles.profileImage}
-              />
-            )}
+       
           </div>
         )}
       </div>

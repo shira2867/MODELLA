@@ -4,7 +4,7 @@ import { usersCollection } from "@/services/server/users";
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { email, name, gender, profileImage } = body;
+    const { email, name, gender } = body;
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -14,7 +14,8 @@ export async function PUT(req: Request) {
 
     const result = await col.updateOne(
       { email },
-      { $set: { name, gender,profileImage, updatedAt: new Date() } }
+
+      { $set: { name, gender, updatedAt: new Date() } }
     );
 
     if (result.matchedCount === 0) {

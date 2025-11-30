@@ -263,7 +263,6 @@ export default function LoginForm() {
     },
   });
 
-  // ---------- Handlers ----------  
   const handleGoogleLogin = () => {
     setErrorMessage("");
     loginMutation.mutate({ method: "google", email: "", password: "" });
