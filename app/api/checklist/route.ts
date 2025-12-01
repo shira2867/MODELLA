@@ -28,22 +28,45 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const result = await addChecklistItem(body);
-    return NextResponse.json({ message: "Item added", id: result.insertedId });
+
+    return NextResponse.json({
+      ...body,
+      _id: result.insertedId.toString(),
+      createdAt: new Date().toISOString(),
+    });
   } catch (err) {
     console.error("Error adding checklist item:", err);
     return NextResponse.json({ message: "Error adding item" }, { status: 500 });
   }
 }
 
+
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
     const { id, text, completed } = body;
-    if (!id)
-      return NextResponse.json({ message: "Missing id" }, { status: 400 });
 
+    if (!id) {
+      return NextResponse.json(
+        { message: "Missing id" },
+        { status: 400 }
+      );
+    }
+
+    // עדכון במסד הנתונים
     const updated = await updateChecklistItem(id, { text, completed });
-    return NextResponse.json({ message: "Item updated", item: updated });
+
+    // החזרת אובייקט מלא ל־client
+    return NextResponse.json({
+      message: "Item updated",
+      item: {
+        _id: id,
+        text,
+        completed,
+        ...(updated?.createdAt && { createdAt: updated.createdAt }),
+        ...(updated?.userId && { userId: updated.userId }),
+      },
+    });
   } catch (err) {
     console.error("Error updating checklist item:", err);
     return NextResponse.json(
@@ -52,6 +75,7 @@ export async function PUT(req: Request) {
     );
   }
 }
+
 
 export async function DELETE(req: Request) {
   try {
