@@ -14,6 +14,6 @@ export type UserType = {
 
 export type ProfileData = {
   name: string;
-  gender: string;
+  gender: "male" | "female" | "";
   profileImage?: string;
 };
