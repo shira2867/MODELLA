@@ -42,6 +42,7 @@ export default function Header() {
           "New Cloth",
           "My Looks",
           "Style Feed",
+          "Checklist",
         ].map((text, i) => (
           <Link
             key={i}
