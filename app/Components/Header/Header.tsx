@@ -13,16 +13,15 @@ import { useRouter } from "next/navigation";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const user = useUserStore((state) => state.user);
-  const profileImage = user?.profileImage;
-  console.log("profileImage", profileImage)
+  const router = useRouter();
+
   const toggleMenu = () => setIsOpen(!isOpen);
-    const router = useRouter();
 
   const handleClick = () => {
     const ok = confirm("Are you sure you want to log out?");
     if (ok) {
-      signOutUser();      
-      router.push("/welcome"); 
+      signOutUser();
+      router.push("/welcome");
     }
   };
 
@@ -35,15 +34,7 @@ export default function Header() {
       </div>
 
       <nav className={`${styles.nav} ${isOpen ? styles.open : ""}`}>
-        {[
-          "Home",
-          "About",
-          "My Closet",
-          "New Cloth",
-          "My Looks",
-          "Style Feed",
-          "Checklist",
-        ].map((text, i) => (
+        {["Home", "About", "My Closet", "New Cloth", "My Looks", "Style Feed", "Checklist"].map((text, i) => (
           <Link
             key={i}
             href={`/${text.toLowerCase().replace(/\s/g, "")}`}
@@ -74,22 +65,12 @@ export default function Header() {
           )}
         </button>
 
-        <button
-          className={styles.hamburger}
-          onClick={toggleMenu}
-          aria-label="Toggle Menu"
-        >
-          {isOpen ? (
-            <Image src={close} alt="Close Menu" width={50} height={50} />
-          ) : (
-            <Image src={menu} alt="Open Menu" width={50} height={50} />
-          )}
+        <button className={styles.hamburger} onClick={toggleMenu} aria-label="Toggle Menu">
+          {isOpen ? <Image src={close} alt="Close Menu" width={50} height={50} /> : <Image src={menu} alt="Open Menu" width={50} height={50} />}
         </button>
       </div>
 
-      {isOpen && (
-        <div className={styles.overlay} onClick={() => setIsOpen(false)} />
-      )}
+      {isOpen && <div className={styles.overlay} onClick={() => setIsOpen(false)} />}
     </header>
   );
 }

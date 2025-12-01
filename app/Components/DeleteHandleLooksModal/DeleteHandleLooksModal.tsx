@@ -13,6 +13,7 @@ type Props = {
   itemCategory?: string;
 };
 
+
 type MutationResponse = {
   updatedLooks: string[];
   deletedLooks: string[];
