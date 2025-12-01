@@ -10,18 +10,23 @@ import { LikeButton, CommentForm } from "../../Components/LikeAndComment/LikeAnd
 import styles from "./shareLookId.module.css";
 
 import { ShareLookType } from "@/types/shareLookType";
+import { useUserStore } from "@/store/userStore";   // 👈 חדש
 
 export default function ShareLookPage() {
   const params = useParams();
   const lookId = params?.id as string;
   const queryClient = useQueryClient();
 
+  // מזהים את המשתמש מה-localStorage כמו שהיה
   const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
-
     setUserId(storedUserId);
   }, []);
+
+  // 👇 השם מגיע מה־userStore המעודכן (אחרי פרופיל)
+  const { user } = useUserStore();
+  const userName = user?.name || "";
 
   const { data: look, isLoading, refetch } = useQuery({
     queryKey: ["share-look", lookId],
@@ -61,14 +66,15 @@ export default function ShareLookPage() {
       <CommentForm
         lookId={look._id}
         userId={userId}
-        userName={""}
+        userName={userName}              // 👈 עכשיו השם המעודכן נכנס לטופס
         onNewComment={addCommentToState}
       />
 
       <ul className={styles.commentList}>
         {look.comments?.map((c, i) => (
           <li key={i} className={styles.commentItem}>
-            <strong>{c.userId}</strong>: {c.text}
+            {/* אם יש userName מהשרת – נשתמש בו, אחרת נ fallback ל-userId */}
+            <strong>{(c as any).userName || c.userId}</strong>: {c.text}
           </li>
         ))}
       </ul>

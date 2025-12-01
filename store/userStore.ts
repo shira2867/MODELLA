@@ -22,19 +22,23 @@ export const useUserStore = create<UserStore>()(
       user: null,
       userId: null,
 
-      setUser: (user) => set({ user }),
+      setUser: (user) => {
+        console.log("ZUSTAND setUser called with:", user); // 👈 דיבאג
+        set({ user });
+      },
+
       setUserId: (id) => {
         set({ userId: id });
         if (id) {
-          localStorage.setItem("userId", id); 
+          localStorage.setItem("userId", id);
         } else {
-          localStorage.removeItem("userId"); 
+          localStorage.removeItem("userId");
         }
       },
 
       clearUser: () => {
         set({ user: null, userId: null });
-        localStorage.removeItem("userId"); 
+        localStorage.removeItem("userId");
       },
     }),
     {
