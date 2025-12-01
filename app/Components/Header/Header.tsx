@@ -7,12 +7,24 @@ import logo from "../../../public/logo.png";
 import menu from "../../../public/menu.png";
 import close from "../../../public/remove.png";
 import { useUserStore } from "@/store/userStore";
+import { signOutUser } from "@/app/firebase/authActions";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const user = useUserStore((state) => state.user);
-
+  const profileImage = user?.profileImage;
+  console.log("profileImage", profileImage)
   const toggleMenu = () => setIsOpen(!isOpen);
+    const router = useRouter();
+
+  const handleClick = () => {
+    const ok = confirm("Are you sure you want to log out?");
+    if (ok) {
+      signOutUser();      
+      router.push("/welcome"); 
+    }
+  };
 
   return (
     <header className={styles.header}>
@@ -30,6 +42,7 @@ export default function Header() {
           "New Cloth",
           "My Looks",
           "Style Feed",
+          "Checklist",
         ].map((text, i) => (
           <Link
             key={i}
@@ -43,11 +56,11 @@ export default function Header() {
       </nav>
 
       <div className={styles.rightControls}>
-        <button className={styles.userButton}>
+        <button className={styles.userButton} onClick={handleClick}>
           {user?.profileImage ? (
             <Image
               src={user.profileImage}
-              alt="User Icon"
+              alt="profileImage"
               width={50}
               height={50}
               className={styles.userImage}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, KeyboardEvent } from "react";
 import type React from "react";
 import axios from "axios";
 import styles from "./LikeAndComment.module.css";
@@ -17,7 +17,6 @@ export function LikeButton({
   onLike: (newLikes: string[]) => void;
 }) {
   const handleLike = async (e: React.MouseEvent) => {
-    // Prevents the card's onClick from firing
     e.stopPropagation();
     if (!userId) {
       console.error("Missing userId");
@@ -61,35 +60,34 @@ export function CommentForm({
 }) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [emojiCategory, setEmojiCategory] = useState<"all" | "hearts" | "clothes">("all");
+
+  const allEmojis = {
+    all: ["😀", "😂", "😍", "😢", "😎", "👍", "💖", "🎉"],
+    hearts: ["❤️", "💖", "💘", "💞", "💕"],
+    clothes: ["👕", "👗", "👖", "🧥", "👟", "🥿", "🧢"],
+  } as const;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!userId) {
-      console.error("Missing userId");
-      return;
-    }
-    if (!text.trim()) {
-      console.error("Empty comment text");
-      return;
-    }
+    if (!userId) return;
+    if (!text.trim()) return;
 
     setLoading(true);
     try {
-      console.log("Sending request for lookId:", lookId);
-
       await axios.post(`/api/sharelook/${lookId}/comment`, {
         userId,
         userName,
+        profileImage,
         text: text.trim(),
       });
 
       const res = await axios.get(`/api/sharelook/${lookId}/comment`);
       const comments = res.data.comments || [];
-      console.log("GET comments response:", res.data);
-
       onNewComment(comments);
       setText("");
+      setShowEmojiPicker(false); // סוגר את האימוג'ים אחרי שליחה
     } catch (err) {
       console.error("Failed to add comment:", err);
     } finally {
@@ -97,9 +95,19 @@ export function CommentForm({
     }
   };
 
+  const addEmoji = (emoji: string) => {
+    setText((prev) => prev + emoji);
+    setShowEmojiPicker(false); // סוגר אחרי בחירת אימוג'י
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setShowEmojiPicker(false); // סוגר את האימוג'ים אחרי ENTER
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className={styles.commentForm}>
-      {/* Small user avatar next to the input */}
       {profileImage ? (
         <img
           src={profileImage}
@@ -112,13 +120,66 @@ export function CommentForm({
         </div>
       )}
 
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Add a comment..."
-        className={styles.commentInput}
-        disabled={loading}
-      />
+      <div className={styles.commentInputWrapper}>
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Add a comment..."
+          className={styles.commentInput}
+          disabled={loading}
+        />
+
+        <button
+          type="button"
+          className={styles.emojiButton}
+          onClick={() => setShowEmojiPicker((prev) => !prev)}
+        >
+          😀
+        </button>
+
+     {showEmojiPicker && (
+  <div className={styles.emojiPicker}>
+    <div className={styles.emojiCategories}>
+      <button
+        type="button"
+        onClick={() => setEmojiCategory("all")}
+        className={emojiCategory === "all" ? styles.activeCategory : ""}
+      >
+        All
+      </button>
+      <button
+        type="button"
+        onClick={() => setEmojiCategory("hearts")}
+        className={emojiCategory === "hearts" ? styles.activeCategory : ""}
+      >
+        Hearts
+      </button>
+      <button
+        type="button"
+        onClick={() => setEmojiCategory("clothes")}
+        className={emojiCategory === "clothes" ? styles.activeCategory : ""}
+      >
+        Clothes
+      </button>
+    </div>
+
+    <div className={styles.emojiGrid}>
+      {allEmojis[emojiCategory].map((emoji) => (
+        <button
+          key={emoji}
+          type="button"
+          className={styles.emojiItem}
+          onClick={() => addEmoji(emoji)}
+        >
+          {emoji}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
+      </div>
 
       <button
         type="submit"

@@ -190,7 +190,7 @@ import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import styles from "./Login.module.css";
 import { FormData } from "../../../types/userTypes";
-import { auth, provider } from "@/app/firebase/config"; // 👈 שימוש בקובץ המשותף
+import { auth, provider } from "@/app/firebase/config"; 
 
 export default function LoginForm() {
   const { register, handleSubmit } = useForm<FormData>();
@@ -199,7 +199,6 @@ export default function LoginForm() {
   const setUserId = useUserStore((state) => state.setUserId);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // ---------- React Query mutation ----------  
   const loginMutation = useMutation<
     { firebaseUser: User; dbData: any },
     any,
@@ -234,6 +233,9 @@ export default function LoginForm() {
     },
 
     onSuccess: async ({ firebaseUser, dbData }) => {
+         setUser(dbData.user); 
+         console.log("dbData.user",dbData.user.id)
+         setUserId(dbData.user.id)
       const idToken = await firebaseUser.getIdToken();
 
       const cookieRes = await fetch("/api/auth/set-cookie", {
@@ -261,7 +263,6 @@ export default function LoginForm() {
     },
   });
 
-  // ---------- Handlers ----------  
   const handleGoogleLogin = () => {
     setErrorMessage("");
     loginMutation.mutate({ method: "google", email: "", password: "" });

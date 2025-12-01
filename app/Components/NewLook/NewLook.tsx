@@ -8,7 +8,7 @@ import { useUserStore } from "../../../store/userStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ClothingItem } from "@/types/clothTypes";
 import { LookType } from "@/types/lookTypes";
-import { analyzeImageColors } from '@/services/client/imageAnalysis';
+import { analyzeImageColors } from "@/services/client/imageAnalysis";
 
 const postLook = async (look: LookType) => {
   const res = await fetch("/api/looks", {
@@ -59,22 +59,22 @@ const NewLook: FC<NewLookProps> = ({
     setInspirationColors([]);
   }, [onModeChange, setInspirationColors]);
 
-  const handleImageUpload: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
+  const handleImageUpload: React.ChangeEventHandler<HTMLInputElement> = async (
+    event
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setUploadedImage(reader.result as string);
-    };
+    reader.onloadend = () => setUploadedImage(reader.result as string);
     reader.readAsDataURL(file);
 
     setIsAnalyzing(true);
-    setInspirationColors([]); 
-    
-try {
-      const colors = await analyzeImageColors(file); 
-      setInspirationColors(colors); 
+    setInspirationColors([]);
+
+    try {
+      const colors = await analyzeImageColors(file);
+      setInspirationColors(colors);
       console.log("Colors for filtering:", colors);
     } catch (error) {
       console.error("Image analysis failed", error);
@@ -84,10 +84,10 @@ try {
       setIsAnalyzing(false);
     }
   };
+
   const mutation = useMutation({
     mutationFn: postLook,
-    onSuccess: (data) => {
-      console.log("Look saved:", data.look);
+    onSuccess: () => {
       setSelectedItems([]);
       handleClose();
       alert("Look saved successfully!");
@@ -123,14 +123,9 @@ try {
   };
 
   const saveLook = () => {
-    if (!userId) {
-      alert("User not found. Please log in.");
-      return;
-    }
-    if (selectedItems.length === 0) {
-      alert("Add at least one clothing item before saving!");
-      return;
-    }
+    if (!userId) return alert("User not found. Please log in.");
+    if (selectedItems.length === 0)
+      return alert("Add at least one clothing item before saving!");
 
     const look: LookType = {
       _id: "",
@@ -142,102 +137,177 @@ try {
     mutation.mutate(look);
   };
 
+  const selectedCount = selectedItems.length;
+  const hasItems = selectedCount > 0;
+
   return (
-    <div className={styles.container}>
-      {!isOpen ? (
-        <>
-          <h1 className={styles.title}>
-            You want to create a new look? <br /> Click here
-          </h1>
-          <Image src={down} alt="down arrow" width={60} height={60} />
-          <br />
-          <div className={styles.initialButtons}>
-            <button
-              className={styles.openBtn}
-              onClick={() => handleOpen("default")}
-            >
-              Create New Look
-            </button>
-            <button
-              className={styles.openInspirationBtn}
-              onClick={() => handleOpen("inspiration")}
-            >
-              Look From Inspiration
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className={styles.lookWrapper}>
-          <button
-            className={styles.closeBtn}
-            onClick={handleClose}
-            title="Close Look Area"
-          >
-            ❌
-          </button>
-
-          {lookMode === "inspiration" && (
-            <div className={styles.inspirationArea}>
-              <h3>Look From Inspiration </h3>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                disabled={isAnalyzing}
-                className={styles.fileInput}
-              />
-              {isAnalyzing && (
-                <p className={styles.analysisStatus}>
-                  Analyzing image... Hang tight! ⏳
+    <section className={styles.container} aria-live="polite">
+      <div className={styles.shell}>
+        {!isOpen ? (
+          <div className={styles.introCard}>
+            <div className={styles.introContent}>
+              <div className={styles.introCopy}>
+                <p className={styles.cardEyebrow}>Create a look</p>
+                <h1 className={styles.cardTitle}>Craft your next outfit</h1>
+                <p className={styles.cardHint}>
+                  Drag pieces from My Closet into the builder.
                 </p>
-              )}
-              {uploadedImage && (
-                <div className={styles.uploadedImageWrapper}>
-                  <img
-                    src={uploadedImage}
-                    alt="Inspiration"
-                    className={styles.uploadedImage}
-                  />
-                </div>
-              )}
+              </div>
+              <Image
+                src={down}
+                alt="Open look builder"
+                width={56}
+                height={56}
+                className={styles.introIcon}
+              />
             </div>
-          )}
 
-          <div
-            className={styles.lookArea}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-          >
-            {selectedItems.length === 0 ? (
-              <p className={styles.hint}>Drag clothes here</p>
-            ) : (
-              selectedItems.map((item) => (
-                <div key={item._id} className={styles.lookItem}>
-                  <img src={item.imageUrl} alt={item.category} />
-                  <button onClick={() => removeItem(item._id)}>🗑️</button>
+            <div className={styles.introActions}>
+              <button
+                className={`${styles.ctaButton} ${styles.primaryCta}`}
+                onClick={() => handleOpen("default")}
+              >
+                Create New Look
+              </button>
+              <button
+                className={`${styles.ctaButton} ${styles.secondaryCta}`}
+                onClick={() => handleOpen("inspiration")}
+              >
+                Look From Inspiration
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div id="create-look-panel" className={styles.builderCard}>
+            <header className={styles.panelHeader}>
+              <div>
+                <p className={styles.panelEyebrow}>Create look</p>
+                <h3 className={styles.panelTitle}>Build a balanced outfit</h3>
+                <p className={styles.panelMeta}>
+                  {hasItems
+                    ? `${selectedCount} item${
+                        selectedCount === 1 ? "" : "s"
+                      } selected`
+                    : "No items yet"}
+                </p>
+              </div>
+              <button
+                type="button"
+                className={styles.closeBtn}
+                onClick={handleClose}
+                aria-label="Close look builder"
+              >
+                ✕
+              </button>
+            </header>
+
+            <div className={styles.scrollRegion}>
+              <p className={styles.helperText}>
+                Drag &amp; drop garments from your closet grid. Remove items any
+                time.
+              </p>
+
+              {lookMode === "inspiration" && (
+                <div className={styles.inspirationArea}>
+                  {uploadedImage ? (
+                    <div className={styles.uploadedImageContent}>
+                      <img
+                        src={uploadedImage}
+                        alt="Inspiration"
+                        className={styles.uploadedImage}
+                      />
+                      <button
+                        className={styles.resetImageBtn}
+                        onClick={() => {
+                          setUploadedImage(null);
+                          setInspirationColors([]);
+                        }}
+                      >
+                        Change Image
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className={styles.inspirationText}>
+                        <h3>Look From Inspiration</h3>
+                        <p>Upload a mood image to pull guiding colors.</p>
+                      </div>
+
+                      <label className={styles.fileField}>
+                        <span>
+                          {isAnalyzing ? "Analyzing..." : "Upload image"}
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={isAnalyzing}
+                        />
+                      </label>
+
+                      {isAnalyzing && (
+                        <p className={styles.analysisStatus}>
+                          Analyzing image... Hang tight! ⏳
+                        </p>
+                      )}
+                    </>
+                  )}
                 </div>
-              ))
-            )}
-          </div>
+              )}
 
-          <div className={styles.buttons}>
-            <button
-              className={styles.saveBtn}
-              onClick={saveLook}
-              disabled={mutation.isPending}
-            >
-              {mutation.isPending ? "Saving..." : "SAVE"}
-            </button>
-            <button
-              className={styles.cancelBtn}
-              onClick={() => setSelectedItems([])}
-            >
-              CANCEL
-            </button>
+              <div
+                className={`${styles.lookArea} ${
+                  hasItems ? styles.lookAreaFilled : ""
+                }`}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+              >
+                {hasItems ? (
+                  selectedItems.map((item) => (
+                    <div key={item._id} className={styles.lookItem}>
+                      <img
+                        src={item.imageUrl}
+                        alt={item.category}
+                        loading="lazy"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item._id)}
+                        aria-label={`Remove ${item.category}`}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className={styles.emptyState}>
+                    <p>Drag garments here to start styling.</p>
+                    <span>Tip: mix textures &amp; tones for balance.</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.actionBar}>
+              <button
+                type="button"
+                onClick={saveLook}
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? "Saving..." : "Save look"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedItems([])}
+                disabled={!hasItems || mutation.isPending}
+              >
+                Reset
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </section>
   );
 };
 

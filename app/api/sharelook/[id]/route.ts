@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { shareLooksCollection } from "@/services/server/shareLook";
-
+import { usersCollection } from "@/services/server/users"; // נניח שיש מסד משתמשים
 
 export async function GET(
   req: NextRequest,
@@ -8,11 +8,9 @@ export async function GET(
 ) {
   try {
     const { id } = await context.params;
-
     const collection = await shareLooksCollection();
 
     let look = await collection.findOne({ _id: id });
-
     if (!look) {
       look = await collection.findOne({ lookId: id });
     }
@@ -24,7 +22,15 @@ export async function GET(
         likes: [],
         items: [],
         comments: [],
+        profileImage: null, 
       }, { status: 200 });
+    }
+
+    let profileImage = null;
+    if (look.userId) {
+      const usersCol = await usersCollection();
+      const user = await usersCol.findOne({ _id: look.userId });
+      if (user) profileImage = user.profileImage || null;
     }
 
     return NextResponse.json({
@@ -33,12 +39,14 @@ export async function GET(
       likes: look.likes || [],
       items: look.items || [],
       comments: look.comments || [],
+      profileImage,
     }, { status: 200 });
   } catch (err) {
     console.error("Error fetching shared look:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
 
 
 

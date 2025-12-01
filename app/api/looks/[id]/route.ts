@@ -34,3 +34,34 @@ export async function GET(
     );
   }
 }
+
+
+
+
+export async function DELETE(
+  req: NextRequest,
+  context: RouteContext
+) {
+  const { id } = await context.params;
+
+  try {
+    const col = await looksCollection();
+
+    const result = await col.deleteOne({ _id: id });
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json(
+        { error: "Look not found or already deleted" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ message: "Look deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { error: "Failed to delete look" },
+      { status: 500 }
+    );
+  }
+}

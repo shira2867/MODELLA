@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { name, email, password, gender, profileImage } = body;
-
+console.log("profileImage",profileImage)
     if (!email) {
       return NextResponse.json(
         { error: "Email is required" },
