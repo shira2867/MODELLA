@@ -12,7 +12,7 @@ import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import styles from "./Login.module.css";
 import { FormData } from "../../../types/userTypes";
-import { auth, provider } from "@/app/firebase/config"; 
+import { auth, provider } from "@/app/firebase/config";
 
 export default function LoginForm() {
   const { register, handleSubmit } = useForm<FormData>();
