@@ -347,3 +347,63 @@
     transition: none;
   }
 }
+
+.notemodalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.notemodal {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 2px solid #5c1a1a; 
+}
+
+.notemodalText {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  font-family: "Playfair Display, Georgia, serif";
+  color: #111;
+}
+
+.notemodalButtons {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.notebutton {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #5c1a1a;
+  color: #fff;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.notebutton:hover {
+  background-color: #7d2222;
+}
+
+.notecancelButton {
+  background-color: #888;
+}
+
+.notecancelButton:hover {
+  background-color: #555;
+}
