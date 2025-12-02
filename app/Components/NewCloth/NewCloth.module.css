@@ -20,7 +20,9 @@
   font-family: "Montserrat", sans-serif;
   margin-bottom: 40px;
 }
-
+.pageWrapper {
+  padding: 0 !important;
+}
 .pageTitle {
   font-family: "Playfair Display", serif;
   font-size: 3.5rem;
@@ -144,9 +146,7 @@
 .submitBtn:disabled {
   opacity: 0.6;
 }
-.pageWrapper {
-  padding: 0 !important;
-}
+
 .NewCloth-module___m-_kW__container {
   padding: 0 !important;
 }
