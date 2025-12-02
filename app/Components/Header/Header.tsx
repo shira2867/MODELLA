@@ -1,3 +1,4 @@
+// Updated Header component with profile popup menu
 "use client";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,17 +13,23 @@ import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
 
   const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleProfile = () => setProfileOpen(!profileOpen);
 
-  const handleClick = () => {
+  const handleLogout = () => {
     const ok = confirm("Are you sure you want to log out?");
     if (ok) {
       signOutUser();
       router.push("/welcome");
     }
+  };
+
+  const handleGoWelcome = () => {
+    router.push("/welcome");
   };
 
   return (
@@ -47,7 +54,7 @@ export default function Header() {
       </nav>
 
       <div className={styles.rightControls}>
-        <button className={styles.userButton} onClick={handleClick}>
+        <button className={styles.userButton} onClick={toggleProfile}>
           {user?.profileImage ? (
             <Image
               src={user.profileImage}
@@ -65,8 +72,23 @@ export default function Header() {
           )}
         </button>
 
+        {profileOpen && (
+          <div className={styles.buttons}>
+            <button className={styles.profileButton} onClick={handleLogout}>
+              Logout
+            </button>
+            <button className={styles.profileButton} onClick={handleGoWelcome}>
+              Go to Welcome
+            </button>
+          </div>
+        )}
+
         <button className={styles.hamburger} onClick={toggleMenu} aria-label="Toggle Menu">
-          {isOpen ? <Image src={close} alt="Close Menu" width={50} height={50} /> : <Image src={menu} alt="Open Menu" width={50} height={50} />}
+          {isOpen ? (
+            <Image src={close} alt="Close Menu" width={50} height={50} />
+          ) : (
+            <Image src={menu} alt="Open Menu" width={50} height={50} />
+          )}
         </button>
       </div>
 

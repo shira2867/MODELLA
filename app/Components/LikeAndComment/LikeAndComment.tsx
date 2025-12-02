@@ -4,6 +4,7 @@ import { useState, KeyboardEvent } from "react";
 import type React from "react";
 import axios from "axios";
 import styles from "./LikeAndComment.module.css";
+import Image from "next/image";
 
 export function LikeButton({
   lookId,
@@ -87,7 +88,7 @@ export function CommentForm({
       const comments = res.data.comments || [];
       onNewComment(comments);
       setText("");
-      setShowEmojiPicker(false); // סוגר את האימוג'ים אחרי שליחה
+      setShowEmojiPicker(false); 
     } catch (err) {
       console.error("Failed to add comment:", err);
     } finally {
@@ -97,28 +98,34 @@ export function CommentForm({
 
   const addEmoji = (emoji: string) => {
     setText((prev) => prev + emoji);
-    setShowEmojiPicker(false); // סוגר אחרי בחירת אימוג'י
+    setShowEmojiPicker(false); 
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      setShowEmojiPicker(false); // סוגר את האימוג'ים אחרי ENTER
+      setShowEmojiPicker(false); 
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles.commentForm}>
-      {profileImage ? (
-        <img
-          src={profileImage}
-          alt={userName}
-          className={styles.commentAvatar}
-        />
-      ) : (
-        <div className={styles.commentAvatarFallback}>
-          {userName?.charAt(0).toUpperCase() || "U"}
-        </div>
-      )}
+{profileImage ? (
+  <Image
+    src={profileImage}
+    alt={userName}
+    width={40}
+    height={40}
+    className={styles.commentAvatar}
+    onError={(e) => {
+      const target = e.target as HTMLImageElement;
+      target.src = "/default-avatar.png"; 
+    }}
+  />
+) : (
+  <div className={styles.commentAvatarFallback}>
+    {userName?.charAt(0).toUpperCase() || "U"}
+  </div>
+)}
 
       <div className={styles.commentInputWrapper}>
         <input

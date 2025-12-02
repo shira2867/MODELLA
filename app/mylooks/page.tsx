@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import MyLooks from "@/app/Components/MyLooks/MyLooks";
 import Headers from "../Components/Header/Header";
 import Footer from "../Components/Footer/Footer";
+import styles from "./ShowMyLooks.module.css"; // ניצור CSS קטן
+
 export default function ShowMyLooks() {
   const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
@@ -13,12 +15,14 @@ export default function ShowMyLooks() {
   if (!userId) {
     return <div>Loading...</div>;
   }
-  return (
-    <div>
-      <Headers />
 
-      <MyLooks userId={userId} />
-      <Footer></Footer>
+  return (
+    <div className={styles.pageContainer}>
+      <Headers />
+      <div className={styles.mainContent}>
+        <MyLooks userId={userId} />
+      </div>
+      <Footer />
     </div>
   );
 }

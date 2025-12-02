@@ -116,17 +116,24 @@ export default function LookPopup({ look, onClose }: Props) {
           {Array.isArray(comments) && comments.length > 0 ? (
            comments.map((c: any, i: number) => (
   <div key={i} className={styles.comment}>
-    {c.profileImage ? (
-      <img
-        src={c.profileImage}
-        alt={c.userName}
-        className={styles.commentAvatar}
-      />
-    ) : (
-      <div className={styles.commentAvatarFallback}>
-        {c.userName?.charAt(0).toUpperCase() || "U"}
-      </div>
-    )}
+ {c.profileImage ? (
+  <Image
+    src={c.profileImage}
+    alt={c.userName}
+    width={40}
+    height={40}
+    className={styles.commentAvatar}
+    onError={(e) => {
+      const target = e.target as HTMLImageElement;
+      target.src = "/default-avatar.png"; 
+    }}
+  />
+) : (
+  <div className={styles.commentAvatarFallback}>
+    {c.userName?.charAt(0).toUpperCase() || "U"}
+  </div>
+)}
+
 
     <div className={styles.commentContent}>
       <div className={styles.commentHeader}>

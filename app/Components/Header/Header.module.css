@@ -111,3 +111,28 @@
     z-index: 199; 
   }
 }
+
+.buttons {
+
+display: flex;
+flex-direction: row; 
+gap: 20px; 
+}
+
+
+.profileButton {
+background: #f5f5f5;
+padding: 10px 14px;
+border-radius: 8px;
+cursor: pointer;
+font-size: 16px;
+transition: 0.2s;
+width: 100px;
+text-align: center;
+}
+
+
+.profileButton:hover {
+background: #090909;
+color: #fff;
+}

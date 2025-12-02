@@ -67,7 +67,7 @@ const CATEGORIES = [
   },
 ];
 
-const STYLES = ["casual", "sporty", "formal"];
+const STYLES = ["casual", "sporty", "formal","party"];
 const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 
 type MyClosetProps = {
@@ -223,7 +223,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
           {inspirationColors.length > 0 && (
             <div className={styles.filterGroup}>
               <label className={styles.inspirationLabel}>
-                🎨 Inspired Look Active:
+                 Inspired Look Active:
                 <span style={{ fontWeight: "bold", color: "#5c1a1a" }}>
                   Filtering by {inspirationColors.length} colors!
                 </span>
