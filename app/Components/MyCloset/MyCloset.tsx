@@ -67,7 +67,7 @@ const CATEGORIES = [
   },
 ];
 
-const STYLES = ["casual", "sporty", "formal","party"];
+const STYLES = ["casual", "sporty", "formal", "party"];
 const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 
 type MyClosetProps = {
@@ -83,7 +83,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
   const [showFilters, setShowFilters] = useState(false);
   const filterPanelId = "closet-filter-panel";
 
-  const [selectedClothing, setSelectedClothing] = useState<string | null>(null);
+  const [selectedClothing, setSelectedClothing] = useState<ClothingItem  | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: clothes = [], isLoading } = useQuery<ClothingItem[], Error>({
@@ -148,7 +148,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
             </div>
             <button
               onClick={() => {
-                setSelectedClothing(item._id);
+                setSelectedClothing(item);
                 setModalOpen(true);
               }}
               className={styles.deleteButton}
@@ -223,7 +223,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
           {inspirationColors.length > 0 && (
             <div className={styles.filterGroup}>
               <label className={styles.inspirationLabel}>
-                 Inspired Look Active:
+                Inspired Look Active:
                 <span style={{ fontWeight: "bold", color: "#5c1a1a" }}>
                   Filtering by {inspirationColors.length} colors!
                 </span>
@@ -334,7 +334,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                   </div>
                   <button
                     onClick={() => {
-                      setSelectedClothing(item._id);
+                      setSelectedClothing(item);
                       setModalOpen(true);
                     }}
                     className={styles.deleteButton}
@@ -350,7 +350,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
 
       {selectedClothing && (
         <DeleteHandleLooksModal
-          clothingId={selectedClothing}
+          clothingId={selectedClothing._id}
+          itemImageUrl={selectedClothing.imageUrl} 
+          
           open={modalOpen}
           onClose={() => {
             setModalOpen(false);

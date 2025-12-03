@@ -19,7 +19,7 @@ export default function ShowMyCloset() {
     const storedUserId = localStorage.getItem("userId");
     setUserId(storedUserId);
 
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    const checkMobile = () => setIsMobile(window.innerWidth <= 960);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
@@ -34,29 +34,26 @@ export default function ShowMyCloset() {
 
   return (
     <div className={styles.pageContainer}>
-      <Header />
-      <div className={styles.pageTitleWrapper}></div>
-
+      <Header /> <div className={styles.pageTitleWrapper}></div>{" "}
       {isMobile && (
         <MobileNewLookBanner
           setInspirationColors={setInspirationColors}
           lookMode={lookMode}
           onModeChange={handleModeChange}
         />
-      )}
-
+      )}{" "}
       <div className={styles.mainArea}>
+        {" "}
         {!isMobile && (
           <NewLook
             setInspirationColors={setInspirationColors}
             lookMode={lookMode}
             onModeChange={handleModeChange}
           />
-        )}
-        <MyCloset userId={userId} inspirationColors={inspirationColors} />
+        )}{" "}
+        <MyCloset userId={userId} inspirationColors={inspirationColors} />{" "}
       </div>
-
-      <Footer />
+      <Footer />{" "}
     </div>
   );
 }

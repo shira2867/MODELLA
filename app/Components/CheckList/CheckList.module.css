@@ -253,7 +253,7 @@
 }
 @media (max-width: 600px) {
   .noteHangerWrapper {
-    margin-top: 90px; /* קצת יותר מקום לקולב */
+    margin-top: 90px; 
   }
 
   .introCard {

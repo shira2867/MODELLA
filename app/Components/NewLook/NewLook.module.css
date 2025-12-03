@@ -178,7 +178,7 @@
   padding: 1rem;
   background: var(--color-surface-muted);
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  justify-content: center; 
+  justify-content: center;
 }
 
 .lookItem {
@@ -379,151 +379,156 @@
     transform: translateY(0);
   }
 }
+.initialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
 
+.openInspirationBtn {
+  composes: openBtn;
+}
+
+.openInspirationBtn:hover {
+  background: linear-gradient(135deg, #5c1a1a, #7a2a2a);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.inspirationArea {
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.inspirationArea h3 {
+  margin-top: 0;
+  color: #333;
+  font-family: "Poppins", sans-serif;
+}
+
+.fileInput {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 80%;
+}
+
+.uploadedImageWrapper {
+  margin-top: 10px;
+}
+
+.uploadedImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  object-fit: cover;
+}
+
+.analysisStatus {
+  color: #555;
+  font-style: italic;
+  margin: 10px 0;
+}
+
+.openBtn {
+  margin-left: 0;
+  width: 70%;
+}
+
+.initialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.openInspirationBtn {
+  composes: openBtn;
+}
+
+.openInspirationBtn:hover {
+  background: linear-gradient(135deg, #5c1a1a, #7a2a2a);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.inspirationArea {
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.inspirationArea h3 {
+  margin-top: 0;
+  color: #333;
+  font-family: "Poppins", sans-serif;
+}
+
+.fileInput {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 80%;
+}
+
+.uploadedImageWrapper {
+  margin-top: 10px;
+}
+
+.uploadedImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  object-fit: cover;
+}
+
+.analysisStatus {
+  color: #555;
+  font-style: italic;
+  margin: 10px 0;
+}
+
+.openBtn {
+  margin-left: 0;
+  width: 70%;
+}
+@media (max-width: 960px) {
+ .container {
+ position: static;
+ }
+
+ .builderCard {
+ padding: 1.25rem;
+ }
+
+ .panelHeader {
+ flex-direction: column;
+ }
+
+ .closeBtn {
+ align-self: flex-end;
+ }
+
+ .lookArea {
+ grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+ }
+}
 @media (max-width: 700px) {
-  .container {
-    position: static;
+  .panelTitle,
+  .helperText,
+  .panelMeta {
+    display: none;
   }
-
-  .builderCard {
-    padding: 1.25rem;
-  }
-
-  .panelHeader {
-    flex-direction: column;
-  }
-
-  .closeBtn {
-    align-self: flex-end;
-  }
-
-  .lookArea {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  }
-}
-
-.initialButtons {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  align-items: center;
-}
-
-.openInspirationBtn {
-  composes: openBtn;
-}
-
-.openInspirationBtn:hover {
-  background: linear-gradient(135deg, #5c1a1a, #7a2a2a);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.inspirationArea {
-  padding: 15px;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-}
-
-.inspirationArea h3 {
-  margin-top: 0;
-  color: #333;
-  font-family: "Poppins", sans-serif;
-}
-
-.fileInput {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 80%;
-}
-
-.uploadedImageWrapper {
-  margin-top: 10px;
-}
-
-.uploadedImage {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  object-fit: cover;
-}
-
-.analysisStatus {
-  color: #555;
-  font-style: italic;
-  margin: 10px 0;
-}
-
-.openBtn {
-  margin-left: 0;
-  width: 70%;
-}
-
-.initialButtons {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  align-items: center;
-}
-
-.openInspirationBtn {
-  composes: openBtn;
-}
-
-.openInspirationBtn:hover {
-  background: linear-gradient(135deg, #5c1a1a, #7a2a2a);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.inspirationArea {
-  padding: 15px;
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-}
-
-.inspirationArea h3 {
-  margin-top: 0;
-  color: #333;
-  font-family: "Poppins", sans-serif;
-}
-
-.fileInput {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 80%;
-}
-
-.uploadedImageWrapper {
-  margin-top: 10px;
-}
-
-.uploadedImage {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  object-fit: cover;
-}
-
-.analysisStatus {
-  color: #555;
-  font-style: italic;
-  margin: 10px 0;
-}
-
-.openBtn {
-  margin-left: 0;
-  width: 70%;
 }

@@ -13,7 +13,6 @@ type Props = {
   itemCategory?: string;
 };
 
-
 type MutationResponse = {
   updatedLooks: string[];
   deletedLooks: string[];
@@ -104,6 +103,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
 
   const previewImageUrl = useMemo(() => {
     if (itemImageUrl) return itemImageUrl;
+    if (!looks || looks.length === 0) return itemImageUrl ?? null;
 
     const containingLook = looks.find((look) =>
       look.items.some((item) => item._id === clothingId)
@@ -116,7 +116,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
     if (matchedItem?.imageUrl) return matchedItem.imageUrl;
 
     const firstItem = looks[0]?.items[0];
-    return firstItem?.imageUrl ?? null;
+    return firstItem?.imageUrl ?? itemImageUrl ?? null;
   }, [looks, clothingId, itemImageUrl]);
 
   return (

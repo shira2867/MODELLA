@@ -69,16 +69,14 @@ export default function BuildSimilarLook({ look }: Props) {
     }
     setUserItems(filtered);
   }, [look, allUserItems]);
+
   const handleCategoryClick = async (item: ClothingItem) => {
     if (!userId) return;
-
     const category = item.category;
     const colorName = item.colorName;
     const noteText = `${category} - ${colorName}`;
-
     try {
       const updateResult = await updateClick(userId, category, colorName!);
-
       const isExistingNote = existingNotes.includes(noteText);
       const isAlreadySelected = selectedItems[category]?._id === item._id;
       const isUserItemMatch =
@@ -101,6 +99,7 @@ export default function BuildSimilarLook({ look }: Props) {
     }
     setActiveCategory((prev) => (prev === category ? null : category));
   };
+  
   const handleAddNote = async () => {
     if (!noteCandidate || !userId) return;
 
