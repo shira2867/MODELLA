@@ -23,7 +23,9 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
   Orange: [255, 165, 0],
   Yellow: [255, 255, 0],
   Green: [0, 128, 0],
-  Blue: [0, 0, 255],    
+  Blue: [0, 0, 255],
+  LightBlue: [173, 216, 230],
+  Burgundy: [128, 0, 32],
   Purple: [128, 0, 128],
   Brown: [121, 85, 61],
   Gray: [128, 128, 128],
@@ -68,7 +70,7 @@ const CATEGORIES = [
   },
 ];
 
-const STYLES = ["casual", "sporty", "formal","party"];
+const STYLES = ["casual", "sporty", "formal", "party"];
 const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 
 type MyClosetProps = {
@@ -172,9 +174,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
               <button
                 key={cat.key}
                 type="button"
-                className={`${styles.categoryButton} ${
-                  categoryFilter === cat.key ? styles.active : ""
-                }`}
+                className={`${styles.categoryButton} ${categoryFilter === cat.key ? styles.active : ""
+                  }`}
                 onClick={() =>
                   setCategoryFilter(cat.key === "All" ? null : cat.key)
                 }
@@ -203,9 +204,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
 
         <div
           id={filterPanelId}
-          className={`${styles.sidebarFilter} ${
-            showFilters ? styles.open : ""
-          }`}
+          className={`${styles.sidebarFilter} ${showFilters ? styles.open : ""
+            }`}
           aria-hidden={!showFilters}
         >
           <div className={styles.sidebarHeader}>
@@ -224,7 +224,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
           {inspirationColors.length > 0 && (
             <div className={styles.filterGroup}>
               <label className={styles.inspirationLabel}>
-                 Inspired Look Active:
+                Inspired Look Active:
                 <span style={{ fontWeight: "bold", color: "#5c1a1a" }}>
                   Filtering by {inspirationColors.length} colors!
                 </span>
@@ -245,9 +245,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 {Object.keys(COLOR_MAP).map((color) => (
                   <div
                     key={color}
-                    className={`${styles.colorCircle} ${
-                      colorFilter === color ? styles.activeColor : ""
-                    }`}
+                    className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""
+                      }`}
                     style={{
                       backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
                     }}
@@ -267,9 +266,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 <button
                   key={style}
                   type="button"
-                  className={`${styles.filterButton} ${
-                    styleFilter === style ? styles.active : ""
-                  }`}
+                  className={`${styles.filterButton} ${styleFilter === style ? styles.active : ""
+                    }`}
                   onClick={() =>
                     setStyleFilter(styleFilter === style ? null : style)
                   }
@@ -288,9 +286,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 <button
                   key={season}
                   type="button"
-                  className={`${styles.filterButton} ${
-                    seasonFilter === season ? styles.active : ""
-                  }`}
+                  className={`${styles.filterButton} ${seasonFilter === season ? styles.active : ""
+                    }`}
                   onClick={() =>
                     setSeasonFilter(seasonFilter === season ? null : season)
                   }
