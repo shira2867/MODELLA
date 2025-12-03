@@ -20,12 +20,15 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
   Yellow: [255, 255, 0],
   Green: [0, 128, 0],
   Blue: [0, 0, 255],
+  LightBlue: [173, 216, 230],
+  Burgundy: [128, 0, 32],
   Purple: [128, 0, 128],
-  Brown: [165, 42, 42],
+  Brown: [121, 85, 61],
   Gray: [128, 128, 128],
   Black: [0, 0, 0],
   White: [255, 255, 255],
   Beige: [245, 245, 220],
+
 };
 
 const styleOptions = ["All", "casual", "formal", "sporty", "party"];
