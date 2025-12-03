@@ -86,7 +86,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
   const [showFilters, setShowFilters] = useState(false);
   const filterPanelId = "closet-filter-panel";
 
-  const [selectedClothing, setSelectedClothing] = useState<ClothingItem  | null>(null);
+  const [selectedClothing, setSelectedClothing] = useState<ClothingItem | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: clothes = [], isLoading } = useQuery<ClothingItem[], Error>({
@@ -230,12 +230,13 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 </span>
               </label>
               <div className={styles.optionList}>
-                {inspirationColors.map((color) => (
-                  <span key={color} className={styles.inspirationColorTag}>
+                {inspirationColors.map((color, index) => (
+                  <span key={`${color}-${index}`} className={styles.inspirationColorTag}>
                     {color}
                   </span>
                 ))}
               </div>
+
             </div>
           )}
           {inspirationColors.length === 0 && (
@@ -349,8 +350,8 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
       {selectedClothing && (
         <DeleteHandleLooksModal
           clothingId={selectedClothing._id}
-          itemImageUrl={selectedClothing.imageUrl} 
-          
+          itemImageUrl={selectedClothing.imageUrl}
+
           open={modalOpen}
           onClose={() => {
             setModalOpen(false);

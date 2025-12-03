@@ -424,12 +424,15 @@
 
 .uploadedImage {
   max-width: 100%;
-  height: auto;
+  max-height: 200px; /* הגבול לגובה */
+  width: auto;       /* רוחב מותאם לפרופורציות */
+  height: auto;      /* גובה מותאם לפרופורציות */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
-  object-fit: cover;
+  object-fit: scale-down; /* שומרת על התמונה מבלי לחתוך */
+  display: block;
 }
+
 
 .analysisStatus {
   color: #555;
