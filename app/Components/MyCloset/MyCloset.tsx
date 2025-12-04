@@ -13,8 +13,6 @@ import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksM
 import pants from "../../../public/short_13387117.png";
 import { ClothingItem } from "@/types/clothTypes";
 import { FaTrash } from "react-icons/fa";
-import { FaTshirt, FaHatCowboy, FaUserTie, FaMale } from "react-icons/fa";
-import { GiClothes, GiLargeDress, GiSkirt } from "react-icons/gi";
 import { fetchClothes } from "@/services/client/closet";
 
 const COLOR_MAP: Record<string, [number, number, number]> = {
@@ -32,7 +30,6 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
   Black: [0, 0, 0],
   White: [255, 255, 255],
   Beige: [245, 245, 220],
-
 };
 
 const CATEGORIES = [
@@ -86,7 +83,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
   const [showFilters, setShowFilters] = useState(false);
   const filterPanelId = "closet-filter-panel";
 
-  const [selectedClothing, setSelectedClothing] = useState<ClothingItem | null>(null);
+  const [selectedClothing, setSelectedClothing] = useState<ClothingItem | null>(
+    null
+  );
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: clothes = [], isLoading } = useQuery<ClothingItem[], Error>({
@@ -174,8 +173,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
               <button
                 key={cat.key}
                 type="button"
-                className={`${styles.categoryButton} ${categoryFilter === cat.key ? styles.active : ""
-                  }`}
+                className={`${styles.categoryButton} ${
+                  categoryFilter === cat.key ? styles.active : ""
+                }`}
                 onClick={() =>
                   setCategoryFilter(cat.key === "All" ? null : cat.key)
                 }
@@ -204,8 +204,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
 
         <div
           id={filterPanelId}
-          className={`${styles.sidebarFilter} ${showFilters ? styles.open : ""
-            }`}
+          className={`${styles.sidebarFilter} ${
+            showFilters ? styles.open : ""
+          }`}
           aria-hidden={!showFilters}
         >
           <div className={styles.sidebarHeader}>
@@ -231,12 +232,14 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
               </label>
               <div className={styles.optionList}>
                 {inspirationColors.map((color, index) => (
-                  <span key={`${color}-${index}`} className={styles.inspirationColorTag}>
+                  <span
+                    key={`${color}-${index}`}
+                    className={styles.inspirationColorTag}
+                  >
                     {color}
                   </span>
                 ))}
               </div>
-
             </div>
           )}
           {inspirationColors.length === 0 && (
@@ -246,8 +249,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 {Object.keys(COLOR_MAP).map((color) => (
                   <div
                     key={color}
-                    className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""
-                      }`}
+                    className={`${styles.colorCircle} ${
+                      colorFilter === color ? styles.activeColor : ""
+                    }`}
                     style={{
                       backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
                     }}
@@ -267,8 +271,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 <button
                   key={style}
                   type="button"
-                  className={`${styles.filterButton} ${styleFilter === style ? styles.active : ""
-                    }`}
+                  className={`${styles.filterButton} ${
+                    styleFilter === style ? styles.active : ""
+                  }`}
                   onClick={() =>
                     setStyleFilter(styleFilter === style ? null : style)
                   }
@@ -287,8 +292,9 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 <button
                   key={season}
                   type="button"
-                  className={`${styles.filterButton} ${seasonFilter === season ? styles.active : ""
-                    }`}
+                  className={`${styles.filterButton} ${
+                    seasonFilter === season ? styles.active : ""
+                  }`}
                   onClick={() =>
                     setSeasonFilter(seasonFilter === season ? null : season)
                   }
@@ -351,7 +357,6 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
         <DeleteHandleLooksModal
           clothingId={selectedClothing._id}
           itemImageUrl={selectedClothing.imageUrl}
-
           open={modalOpen}
           onClose={() => {
             setModalOpen(false);
@@ -364,6 +369,7 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
                 : "Item deleted."
             );
           }}
+          userId={userId}
         />
       )}
     </div>
