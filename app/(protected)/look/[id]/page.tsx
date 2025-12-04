@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import LookCard from "../../Components/LookCard/LookCard";
+import LookCard from "../../../Components/LookCard/LookCard";
 import { LookType } from "@/types/lookTypes";
 import Header from "@/app/Components/Header/Header";
 import Footer from "@/app/Components/Footer/Footer";

@@ -5,10 +5,22 @@ import {
 } from "@/services/server/clothing";
 import { deleteClothing } from "@/services/server/clothing";
 import { looksCollection } from "@/services/server/looks";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
+    (body as any).userId = userId;
     const result = await addClothingItem(body);
     return NextResponse.json({ message: "Item added", id: result.insertedId });
   } catch (error) {
@@ -19,9 +31,19 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const url = new URL(req.url);
-    const userId = url.searchParams.get("userId");
     const itemId = url.searchParams.get("id");
+
 
     const looksCol = await looksCollection();
 
@@ -32,15 +54,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ lookNames: relatedLooks.map((l) => l._id) });
     }
 
-    if (userId) {
-      const items = await getAllClothingItem(userId);
-      return NextResponse.json(items);
-    }
+    // אם אין itemId – מחזירים את כל הבגדים של המשתמש המחובר
+    const items = await getAllClothingItem(userId);
+    return NextResponse.json(items);
 
-    return NextResponse.json(
-      { message: "Missing parameters" },
-      { status: 400 }
-    );
   } catch (err) {
     console.error("Error fetching clothing or related looks:", err);
     return NextResponse.json(
@@ -52,6 +69,15 @@ export async function GET(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
     if (!id)

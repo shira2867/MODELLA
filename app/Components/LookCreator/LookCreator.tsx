@@ -76,7 +76,7 @@ export default function BuildSimilarLook({ look }: Props) {
     const colorName = item.colorName;
     const noteText = `${category} - ${colorName}`;
     try {
-      const updateResult = await updateClick(userId, category, colorName!);
+      const updateResult = await updateClick( category, colorName!);
       const isExistingNote = existingNotes.includes(noteText);
       const isAlreadySelected = selectedItems[category]?._id === item._id;
       const isUserItemMatch =

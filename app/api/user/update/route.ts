@@ -1,28 +1,30 @@
 // app/api/user/update/route.ts
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers"; 
 import { usersCollection } from "@/services/server/users";
 
 export async function PUT(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
     const {
-      email,
       name,
       gender,
       profileImage,
     } = body;
 
-    if (!email) {
-      return NextResponse.json(
-        { error: "Email is required" },
-        { status: 400 }
-      );
-    }
-
     const col = await usersCollection();
 
     const result = await col.updateOne(
-      { email },
+      {  _id: userId },
       {
         $set: {
           name,

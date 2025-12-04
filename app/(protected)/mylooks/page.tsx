@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import MyLooks from "@/app/Components/MyLooks/MyLooks";
-import Headers from "../Components/Header/Header";
-import Footer from "../Components/Footer/Footer";
+import Headers from "../../Components/Header/Header";
+import Footer from "../../Components/Footer/Footer";
 import styles from "./ShowMyLooks.module.css"; // ניצור CSS קטן
 
 export default function ShowMyLooks() {

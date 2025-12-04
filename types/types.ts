@@ -1,8 +1,7 @@
  export type RouteContext = {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>
 };
+
 
 export type StepProps = {
   title: string;

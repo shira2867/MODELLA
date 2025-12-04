@@ -6,8 +6,8 @@ import { ProfileData } from "@/types/userTypes";
 import { auth } from "@/app/firebase/config";
 import { sendPasswordResetEmail } from "firebase/auth";
 
-import Header from "../Components/Header/Header";
-import Footer from "../Components/Footer/Footer";
+import Header from "../../Components/Header/Header";
+import Footer from "../../Components/Footer/Footer";
 import styles from "./Profile.module.css";
 
 import { uploadToCloudinary } from "@/services/server/cloudinary"; // 👈 Added Cloudinary upload
