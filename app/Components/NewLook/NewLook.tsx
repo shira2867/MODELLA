@@ -441,7 +441,7 @@ import { useUserStore } from "../../../store/userStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ClothingItem } from "@/types/clothTypes";
 import { LookType } from "@/types/lookTypes";
-import { RGB, closestColorLAB, getDominantColorsFromCenter } from "@/services/server/colorUtils"; 
+import { RGB, closestColorLAB, getDominantColorsKMeans } from "@/services/server/colorUtils"; 
 
 
 
@@ -506,9 +506,8 @@ const NewLook: FC<NewLookProps> = ({ setInspirationColors, lookMode, onModeChang
       const img = document.createElement('img');
       img.src = URL.createObjectURL(file);
       img.onload = () => {
-        // Use imported utility function
-        const topColorsRGB = getDominantColorsFromCenter(img, 150, 4); 
-        const colorNames = topColorsRGB.map(closestColorLAB); // Use imported utility function
+        const topColorsRGB = getDominantColorsKMeans(img, 4); 
+        const colorNames = topColorsRGB.map(closestColorLAB); 
         setInspirationColors(colorNames);
         console.log("Detected colors:", colorNames);
         setIsAnalyzing(false);

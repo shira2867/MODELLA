@@ -1,11 +1,9 @@
 import chroma from "chroma-js";
+import { kmeans } from "ml-kmeans";
 
-// Type definition for RGB tuple
 export type RGB = [number, number, number];
 
-/**
- * A comprehensive map of color names to their representative RGB values.
- */
+
 export const COLOR_MAP: Record<string, RGB> = {
   Red: [255, 0, 0],
   DarkRed: [139, 0, 0],
@@ -40,7 +38,6 @@ export const COLOR_MAP: Record<string, RGB> = {
   Turquoise: [64, 224, 208],
 };
 
-// --- Helper Functions for Specific Color Checks (RGB based) ---
 
 export function isGrayRGB([r, g, b]: RGB): boolean {
   return Math.max(r, g, b) - Math.min(r, g, b) < 20 && r > 50 && r < 200;
@@ -69,9 +66,8 @@ export function isDenimRGB([r, g, b]: RGB): boolean {
     return true;
   return false;
 }
-
 export function isGreenRGB([r, g, b]: RGB): boolean {
-  return g > r && g > b && g >= 80 && g <= 200 && r <= 150 && b <= 150;
+  return g > r + 5 && g > b + 5 && g >= 50;
 }
 
 export function isBurgundyRGB([r, g, b]: RGB): boolean {
@@ -89,7 +85,14 @@ export function isRedRGB([r, g, b]: RGB): boolean {
  * @returns The closest descriptive color name (string).
  */
 export function closestColorLAB(rgb: RGB): string {
-  // Priority checks for specific clothing colors
+    const lab = chroma(rgb).lab();
+  const L = lab[0];
+  const a = lab[1];
+  const bLab = lab[2];
+
+  if (L < 20 && Math.abs(a) < 10 && Math.abs(bLab) < 10) return "Black";
+  if (L > 95) return "White";
+
   if (isDenimRGB(rgb)) return "Blue";
   if (isGreenRGB(rgb)) return "Green";
   if (isRedRGB(rgb)) return "Red";
@@ -102,23 +105,13 @@ export function closestColorLAB(rgb: RGB): string {
 
   const [r, g, b] = rgb;
 
-  // Additional quick checks (based on the original logic)
   if (r >= 150 && g >= 60 && g <= 150 && b <= 40) return "Orange";
   if (r >= 150 && g < 60 && b < 60) return "Red";
   if (b > r && b > g && r < 60 && g < 60 && b < 70) return "Blue";
-  // Fallback for very dark, low-saturation colors (often detected as Gray/Black by LAB)
   if (r < 70 && g < 70 && b < 70) return "Brown";
+  if (g > r + 10 && g > b + 10 && g < 70) return "Green"; 
+  if (g > r + 20 && g > b + 20 && g >= 70 && g <= 180 && r < g && b < g) return "Green";
 
-  // Check for Black/White using LAB Lightness (L)
-  const lab = chroma(rgb).lab();
-  const L = lab[0];
-  const a = lab[1];
-  const bLab = lab[2];
-
-  if (L > 95) return "White";
-  if (L < 10 && Math.abs(a) < 5 && Math.abs(bLab) < 5) return "Black";
-
-  // Find closest color name from COLOR_MAP using LAB distance
   let closest = "";
   let minDistance = Infinity;
   for (const [colorName, colorRgb] of Object.entries(COLOR_MAP)) {
@@ -129,14 +122,14 @@ export function closestColorLAB(rgb: RGB): string {
     }
   }
 
-  // Group similar shades into main color categories
-  const blueShades = ["Blue", "DenimBlue", "DarkDenim", "MediumDenim", "LightDenim", "Navy", "Indigo", "LightBlue", "Turquoise", "Teal"];
+  const blueShades = ["Blue", "DenimBlue", "DarkDenim", "MediumDenim", "LightDenim", "Navy", "Indigo"];
   if (blueShades.includes(closest)) return "Blue";
-
-  const brownShades = ["Brown", "DarkBrown", "Chocolate", "Beige"];
+const greenShades = ["Green", "Olive", "Teal", "Turquoise"];
+  if (greenShades.includes(closest)) return "Green";
+  const brownShades = ["Brown", "DarkBrown", "Chocolate","DarkGray" ];
   if (brownShades.includes(closest)) return "Brown";
 
-  const yellowShades = ["Yellow", "SoftYellow", "Golden", "WarmYellow", "Mustard", "Orange"];
+  const yellowShades = ["Yellow", "SoftYellow", "Golden", "WarmYellow", "Mustard"];
   if (yellowShades.includes(closest)) return "Yellow";
 
   return closest;
@@ -152,6 +145,52 @@ export function closestColorLAB(rgb: RGB): string {
  * @param topN - The number of top dominant colors to return.
  * @returns An array of dominant colors as RGB tuples.
  */
+
+
+export function getDominantColorsKMeans(
+  img: HTMLImageElement,
+  size = 250,
+  topN = 4
+): RGB[] {
+  const canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  console.log("canvas.height",canvas.height)
+  console.log("canvas.width",canvas.width)
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return [];
+
+  ctx.drawImage(img, 0, 0);
+  const centerX = Math.floor(img.width / 2);
+  const centerY = Math.floor(img.height / 2);
+console.log("centerX",centerX)
+  const pixels: number[][] = [];
+for (let x = 0; x < img.width; x++) {
+  for (let y = 0; y < img.height; y++) {
+    const data = ctx.getImageData(x, y, 1, 1).data;
+    const [r, g, b] = [data[0], data[1], data[2]];
+
+    const [L] = chroma([r, g, b]).lab();
+    const saturation = chroma([r, g, b]).hsl()[1];
+
+    if (L > 95) continue;
+    if (saturation < 0.05 && L > 20) continue;
+
+    pixels.push([r, g, b]);
+  }
+}
+
+  if (!pixels.length) return [[0, 0, 0]];
+
+  const dataForKMeans = pixels.map(p => [p[0], p[1], p[2]]);
+
+const { centroids } = kmeans(dataForKMeans, topN, {});
+
+  const dominantColors: RGB[] = centroids.map(c => c.map(Math.round) as RGB);
+
+  return dominantColors;
+}
+
 export function getDominantColorsFromCenter(
   img: HTMLImageElement,
   size = 200,
@@ -179,7 +218,6 @@ export function getDominantColorsFromCenter(
       const [L] = chroma(rgb).lab();
       const saturation = chroma(rgb).hsl()[1];
 
-      // Filter out pure white and low-saturation, non-dark pixels
       if (L > 95) continue;
       if (saturation < 0.05 && L > 20) continue;
 
@@ -187,10 +225,9 @@ export function getDominantColorsFromCenter(
     }
   }
 
-  if (!pixels.length) return [[0, 0, 0]]; // Default to black if no valid pixels found
+  if (!pixels.length) return [[0, 0, 0]]; 
 
-  // Helper to merge colors that are very close in LAB space
-  const mergeSimilar = (colors: RGB[], threshold = 15) => {
+  const mergeSimilar = (colors: RGB[], threshold = 25) => {
     const result: RGB[] = [];
     for (const c of colors) {
       if (!result.some(r => chroma.distance(c, r, "lab") < threshold)) {
@@ -214,7 +251,6 @@ export function getDominantColorsFromCenter(
   sortedColors = mergeSimilar(sortedColors);
 
   const finalColors = sortedColors.slice(0, topN);
-  // Ensure the array always has topN colors, even if repeated
   while (finalColors.length < topN) finalColors.push(sortedColors[0]);
 
   return finalColors;
