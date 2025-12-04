@@ -3,13 +3,19 @@ import {
   addOrUpdateClick,
   getUserClicks,
 } from "@/services/server/clickSuggestions";
+import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
   try {
-    const url = new URL(req.url);
-    const userId = url.searchParams.get("userId");
-    if (!userId)
-      return NextResponse.json({ message: "Missing userId" }, { status: 400 });
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
     const clicks = await getUserClicks(userId);
     return NextResponse.json(clicks);
@@ -24,9 +30,18 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
-    const { userId, category, color } = body;
-    if (!userId || !category || !color)
+    const { category, color } = body;
+    if ( !category || !color)
       return NextResponse.json(
         { message: "Missing parameters" },
         { status: 400 }

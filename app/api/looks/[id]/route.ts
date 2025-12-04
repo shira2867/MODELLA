@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { looksCollection } from "@/services/server/looks";
-import {RouteContext} from "@/types/types"; ;
+import { RouteContext } from "@/types/types";
 
 export async function GET(
   req: NextRequest,
   context: RouteContext
 ) {
+  const userId = req.cookies.get("userId")?.value;
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
   const { id } = await context.params;
 
   try {
@@ -21,7 +29,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      _id: look._id, 
+      _id: look._id,
       imageUrl: look.items?.[0]?.imageUrl ?? "",
       items: look.items ?? [],
       createdAt: look.createdAt,
@@ -42,6 +50,15 @@ export async function DELETE(
   req: NextRequest,
   context: RouteContext
 ) {
+  const userId = req.cookies.get("userId")?.value;
+
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
   const { id } = await context.params;
 
   try {

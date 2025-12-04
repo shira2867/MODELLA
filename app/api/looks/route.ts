@@ -1,10 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { looksCollection, } from "../../../services/server/looks";
-import {LookType} from "@/types/lookTypes";
+import { LookType } from "@/types/lookTypes";
 
 export async function POST(req: NextRequest) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     const body = (await req.json()) as LookType;
+    (body as any).userId = userId;
 
     if (!body.items || body.items.length === 0) {
       return NextResponse.json(
@@ -34,11 +45,14 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: Request) {
   try {
-    const url = new URL(req.url);
-    const userId = url.searchParams.get("userId")?.trim();
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
 
     if (!userId) {
-      return NextResponse.json({ message: "Missing userId" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
     }
 
     const collection = await looksCollection();

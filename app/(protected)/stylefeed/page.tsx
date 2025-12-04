@@ -1,11 +1,11 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import SharedLookCard from "../Components/ShareLookCard/ShareLookCard";
+import SharedLookCard from "../../Components/ShareLookCard/ShareLookCard";
 import styles from "./styleFeedPage.module.css";
 import { ShareLookType } from "@/types/shareLookType";
-import Header from "../Components/Header/Header";
-import Footer from "../Components/Footer/Footer";
+import Header from "../../Components/Header/Header";
+import Footer from "../../Components/Footer/Footer";
 
 export default function StyleFeedPage() {
   const { data, isLoading, isError } = useQuery({

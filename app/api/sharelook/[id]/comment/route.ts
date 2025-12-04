@@ -1,15 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { shareLooksCollection } from "@/services/server/shareLook";
+import { cookies } from "next/headers";
 
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params; 
-    const { userId,userName,profileImage, text } = await req.json();
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
 
-    if (!userId || !text) {
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+    const { id } = await context.params; 
+    const { userName,profileImage, text } = await req.json();
+
+    if (!text) {
       return NextResponse.json({ error: "Missing userId or text" }, { status: 400 });
     }
 
@@ -51,7 +61,9 @@ export async function GET(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await context.params;    const collection = await shareLooksCollection();
+    const { id } = await context.params;    
+    const collection = await shareLooksCollection();
+
     console.log("Fetching comments for lookId:", id);
 
     let look = await collection.findOne({ _id: id });

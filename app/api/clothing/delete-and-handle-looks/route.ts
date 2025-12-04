@@ -1,10 +1,20 @@
 import { NextResponse } from "next/server";
 import { deleteClothing } from "@/services/server/clothing";
 import { looksCollection } from "@/services/server/looks";
+import { cookies } from "next/headers";
 
 
 export async function POST(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
     const clothingId: string = body?.clothingId;
     const actionPerLook: Array<{
@@ -66,6 +76,16 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("userId")?.value;
+
+  if (!userId) {
+    return NextResponse.json(
+      { message: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
   const url = new URL(req.url);
   const clothingId = url.searchParams.get("id");
 

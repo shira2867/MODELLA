@@ -5,13 +5,20 @@ import {
   updateChecklistItem,
   deleteChecklistItem,
 } from "@/services/server/checkList";
+import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
   try {
-    const url = new URL(req.url);
-    const userId = url.searchParams.get("userId");
-    if (!userId)
-      return NextResponse.json({ message: "Missing userId" }, { status: 400 });
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
 
     const items = await getChecklistItems(userId);
     return NextResponse.json(items);
@@ -26,7 +33,18 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
+    (body as any).userId = userId;
     const result = await addChecklistItem(body);
 
     return NextResponse.json({
@@ -43,6 +61,15 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
     const { id, text, completed } = body;
 
@@ -79,6 +106,15 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    const cookieStore = await cookies();
+    const userId = cookieStore.get("userId")?.value;
+
+    if (!userId) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
     if (!id)

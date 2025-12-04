@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-import SharedLookCard from "../../Components/ShareLookCard/ShareLookCard";
-import { LikeButton, CommentForm } from "../../Components/LikeAndComment/LikeAndComment";
+import SharedLookCard from "../../../Components/ShareLookCard/ShareLookCard";
+import { LikeButton, CommentForm } from "../../../Components/LikeAndComment/LikeAndComment";
 import styles from "./shareLookId.module.css";
 
 import { ShareLookType } from "@/types/shareLookType";
@@ -17,7 +17,6 @@ export default function ShareLookPage() {
   const lookId = params?.id as string;
   const queryClient = useQueryClient();
 
-  // מזהים את המשתמש מה-localStorage כמו שהיה
   const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -66,7 +65,7 @@ export default function ShareLookPage() {
       <CommentForm
         lookId={look._id}
         userId={userId}
-        userName={userName}              // 👈 עכשיו השם המעודכן נכנס לטופס
+        userName={userName}             
         onNewComment={addCommentToState}
       />
 

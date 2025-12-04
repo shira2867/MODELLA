@@ -1,8 +1,8 @@
 "use client";
 
 import styles from "./About.module.css";
-import Header from "../Components/Header/Header";
-import Footer from "../Components/Footer/Footer";
+import Header from "../../Components/Header/Header";
+import Footer from "../../Components/Footer/Footer";
 
 export default function AboutPage() {
   return (

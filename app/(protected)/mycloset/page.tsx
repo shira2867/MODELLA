@@ -1,8 +1,8 @@
 "use client";
 import MyCloset from "@/app/Components/MyCloset/MyCloset";
 import NewLook from "@/app/Components/NewLook/NewLook";
-import Footer from "../Components/Footer/Footer";
-import Header from "../Components/Header/Header";
+import Footer from "../../Components/Footer/Footer";
+import Header from "../../Components/Header/Header";
 import MobileNewLookBanner from "@/app/Components/MobileNewLookBanner/MobileNewLookBanner";
 import { useEffect, useState } from "react";
 import styles from "./mycloset.module.css";
