@@ -28,12 +28,12 @@
 .categoryRow {
   display: flex;
   gap: 0.35rem;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
-  overflow-x: auto;
+  overflow-x: visible;
   padding-bottom: 0.15rem;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: auto;
+  -ms-overflow-style: auto;
   flex: 1;
 }
 
@@ -81,7 +81,7 @@
 
 .cardsWrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 250px);
+  grid-template-columns: repeat(3, 250px);
   justify-content: center;
   gap: clamp(0.9rem, 3vw, 1.35rem);
   margin-top: 1rem;
@@ -98,6 +98,8 @@
   gap: 0.75rem;
   transition: transform var(--transition-fast),
     box-shadow var(--transition-fast);
+  width: 250px;
+  height: auto;
 }
 
 .card:hover {
@@ -296,10 +298,9 @@
 
 @media (max-width: 640px) {
   .cardsWrapper {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
 }
-
 @media (max-width: 540px) {
   .container {
     padding: 0.85rem;
@@ -346,44 +347,21 @@
   margin: 5px;
   font-size: 0.9em;
 }
-.cardsWrapper {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  justify-content: center;
-  gap: clamp(0.9rem, 3vw, 1.35rem);
-  margin-top: 1rem;
-}
-
-@media (max-width: 640px) {
-  .cardsWrapper {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  }
-}
-.categoryRow {
-  display: flex;
-  gap: 0.35rem;
-  flex-wrap: wrap;
-  align-items: center;
-  overflow-x: visible;
-  padding-bottom: 0.15rem;
-  scrollbar-width: auto;
-  -ms-overflow-style: auto;
-  flex: 1;
-}
-
-.sidebarFilter {
-  position: fixed;
-  top: 0;
-  right: -420px;
-  z-index: 1100;
-}
-
-.sidebarFilter.open {
-  right: 0;
-}
 
 .filterBackdrop {
   position: fixed;
   inset: 0;
   z-index: 1050;
+}
+
+@media (max-width: 900px) {
+  .cardsWrapper {
+    grid-template-columns: repeat(2, 220px);
+  }
+}
+
+@media (max-width: 600px) {
+  .cardsWrapper {
+    grid-template-columns: repeat(1, 220px);
+  }
 }

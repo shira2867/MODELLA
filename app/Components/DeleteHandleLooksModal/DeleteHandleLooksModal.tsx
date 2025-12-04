@@ -11,6 +11,7 @@ type Props = {
   onComplete: (result: { updated: string[]; deleted: string[] }) => void;
   itemImageUrl?: string;
   itemCategory?: string;
+  userId: string;
 };
 
 type MutationResponse = {
@@ -37,6 +38,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
   onComplete,
   itemImageUrl,
   itemCategory,
+  userId,
 }) => {
   const queryClient = useQueryClient();
   const [actions, setActions] = useState<Record<string, "update" | "delete">>(
@@ -78,6 +80,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
         deleted: data.deletedLooks ?? [],
       });
       queryClient.invalidateQueries({ queryKey: ["looks", clothingId] });
+      queryClient.invalidateQueries({ queryKey: ["clothes", userId] });
       queryClient.invalidateQueries({ queryKey: ["closet"] });
       queryClient.invalidateQueries({ queryKey: ["myLooks"] });
       queryClient.invalidateQueries({ queryKey: ["clothing", clothingId] });
