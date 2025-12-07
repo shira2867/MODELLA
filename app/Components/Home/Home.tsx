@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { CldImage } from "next-cloudinary";
 import Image from "next/image";
 import styles from "./Home.module.css";
@@ -16,11 +17,13 @@ import WeatherWidget from "../WeatherWidget/WeatherWidget";
 import { StepProps } from "@/types/types";
 
 const heroImages = [
-  "slider_5_z5v73p",
   "slider_6_fpl8b5",
+  "slider_5_z5v73p",
   "slider_7_e93yg3",
-  "slider_9_j36kbz.avif",
+  // "slider_9_j36kbz.avif",
   "slider_8_lgv50b.avif",
+  "oejxpjs8o2viabihjkyx.webp",
+  "f469db1182d3b9da38c505eb2d7db785_j1g48w.jpg",
 ];
 const videos = [
   "  https://res.cloudinary.com/dfrgvh4hf/video/upload/v1762951355/video_1_jln9qa.mp4",
@@ -56,26 +59,6 @@ function Step({ title, description, imageUrl, reverse }: StepProps) {
 }
 
 export default function HomePage() {
-  // const stepsData = [
-  //   {
-  //     title: "Step 1: Your Closet",
-  //     description:
-  //       "Quickly add all your favorite clothes into the app, and keep them organized in one place.",
-  //     imageUrl: "step_1_kgktj8",
-  //   },
-  //   {
-  //     title: "Step 2: Daily Outfits",
-  //     description:
-  //       "Expertly styled outfits every day, personalized for your weather and activities. Choose a recommended outfit, edit the ones you like, or build your own. You can even plan outfits.",
-  //     imageUrl: "step_2_b4kjht",
-  //   },
-  //   {
-  //     title: "Step 3: Love What You Wear",
-  //     description:
-  //       "Save time, clear the clutter, and stop spending money. Be free to be you. Sustainable fashion is about knowing your personal style so you can be more intentional.",
-  //     imageUrl: "step_3_hggv5q",
-  //   },
-  // ];
   const stepsData = [
     {
       title: "Step 1: Your Closet",
@@ -126,7 +109,11 @@ export default function HomePage() {
   const rowRef = useRef<HTMLDivElement>(null);
 
   const stepsSectionRef = useRef<HTMLElement | null>(null);
+  const router = useRouter();
 
+  const handleClick = () => {
+    router.push("/newcloth"); // כתובת העמוד של יצירת פריט חדש
+  };
   const nextVideo = () => {
     if (activeIndex !== null)
       setActiveIndex((prev) => (prev! + 1) % videos.length);
@@ -395,7 +382,9 @@ export default function HomePage() {
           </div>
 
           <div className={styles.stepsCTA}>
-            <button className={styles.heroPrimary}>Start Styling</button>
+            <button className={styles.heroPrimary} onClick={handleClick}>
+              Start Styling
+            </button>
           </div>
         </section>
 

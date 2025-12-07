@@ -14,43 +14,23 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.column}>
-          <h3>Templates</h3>
-          <a href="https://app.cladwell.com/capsules/minimalist-summer-capsule-621834">
-            Minimalist Capsule Wardrobe
-          </a>
-          <a href="https://app.cladwell.com/capsules/french-girl-621843">
-            Parisian Capsule Wardrobe
-          </a>
-          <a href="https://app.cladwell.com/capsules/athletic-639223">
-            Athleisure Capsule Wardrobe
-          </a>
+          <h3>Info</h3>
+          <Link href={"/home"}>Home</Link>
+          <Link href="/notes">Check List</Link>
+          <Link href="/about">About My Closet</Link>
+        </div>
+        <div className={styles.column}>
+          <h3>Looks</h3>
+          <Link href="/mycloset">Create Look</Link>
+          <Link href="/mylooks">My Looks</Link>
+          <Link href="/stylefeed">Style Feed</Link>
         </div>
 
         <div className={styles.column}>
-          <h3>Products</h3>
-          <a href="#">Pricing</a>
-          <a href="/app">App</a>
-          <a href="https://cladwell.com/men">For Men</a>
-          <a href="/capsule-wardrobe-program">Course</a>
-        </div>
-
-        <div className={styles.column}>
-          <h3>Company</h3>
-          <a href="https://app.cladwell.com">Login</a>
-          <Link href="/faq">FAQ</Link>
-          <a href="https://cladwell.zendesk.com/hc/en-us/sections/360000415753-Billing-and-Account-">
-            Billing & Account
-          </a>
-          <a href="mailto:hello@cladwell.com">hello@cladwell.com</a>
-        </div>
-
-        <div className={styles.column}>
-          <h3>About</h3>
-          <a href="https://cladwell.com/style-for-good">Our Mission</a>
-          <a href="/from-the-founder">From The Founder</a>
-          <a href="/capsule-wardrobe-101">Capsule Wardrobe 101</a>
-          <a href="/fastfashion">What is Fast Fashion?</a>
-          <a href="/stories">Capsule Wardrobe Stories</a>
+          <h3>Account</h3>
+          <Link href={"/login"}>Login</Link>
+          <Link href="/register">Register</Link>
+          <Link href="/profile">Update Profile</Link>
         </div>
       </div>
 
@@ -90,11 +70,6 @@ export default function Footer() {
         >
           <FaTwitter />
         </a>
-      </div>
-
-      <div className={styles.bottomLinks}>
-        <a href="/terms-of-service">TERMS OF SERVICE</a>
-        <a href="/privacy-policy">PRIVACY POLICY</a>
       </div>
     </footer>
   );
