@@ -7,12 +7,14 @@ import styles from "./LookCreator.module.css";
 import { ClothingItem } from "@/types/clothTypes";
 import { LookType as Look } from "@/types/lookTypes";
 import { updateClick } from "@/services/client/clickSuggestions";
+import { useRouter } from 'next/navigation';
 
 type Props = {
   readonly look: Look;
 };
 
 export default function BuildSimilarLook({ look }: Props) {
+  const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [userItems, setUserItems] = useState<Record<string, ClothingItem[]>>(
     {}
@@ -141,6 +143,7 @@ export default function BuildSimilarLook({ look }: Props) {
       const res = await axios.post("/api/looks", { userId, items: newLook });
       alert("New Look created!");
       console.log("Saved look:", res.data);
+      router.push('/stylefeed')
     } catch (err) {
       console.error("Error saving look:", err);
       alert("Error saving look");
@@ -243,7 +246,9 @@ export default function BuildSimilarLook({ look }: Props) {
         <div className={styles.buttonContainer}>
           <button className={styles.button} onClick={handleConfirm}>
             Confirm Look
+            
           </button>
+          
         </div>
       </div>
       {noteCandidate && (
