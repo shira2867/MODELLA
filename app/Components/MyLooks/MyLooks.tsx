@@ -8,6 +8,7 @@ import { LookType } from "@/types/lookTypes";
 import { fetchLooks } from "@/services/client/look";
 import styles from "./MyLooks.module.css";
 import close from "../../../public/remove.png";
+import filter from "../../../public/filter_7420963.png"
 
 type MyLooksProps = {
   userId: string;
@@ -81,7 +82,8 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
           className={`${styles.categoryButton} ${styles.filterToggle}`}
           onClick={() => setSidebarOpen(true)}
         >
-          Filters
+            filter       <Image width={24} src={filter} alt="filter"></Image>
+
         </button>
 
         <div
