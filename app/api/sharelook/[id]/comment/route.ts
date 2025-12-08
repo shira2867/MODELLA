@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { shareLooksCollection } from "@/services/server/shareLook";
+import { usersCollection } from "@/services/server/users";
 import { cookies } from "next/headers";
+import { ObjectId } from "mongodb";
 
+/**
+ * POST /api/sharelook/[id]/comment
+ * Adds a new comment to a shared look.
+ * Uses userId from cookie and saves only userId + text + createdAt.
+ */
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -16,69 +23,145 @@ export async function POST(
         { status: 401 }
       );
     }
-    const { id } = await context.params; 
-    const { userName,profileImage, text } = await req.json();
 
-    if (!text) {
-      return NextResponse.json({ error: "Missing userId or text" }, { status: 400 });
+    const { id } = await context.params;
+    const { text } = await req.json();
+
+    if (!text || !text.trim()) {
+      return NextResponse.json(
+        { error: "Missing text" },
+        { status: 400 }
+      );
     }
 
     const newComment = {
       userId,
-      userName,
-      profileImage,
-      text,
-      createdAt: new Date(), 
+      text: text.trim(),
+      createdAt: new Date(),
     };
 
     const collection = await shareLooksCollection();
 
     const result = await collection.updateOne(
       { _id: id },
-      { $push: { comments: newComment } }  
+      { $push: { comments: newComment } }
     );
 
-    console.log("Update result:", result);
-
     if (result.matchedCount === 0) {
-      return NextResponse.json({ error: "Look not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Look not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      comments: newComment,
-      matched: result.matchedCount,
-      modified: result.modifiedCount,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        comment: newComment,
+      },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Error adding comment:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
 
-
+/**
+ * GET /api/sharelook/[id]/comment
+ * Returns the comments of a shared look,
+ * enriched with the latest userName and profileImage
+ * from the users collection based on userId.
+ */
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }) {
+  context: { params: Promise<{ id: string }> }
+) {
   try {
-    const { id } = await context.params;    
+    const { id } = await context.params;
     const collection = await shareLooksCollection();
 
-    console.log("Fetching comments for lookId:", id);
-
+    // Try to find by _id
     let look = await collection.findOne({ _id: id });
+
+    // Fallback: some documents may store the identifier as lookId
     if (!look) {
       look = await collection.findOne({ lookId: id });
-      console.log("Look found by lookId:", look);
     }
 
     if (!look) {
-      return NextResponse.json({ comments: [] }, { status: 200 });
+      return NextResponse.json(
+        { comments: [] },
+        { status: 200 }
+      );
     }
 
-    return NextResponse.json({ comments: look.comments || [] }, { status: 200 });
+    const rawComments = look.comments || [];
+
+    // Collect unique userIds from comments
+    const userIds = Array.from(
+      new Set(
+        rawComments
+          .map((c: any) => c.userId)
+          .filter((userId: string | undefined) => !!userId)
+      )
+    );
+
+    let usersById: Record<string, any> = {};
+
+    if (userIds.length > 0) {
+      const usersCol = await usersCollection();
+
+      // Convert userIds from strings to ObjectId[]
+      const objectIds = userIds
+        .filter((id) => ObjectId.isValid(id))
+        .map((id) => new ObjectId(id));
+
+      const users = await usersCol
+        .find({ _id: { $in: objectIds } })
+        .project({ _id: 1, name: 1, profileImage: 1 })
+        .toArray();
+
+      // Index users by their stringified _id for easy lookup
+      usersById = users.reduce((acc: Record<string, any>, user: any) => {
+        acc[user._id.toString()] = user;
+        return acc;
+      }, {});
+    }
+
+    // Enrich comments with up-to-date userName and profileImage
+    const comments = rawComments.map((c: any) => {
+      const user = c.userId ? usersById[c.userId] : null;
+
+      const userName =
+        (typeof user?.name === "string" && user.name.trim()) ||
+        (typeof c.userName === "string" && c.userName.trim()) ||
+        "User";
+
+      const profileImage =
+        user?.profileImage ??
+        c.profileImage ??
+        null;
+
+      return {
+        ...c,
+        userName,
+        profileImage,
+      };
+    });
+
+    return NextResponse.json(
+      { comments },
+      { status: 200 }
+    );
   } catch (err) {
     console.error("Error fetching comments:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

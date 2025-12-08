@@ -78,9 +78,6 @@ export function CommentForm({
     setLoading(true);
     try {
       await axios.post(`/api/sharelook/${lookId}/comment`, {
-        userId,
-        userName,
-        profileImage,
         text: text.trim(),
       });
 
