@@ -73,14 +73,22 @@ const SEASONS = ["Spring", "Summer", "Autumn", "Winter"];
 type MyClosetProps = {
   userId: string;
   inspirationColors: string[];
+  isMobile?: boolean;
 };
 
-const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
+type SidebarMode = "none" | "filters" | "categories";
+
+const MyCloset: React.FC<MyClosetProps> = ({
+  userId,
+  inspirationColors,
+  isMobile = false,
+}) => {
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [colorFilter, setColorFilter] = useState<string | null>(null);
   const [styleFilter, setStyleFilter] = useState<string | null>(null);
   const [seasonFilter, setSeasonFilter] = useState<string | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
+
+  const [sidebarMode, setSidebarMode] = useState<SidebarMode>("none");
   const filterPanelId = "closet-filter-panel";
 
   const [selectedClothing, setSelectedClothing] = useState<ClothingItem | null>(
@@ -98,20 +106,26 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
       categoryFilter &&
       categoryFilter !== "All" &&
       item.category !== categoryFilter
-    )
+    ) {
       return false;
+    }
+
     if (
       inspirationColors.length === 0 &&
       colorFilter &&
       item.colorName !== colorFilter
-    )
+    ) {
       return false;
+    }
+
     if (inspirationColors.length > 0) {
       if (!item.colorName || !inspirationColors.includes(item.colorName)) {
         return false;
       }
     }
+
     if (styleFilter && item.style !== styleFilter) return false;
+
     if (seasonFilter && item.thickness) {
       const thicknessSeasonMap: Record<string, string[]> = {
         light: ["Summer", "Spring"],
@@ -121,8 +135,13 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
       const seasonsForItem = thicknessSeasonMap[item.thickness] || [];
       if (!seasonsForItem.includes(seasonFilter)) return false;
     }
+
     return true;
   });
+
+  const isSidebarOpen = sidebarMode !== "none";
+  const isFiltersMode = sidebarMode === "filters";
+  const isCategoriesMode = sidebarMode === "categories";
 
   let closetContent: React.ReactNode;
   if (isLoading) {
@@ -164,193 +183,229 @@ const MyCloset: React.FC<MyClosetProps> = ({ userId, inspirationColors }) => {
     );
   }
 
+  const handleCloseSidebar = () => setSidebarMode("none");
+
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
-        <div className={styles.categoryFilterRow}>
-          <div className={styles.categoryRow}>
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.key}
-                type="button"
-                className={`${styles.categoryButton} ${
-                  categoryFilter === cat.key ? styles.active : ""
-                }`}
-                onClick={() =>
-                  setCategoryFilter(cat.key === "All" ? null : cat.key)
-                }
-                aria-pressed={categoryFilter === cat.key}
-                aria-label={`Filter by ${cat.key}`}
-              >
-                <span className="sr-only">{`Filter by ${cat.key}`}</span>
-                <span className={styles.categoryText}>
-                  {cat.key === "All" ? "All clothes" : cat.key}
-                </span>
-              </button>
-            ))}
-          </div>
-          {!showFilters && (
+        {/* Mobile: centered buttons that open side panels */}
+        {isMobile && (
+          <div className={styles.mobileToggleContainer}>
             <button
               type="button"
-              className={`${styles.categoryButton} ${styles.filterToggle}`}
-              onClick={() => setShowFilters(true)}
-              aria-expanded={showFilters}
-              aria-controls={filterPanelId}
+              className={styles.mobileToggleButton}
+              onClick={() =>
+                setSidebarMode((prev) =>
+                  prev === "filters" ? "none" : "filters"
+                )
+              }
             >
-              <span className={styles.categoryText}>Filters</span>
+              Filters
             </button>
-          )}
-        </div>
+            <button
+              type="button"
+              className={styles.mobileToggleButton}
+              onClick={() =>
+                setSidebarMode((prev) =>
+                  prev === "categories" ? "none" : "categories"
+                )
+              }
+            >
+              Categories
+            </button>
+          </div>
+        )}
 
+        {/* Categories row – desktop only, unchanged */}
+        {!isMobile && (
+          <div className={styles.categoryFilterRow}>
+            <div className={styles.categoryRow}>
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.key}
+                  type="button"
+                  className={`${styles.categoryButton} ${categoryFilter === cat.key ? styles.active : ""
+                    }`}
+                  onClick={() =>
+                    setCategoryFilter(cat.key === "All" ? null : cat.key)
+                  }
+                  aria-pressed={categoryFilter === cat.key}
+                  aria-label={`Filter by ${cat.key}`}
+                >
+                  <span className="sr-only">{`Filter by ${cat.key}`}</span>
+                  <span className={styles.categoryText}>
+                    {cat.key === "All" ? "All clothes" : cat.key}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Desktop filters pill on the right – same behavior as before */}
+            {!isFiltersMode && (
+              <button
+                type="button"
+                className={`${styles.categoryButton} ${styles.filterToggle}`}
+                onClick={() => setSidebarMode("filters")}
+                aria-expanded={isFiltersMode}
+                aria-controls={filterPanelId}
+              >
+                <span className={styles.categoryText}>Filters</span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Shared sidebar – filters OR categories */}
         <div
           id={filterPanelId}
-          className={`${styles.sidebarFilter} ${
-            showFilters ? styles.open : ""
-          }`}
-          aria-hidden={!showFilters}
+          className={`${styles.sidebarFilter} ${isSidebarOpen ? styles.open : ""
+            }`}
+          aria-hidden={!isSidebarOpen}
         >
           <div className={styles.sidebarHeader}>
-            <h3>Filters</h3>
-            <p>Refine by color, style, or season.</p>
+            <h3>{isFiltersMode ? "Filters" : "Categories"}</h3>
+            <p>
+              {isFiltersMode
+                ? "Refine by color, style, or season."
+                : "Choose a category to filter your closet."}
+            </p>
           </div>
+
           <button
             type="button"
             className={styles.sidebarClose}
-            onClick={() => setShowFilters(false)}
-            aria-label="Hide filters"
+            onClick={handleCloseSidebar}
+            aria-label="Hide panel"
           >
-            <Image src={close} alt="Close Menu" width={30} height={30} />
+            <Image src={close} alt="Close panel" width={30} height={30} />
             <span>Close</span>
           </button>
-          {inspirationColors.length > 0 && (
+
+          {/* Filters content */}
+          {isFiltersMode && (
+            <>
+              {inspirationColors.length > 0 && (
+                <div className={styles.filterGroup}>
+                  <label className={styles.inspirationLabel}>
+                    Inspired Look Active:
+                    <span style={{ fontWeight: "bold", color: "#5c1a1a" }}>
+                      {" "}
+                      Filtering by {inspirationColors.length} colors!
+                    </span>
+                  </label>
+                  <div className={styles.optionList}>
+                    {inspirationColors.map((color, index) => (
+                      <span
+                        key={`${color}-${index}`}
+                        className={styles.inspirationColorTag}
+                      >
+                        {color}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {inspirationColors.length === 0 && (
+                <div className={styles.filterGroup}>
+                  <label>Color:</label>
+                  <div className={styles.colorOptions}>
+                    {Object.keys(COLOR_MAP).map((color) => (
+                      <div
+                        key={color}
+                        className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""
+                          }`}
+                        style={{
+                          backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
+                        }}
+                        onClick={() =>
+                          setColorFilter(colorFilter === color ? null : color)
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className={styles.filterGroup}>
+                <p className={styles.filterLabel}>Style</p>
+                <div className={styles.optionList}>
+                  {STYLES.map((style) => (
+                    <button
+                      key={style}
+                      type="button"
+                      className={`${styles.filterButton} ${styleFilter === style ? styles.active : ""
+                        }`}
+                      onClick={() =>
+                        setStyleFilter(styleFilter === style ? null : style)
+                      }
+                      aria-pressed={styleFilter === style}
+                    >
+                      {style}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <p className={styles.filterLabel}>Season</p>
+                <div className={styles.optionList}>
+                  {SEASONS.map((season) => (
+                    <button
+                      key={season}
+                      type="button"
+                      className={`${styles.filterButton} ${seasonFilter === season ? styles.active : ""
+                        }`}
+                      onClick={() =>
+                        setSeasonFilter(
+                          seasonFilter === season ? null : season
+                        )
+                      }
+                      aria-pressed={seasonFilter === season}
+                    >
+                      {season}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Categories content – for sidebar "Categories" mode */}
+          {isCategoriesMode && (
             <div className={styles.filterGroup}>
-              <label className={styles.inspirationLabel}>
-                Inspired Look Active:
-                <span style={{ fontWeight: "bold", color: "#5c1a1a" }}>
-                  Filtering by {inspirationColors.length} colors!
-                </span>
-              </label>
+              <p className={styles.filterLabel}>Category</p>
               <div className={styles.optionList}>
-                {inspirationColors.map((color, index) => (
-                  <span
-                    key={`${color}-${index}`}
-                    className={styles.inspirationColorTag}
-                  >
-                    {color}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-          {inspirationColors.length === 0 && (
-            <div className={styles.filterGroup}>
-              <label>Color:</label>
-              <div className={styles.colorOptions}>
-                {Object.keys(COLOR_MAP).map((color) => (
-                  <div
-                    key={color}
-                    className={`${styles.colorCircle} ${
-                      colorFilter === color ? styles.activeColor : ""
-                    }`}
-                    style={{
-                      backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.key}
+                    type="button"
+                    className={`${styles.filterButton} ${categoryFilter === cat.key ? styles.active : ""
+                      }`}
+                    onClick={() => {
+                      setCategoryFilter(cat.key === "All" ? null : cat.key);
+                      // optionally close sidebar on select:
+                      // setSidebarMode("none");
                     }}
-                    onClick={() =>
-                      setColorFilter(colorFilter === color ? null : color)
-                    }
-                  />
+                    aria-pressed={categoryFilter === cat.key}
+                  >
+                    {cat.key === "All" ? "All clothes" : cat.key}
+                  </button>
                 ))}
               </div>
             </div>
           )}
-
-          <div className={styles.filterGroup}>
-            <p className={styles.filterLabel}>Style</p>
-            <div className={styles.optionList}>
-              {STYLES.map((style) => (
-                <button
-                  key={style}
-                  type="button"
-                  className={`${styles.filterButton} ${
-                    styleFilter === style ? styles.active : ""
-                  }`}
-                  onClick={() =>
-                    setStyleFilter(styleFilter === style ? null : style)
-                  }
-                  aria-pressed={styleFilter === style}
-                >
-                  {style}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.filterGroup}>
-            <p className={styles.filterLabel}>Season</p>
-            <div className={styles.optionList}>
-              {SEASONS.map((season) => (
-                <button
-                  key={season}
-                  type="button"
-                  className={`${styles.filterButton} ${
-                    seasonFilter === season ? styles.active : ""
-                  }`}
-                  onClick={() =>
-                    setSeasonFilter(seasonFilter === season ? null : season)
-                  }
-                  aria-pressed={seasonFilter === season}
-                >
-                  {season}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
-        {showFilters && (
+
+        {isSidebarOpen && (
           <div
             className={styles.filterBackdrop}
-            onClick={() => setShowFilters(false)}
+            onClick={handleCloseSidebar}
             aria-hidden="true"
           />
         )}
 
-        <div className={styles.closetContent}>
-          {isLoading ? (
-            <p className={styles.loading}>Loading...</p>
-          ) : filteredClothes.length === 0 ? (
-            <p className={styles.noClothes}>No items found.</p>
-          ) : (
-            <div className={styles.cardsWrapper}>
-              {filteredClothes.map((item) => (
-                <div key={item._id} className={styles.card}>
-                  <div className={styles.imageWrapper}>
-                    <img
-                      src={item.imageUrl}
-                      alt={item.category}
-                      className={styles.clothImage}
-                      draggable
-                      onDragStart={(e) => {
-                        e.dataTransfer.setData(
-                          "application/json",
-                          JSON.stringify(item)
-                        );
-                      }}
-                    />
-                  </div>
-                  <button
-                    onClick={() => {
-                      setSelectedClothing(item);
-                      setModalOpen(true);
-                    }}
-                    className={styles.deleteButton}
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <div className={styles.closetContent}>{closetContent}</div>
       </div>
 
       {selectedClothing && (
