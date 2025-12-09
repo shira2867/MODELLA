@@ -156,9 +156,8 @@ export default function CheckList({ userId }: Props) {
                 />
               </div>
               <div
-                className={`${styles.introCard} ${
-                  item.completed ? styles.completedCard : ""
-                } ${expandedNoteId === item._id ? styles.expanded : ""}`}
+                className={`${styles.introCard} ${item.completed ? styles.completedCard : ""
+                  } ${expandedNoteId === item._id ? styles.expanded : ""}`}
                 onClick={() =>
                   setExpandedNoteId(
                     expandedNoteId === item._id ? null : item._id
@@ -177,49 +176,52 @@ export default function CheckList({ userId }: Props) {
                       : truncateText(item.text)}
                   </p>
 
+                </div>
+
+                <div className={styles.iconActions}>
                   <p className={styles.cardEyebrow}>
                     {item.createdAt
                       ? new Date(item.createdAt).toLocaleDateString()
                       : "No Date"}
                   </p>
+                  <div className={styles.actionButtons}>
+                    <button
+                      className={styles.iconButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEditor(item);
+                      }}
+                      title="Edit"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className={styles.iconButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleMutation.mutate({
+                          id: item._id,
+                          completed: item.completed,
+                          text: item.text,
+                        });
+                      }}
+                      title={item.completed ? "Undo" : "Done"}
+                    >
+                      {item.completed ? <FaUndo /> : <FaCheckCircle />}
+                    </button>
+                    <button
+                      className={styles.iconButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteMutation.mutate(item._id);
+                      }}
+                      title="Delete"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
 
-                <div className={styles.iconActions}>
-                  <button
-                    className={styles.iconButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openEditor(item);
-                    }}
-                    title="Edit"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className={styles.iconButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleMutation.mutate({
-                        id: item._id,
-                        completed: item.completed,
-                        text: item.text,
-                      });
-                    }}
-                    title={item.completed ? "Undo" : "Done"}
-                  >
-                    {item.completed ? <FaUndo /> : <FaCheckCircle />}
-                  </button>
-                  <button
-                    className={styles.iconButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteMutation.mutate(item._id);
-                    }}
-                    title="Delete"
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
               </div>
             </div>
           ))}
