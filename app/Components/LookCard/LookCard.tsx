@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styles from "./LookCard.module.css";
+import { useToast } from "../Toast/ToastProvider";
 import { FiShare2, FiMail, FiMessageCircle, FiUpload } from "react-icons/fi";
 import { FaFacebookF, FaTimes, FaTrash } from "react-icons/fa";
 import { ClothingItem } from "@/types/clothTypes";
@@ -20,8 +21,8 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const [isDeleted, setIsDeleted] = useState(false);
   const queryClient = useQueryClient();
   const userId = useUserStore((state) => state.userId);
-    const profileImage = useUserStore((state) => state.user?.profileImage);
-
+  const profileImage = useUserStore((state) => state.user?.profileImage);
+  const { showToast } = useToast();
 
   const BASE_URL = globalThis?.location?.origin ?? "";
   const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
@@ -47,14 +48,18 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   }, [shareStatus]);
 
   const openPopup = (url: string) => {
-    if (typeof globalThis === "undefined" || typeof globalThis.open !== "function") return;
+    if (
+      typeof globalThis === "undefined" ||
+      typeof globalThis.open !== "function"
+    )
+      return;
     globalThis.open(url, "_blank", "width=600,height=500,noopener,noreferrer");
   };
 
   const shareCopyLink = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigator.clipboard?.writeText(lookUrl);
-    alert("Link copied!");
+    showToast("Link copied!", "success");
   };
 
   const shareEmail = (e: React.MouseEvent) => {
@@ -68,7 +73,9 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const shareFacebook = (e: React.MouseEvent) => {
     e.stopPropagation();
     openPopup(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(lookUrl)}`
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        lookUrl
+      )}`
     );
   };
 
@@ -78,7 +85,7 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
       const res = await fetch("/api/sharelook", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lookId, userId,profileImage }),
+        body: JSON.stringify({ lookId, userId, profileImage }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not share look");
@@ -87,15 +94,19 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     onSuccess: (data) => {
       setIsShared(true);
       setSharedLookId(data._id);
-      queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId, userId] });
-      alert("Look added to StyleFeed!");
+      queryClient.invalidateQueries({
+        queryKey: ["shareLookStatus", lookId, userId],
+      });
+      showToast("Look added to StyleFeed!", "success");
     },
   });
 
   const removeLookMutation = useMutation({
     mutationFn: async () => {
       if (!sharedLookId) throw new Error("Missing shared look ID");
-      const res = await fetch(`/api/sharelook/${sharedLookId}`, { method: "DELETE" });
+      const res = await fetch(`/api/sharelook/${sharedLookId}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not remove");
       return data;
@@ -103,9 +114,13 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
     onSuccess: () => {
       setIsShared(false);
       setSharedLookId(null);
-      queryClient.invalidateQueries({ queryKey: ["shareLookStatus", lookId, userId] });
-      alert("Look removed from StyleFeed");
+      queryClient.invalidateQueries({
+        queryKey: ["shareLookStatus", lookId, userId],
+      });
+      showToast("Look removed from StyleFeed", "success");
     },
+    onError: (err: any) =>
+      showToast(err.message || "Could not remove look", "error"),
   });
 
   const deleteLook = async (e: React.MouseEvent) => {
@@ -120,9 +135,9 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
       setIsDeleted(true);
       queryClient.invalidateQueries({ queryKey: ["userLooks", userId] });
       setIsPopupOpen(false);
-      alert("Look deleted successfully!");
+      showToast("Look deleted successfully!", "success");
     } catch (err: any) {
-      alert(err.message || "Failed to delete look");
+      showToast(err.message || "Failed to delete look", "error");
     }
   };
 
@@ -138,7 +153,9 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
         <div className={styles.cardSummary}>
           <p className={styles.cardEyebrow}>Look</p>
           <h3 className={styles.cardTitle}>{items.length} curated items</h3>
-          <p className={styles.cardHelper}>Tap any piece for a full-screen preview.</p>
+          <p className={styles.cardHelper}>
+            Tap any piece for a full-screen preview.
+          </p>
         </div>
         <span
           className={`${styles.badge} ${isShared ? styles.badgeSuccess : ""}`}
@@ -174,20 +191,41 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
         <div>
           <p className={styles.shareLabel}>Share or manage look</p>
           <p className={styles.shareDescription}>
-            Copy a link or push to StyleFeed. Removing will hide it from followers.
+            Copy a link or push to StyleFeed. Removing will hide it from
+            followers.
           </p>
         </div>
         <div className={styles.shareButtons} aria-label="Share look options">
-          <button type="button" className={styles.shareButton} onClick={shareCopyLink} title="Copy share link">
+          <button
+            type="button"
+            className={styles.shareButton}
+            onClick={shareCopyLink}
+            title="Copy share link"
+          >
             <FiShare2 size={18} />
           </button>
-          <button type="button" className={styles.shareButton} onClick={shareEmail} title="Share via email">
+          <button
+            type="button"
+            className={styles.shareButton}
+            onClick={shareEmail}
+            title="Share via email"
+          >
             <FiMail size={18} />
           </button>
-          <button type="button" className={styles.shareButton} onClick={shareWhatsApp} title="Share via WhatsApp">
+          <button
+            type="button"
+            className={styles.shareButton}
+            onClick={shareWhatsApp}
+            title="Share via WhatsApp"
+          >
             <FiMessageCircle size={18} />
           </button>
-          <button type="button" className={styles.shareButton} onClick={shareFacebook} title="Share on Facebook">
+          <button
+            type="button"
+            className={styles.shareButton}
+            onClick={shareFacebook}
+            title="Share on Facebook"
+          >
             <FaFacebookF size={18} />
           </button>
 
@@ -195,7 +233,10 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
             <button
               type="button"
               className={`${styles.shareButton} ${styles.styleFeed}`}
-              onClick={(e) => { e.stopPropagation(); removeLookMutation.mutate(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                removeLookMutation.mutate();
+              }}
               title="Remove from StyleFeed"
             >
               ✖
@@ -204,7 +245,10 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
             <button
               type="button"
               className={`${styles.shareButton} ${styles.styleFeed}`}
-              onClick={(e) => { e.stopPropagation(); addLookMutation.mutate(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                addLookMutation.mutate();
+              }}
               title="Share to StyleFeed"
             >
               <FiUpload size={18} />
@@ -226,20 +270,45 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
 
       {isPopupOpen && (
         <div className={styles.modalBackdrop}>
-          <button className={styles.backdropDismiss} onClick={closePreview} tabIndex={-1} />
-          <dialog open className={styles.modalContentLarge} onCancel={(e) => { e.preventDefault(); closePreview(); }}>
-            <button type="button" className={styles.closeButton} onClick={closePreview}>
+          <button
+            className={styles.backdropDismiss}
+            onClick={closePreview}
+            tabIndex={-1}
+          />
+          <dialog
+            open
+            className={styles.modalContentLarge}
+            onCancel={(e) => {
+              e.preventDefault();
+              closePreview();
+            }}
+          >
+            <button
+              type="button"
+              className={styles.closeButton}
+              onClick={closePreview}
+            >
               <FaTimes />
             </button>
             <header className={styles.modalHeader}>
               <p className={styles.cardEyebrow}>Full look</p>
-              <h4 className={styles.modalTitle}>{items.length} curated items</h4>
-              <p className={styles.modalDescription}>Scroll through every piece in a larger canvas to examine textures and fit.</p>
+              <h4 className={styles.modalTitle}>
+                {items.length} curated items
+              </h4>
+              <p className={styles.modalDescription}>
+                Scroll through every piece in a larger canvas to examine
+                textures and fit.
+              </p>
             </header>
             <div className={styles.gridLarge}>
               {items.map((item) => (
                 <div key={item._id} className={styles.itemWrapperLarge}>
-                  <img src={item.imageUrl} alt={item.category} className={styles.imageLarge} loading="lazy" />
+                  <img
+                    src={item.imageUrl}
+                    alt={item.category}
+                    className={styles.imageLarge}
+                    loading="lazy"
+                  />
                 </div>
               ))}
             </div>

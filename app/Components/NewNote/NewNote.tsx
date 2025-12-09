@@ -3,7 +3,7 @@
 import React, { useState, FC, useEffect } from "react";
 import styles from "./NewNote.module.css";
 import { ChecklistItem } from "../CheckList/CheckList";
-
+import { useToast } from "../Toast/ToastProvider";
 type Props = {
   note?: ChecklistItem;
   onSave: (text: string) => void;
@@ -12,7 +12,7 @@ type Props = {
 
 const NoteEditor: FC<Props> = ({ note, onSave, onClose }) => {
   const [text, setText] = useState(note?.text || "");
-
+  const { showToast } = useToast();
   useEffect(() => {
     setText(note?.text || "");
   }, [note]);
@@ -38,7 +38,10 @@ const NoteEditor: FC<Props> = ({ note, onSave, onClose }) => {
           <button
             className={styles.saveBtn}
             onClick={() => {
-              if (!text.trim()) return alert("Please write something first!");
+              if (!text.trim()) {
+                showToast("Please write something first!", "error");
+                return;
+              }
               onSave(text);
               setText("");
             }}

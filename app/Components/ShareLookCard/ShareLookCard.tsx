@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./ShareLookCard.module.css";
@@ -27,8 +28,12 @@ export default function ShareLookCard({ look }: Props) {
       <div className={styles.card} onClick={() => setOpen(true)}>
         <div className={styles.cardHeader}>
           <div className={styles.cardSummary}>
-            <h3 className={styles.cardTitle}>{look.items?.length} curated items</h3>
-            <p className={styles.cardHelper}>Tap any piece for a full-screen preview.</p>
+            <h3 className={styles.cardTitle}>
+              {look.items?.length} curated items
+            </h3>
+            <p className={styles.cardHelper}>
+              Tap any piece for a full-screen preview.
+            </p>
           </div>
         </div>
 
@@ -47,19 +52,25 @@ export default function ShareLookCard({ look }: Props) {
         </div>
 
         <div className={styles.cardFooter}>
-          <LikeButton lookId={look._id} userId={userId} likes={likes} onLike={handleLike} />
+          <LikeButton
+            lookId={look._id}
+            userId={userId}
+            likes={likes}
+            onLike={handleLike}
+          />
         </div>
-<div className={styles.profileImage}>
-   {typeof look.profileImage === "string" && look.profileImage.startsWith("http") && (
-  <Image
-    src={look.profileImage}
-    alt="Profile"
-    width={40}
-    height={40}
-    className={styles.userImage}
-  />
-)}
-</div>
+
+        <div className={styles.profileImage}>
+          {look.profileImage && (
+            <Image
+              src={look.profileImage}
+              alt="Profile"
+              width={40}
+              height={40}
+              className={styles.userImage}
+            />
+          )}
+        </div>
       </div>
 
       {open && <LookModal look={look} onClose={() => setOpen(false)} />}

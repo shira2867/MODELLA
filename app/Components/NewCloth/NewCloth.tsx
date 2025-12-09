@@ -1,42 +1,68 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
+import { useToast } from "../Toast/ToastProvider";
 import styles from "./NewCloth.module.css";
 import { uploadToCloudinary } from "@/services/server/cloudinary";
 import { ClothingItemPayload } from "@/types/clothTypes";
-import { closestColorLAB, getDominantColorsFromCenter } from "@/services/server/colorUtils"; 
 
+import {
+  closestColorLAB,
+  getDominantColorsFromCenter,
+} from "@/services/server/colorUtils";
 
 type NewClothProps = { userId: string };
 
 const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
   const [category, setCategory] = useState("");
-  const [thickness, setThickness] = useState<"light" | "medium" | "heavy">("light");
+  const [thickness, setThickness] = useState<
+    "light" | "medium" | "heavy" | " "
+  >(" ");
+
   const [style, setStyle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const categories = ["shirt", "pants", "Jacket&coat", "dress", "Skirts", "Shoes", "Accessories"];
+  const categories = [
+    "shirt",
+    "pants",
+    "Jacket&coat",
+    "dress",
+    "Skirts",
+    "Shoes",
+    "Accessories",
+  ];
   const styleOptions = ["casual", "formal", "sporty", "party"];
-  const thicknessOptions: ("light" | "medium" | "heavy")[] = ["light", "medium", "heavy"];
-
+  const thicknessOptions: ("light" | "medium" | "heavy")[] = [
+    "light",
+    "medium",
+    "heavy",
+  ];
+  const isNonFabricCategory =
+    category === "Shoes" || category === "Accessories";
+  useEffect(() => {
+    if (isNonFabricCategory) {
+      setThickness(" ");
+    }
+  }, [category]);
   const mutation = useMutation<void, Error, ClothingItemPayload>({
     mutationFn: async (newCloth) => await axios.post("/api/clothing", newCloth),
     onSuccess: () => {
-      alert("Item added successfully!");
+      showToast("Item added successfully!", "success");
       queryClient.invalidateQueries({ queryKey: ["clothes", userId] });
       router.push("/mycloset");
     },
-    onError: () => alert("Something went wrong!"),
+    onError: () => showToast("Something went wrong!", "error"),
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,8 +73,13 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!category || !thickness || !style || !imageFile) {
-      alert("Please fill all fields and upload an image!");
+    if (
+      !category ||
+      !style ||
+      !imageFile ||
+      (!isNonFabricCategory && !thickness)
+    ) {
+      showToast("Please fill all fields and upload an image!", "error");
       return;
     }
 
@@ -60,18 +91,20 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
       img.crossOrigin = "anonymous";
       img.src = imageUrl;
       img.onload = () => {
-      
         const topColors = getDominantColorsFromCenter(img, 100, 1);
         const mainColor = topColors[0];
         const colorName = closestColorLAB(mainColor);
 
         console.log("Detected color:", colorName);
-        console.log("rgb", `rgb(${mainColor[0]}, ${mainColor[1]}, ${mainColor[2]})`);
+        console.log(
+          "rgb",
+          `rgb(${mainColor[0]}, ${mainColor[1]}, ${mainColor[2]})`
+        );
 
         mutation.mutate({
           userId,
           category,
-          thickness,
+          thickness: isNonFabricCategory ? " " : thickness,
           style,
           imageUrl,
           color: `rgb(${mainColor[0]}, ${mainColor[1]}, ${mainColor[2]})`,
@@ -80,7 +113,7 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
       };
     } catch (err) {
       console.error(err);
-      alert("Upload failed!");
+      showToast("Upload failed!", "error");
     } finally {
       setLoading(false);
     }
@@ -96,7 +129,11 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
         <form className={styles.fieldsArea} onSubmit={handleSubmit}>
           <label className={styles.imageBox}>
             {imagePreview ? (
-              <img src={imagePreview} alt="Clothing Preview" className={styles.previewImage} />
+              <img
+                src={imagePreview}
+                alt="Clothing Preview"
+                className={styles.previewImage}
+              />
             ) : (
               <div className={styles.placeholder}>
                 <span className={styles.plusIcon}>+</span>
@@ -108,7 +145,10 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
 
           <div className={styles.field}>
             <label>Category</label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
               <option value="">Select category</option>
               {categories.map((c) => (
                 <option key={c}>{c}</option>
@@ -118,7 +158,13 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
 
           <div className={styles.field}>
             <label>Thickness</label>
-            <select value={thickness} onChange={(e) => setThickness(e.target.value as "light" | "medium" | "heavy")}>
+            <select
+              value={thickness}
+              onChange={(e) =>
+                setThickness(e.target.value as "light" | "medium" | "heavy")
+              }
+              disabled={isNonFabricCategory}
+            >
               <option value="">Select thickness</option>
               {thicknessOptions.map((c) => (
                 <option key={c}>{c}</option>

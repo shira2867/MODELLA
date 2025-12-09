@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ShareLookType } from "@/types/shareLookType";
+import { useToast } from "../Toast/ToastProvider";
 import styles from "./LookPopUp.module.css";
 import { LikeButton, CommentForm } from "../LikeAndComment/LikeAndComment";
 import { useUserStore } from "@/store/userStore";
@@ -26,7 +27,7 @@ export default function LookPopup({ look, onClose }: Props) {
   const [userId, setUserId] = useState<string | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-
+  const { showToast } = useToast();
   const user = useUserStore((state) => state.user);
   const userIdFromStore = useUserStore((state) => state.userId);
 
@@ -38,13 +39,11 @@ export default function LookPopup({ look, onClose }: Props) {
 
   const handleShareAll = () => {
     if (!look._id) {
-      alert("This look is not shared with everyone yet!");
+      showToast("This look is not shared with everyone yet!", "error");
       return;
     }
     router.push(`/sharelookall/${look._id}`);
   };
-  const togglePanel = () => setIsOpen((prev) => !prev);
-
   return (
     <div className={styles.modalBackdrop} onClick={onClose} role="presentation">
       <div
@@ -80,9 +79,12 @@ export default function LookPopup({ look, onClose }: Props) {
         <section className={styles.container}>
           <header className={styles.sectionHeader}>
             <p className={styles.eyebrow}>Closet remix</p>
-            <h1 className={styles.title}>Do you want to create like this look?</h1>
+            <h1 className={styles.title}>
+              Do you want to create like this look?
+            </h1>
             <p className={styles.description}>
-              Replace inspiration pieces with items from your closet to build a personalised edit.
+              Replace inspiration pieces with items from your closet to build a
+              personalised edit.
             </p>
           </header>
 
@@ -114,39 +116,39 @@ export default function LookPopup({ look, onClose }: Props) {
           />
 
           {Array.isArray(comments) && comments.length > 0 ? (
-           comments.map((c: any, i: number) => (
-  <div key={i} className={styles.comment}>
- {c.profileImage ? (
-  <Image
-    src={c.profileImage}
-    alt={c.userName}
-    width={40}
-    height={40}
-    className={styles.commentAvatar}
-    onError={(e) => {
-      const target = e.target as HTMLImageElement;
-      target.src = "/default-avatar.png"; 
-    }}
-  />
-) : (
-  <div className={styles.commentAvatarFallback}>
-    {c.userName?.charAt(0).toUpperCase() || "U"}
-  </div>
-)}
+            comments.map((c: any, i: number) => (
+              <div key={i} className={styles.comment}>
+                {c.profileImage ? (
+                  <Image
+                    src={c.profileImage}
+                    alt={c.userName}
+                    width={40}
+                    height={40}
+                    className={styles.commentAvatar}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "/default-avatar.png";
+                    }}
+                  />
+                ) : (
+                  <div className={styles.commentAvatarFallback}>
+                    {c.userName?.charAt(0).toUpperCase() || "U"}
+                  </div>
+                )}
 
-
-    <div className={styles.commentContent}>
-      <div className={styles.commentHeader}>
-        <span className={styles.commentUserName}>{c.userName}</span>
-        <span className={styles.commentDate}>
-          {c.createdAt ? new Date(c.createdAt).toLocaleString("he-IL") : ""}
-        </span>
-      </div>
-      <p className={styles.commentText}>{c.text}</p>
-    </div>
-  </div>
-))
-
+                <div className={styles.commentContent}>
+                  <div className={styles.commentHeader}>
+                    <span className={styles.commentUserName}>{c.userName}</span>
+                    <span className={styles.commentDate}>
+                      {c.createdAt
+                        ? new Date(c.createdAt).toLocaleString("he-IL")
+                        : ""}
+                    </span>
+                  </div>
+                  <p className={styles.commentText}>{c.text}</p>
+                </div>
+              </div>
+            ))
           ) : (
             <p className={styles.noComments}>No comments yet</p>
           )}

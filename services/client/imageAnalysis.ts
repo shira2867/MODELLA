@@ -94,18 +94,17 @@ function getTopColorsFromImage(image: HTMLImageElement, topN: number = 3): strin
   const ctx = canvas.getContext("2d");
   if (!ctx) return [];
 
-  const size = 200; // canvas גדול יותר
+  const size = 200; 
   canvas.width = size;
   canvas.height = size;
 
-  // צייר את כל התמונה על הקנבס
   ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, size, size);
 
   const imageData = ctx.getImageData(0, 0, size, size);
   const data = imageData.data;
 
   const colorCounts = new Map<string, number>();
-  const BIN_SIZE = 16; // יותר רזולוציה לצבעים
+  const BIN_SIZE = 16; 
 
   for (let i = 0; i < data.length; i += 4) {
     const alpha = data[i + 3];
@@ -125,7 +124,7 @@ function getTopColorsFromImage(image: HTMLImageElement, topN: number = 3): strin
   const usedColorNames = new Set<string>();
 
   for (const [key, count] of sortedColors) {
-    if (count < 15) continue; // סף פיקסלים קטן יותר
+    if (count < 15) continue;
     if (dominantColorNames.length >= topN) break;
 
     const [r, g, b] = key.split(",").map(Number);
@@ -153,7 +152,7 @@ const mapAnalysisToCoreColors = (analysisColors: string[]): string[] => {
   const coreColors = analysisColors.map((analysisColor) => {
     return ANALYSIS_TO_CORE_MAP[analysisColor] || analysisColor;
   });
-  return Array.from(new Set(coreColors)); // מסיר כפילויות
+  return Array.from(new Set(coreColors)); 
 };
 
 

@@ -1,4 +1,5 @@
 "use client";
+
 import MyCloset from "@/app/Components/MyCloset/MyCloset";
 import NewLook from "@/app/Components/NewLook/NewLook";
 import Footer from "../../Components/Footer/Footer";
@@ -34,26 +35,33 @@ export default function ShowMyCloset() {
 
   return (
     <div className={styles.pageContainer}>
-      <Header /> <div className={styles.pageTitleWrapper}></div>{" "}
+      <Header />
+      <div className={styles.pageTitleWrapper}>{/* optional title */}</div>
+
       {isMobile && (
         <MobileNewLookBanner
           setInspirationColors={setInspirationColors}
           lookMode={lookMode}
           onModeChange={handleModeChange}
         />
-      )}{" "}
+      )}
+
       <div className={styles.mainArea}>
-        {" "}
         {!isMobile && (
           <NewLook
             setInspirationColors={setInspirationColors}
             lookMode={lookMode}
             onModeChange={handleModeChange}
           />
-        )}{" "}
-        <MyCloset userId={userId} inspirationColors={inspirationColors} />{" "}
+        )}
+        <MyCloset
+          userId={userId}
+          inspirationColors={inspirationColors}
+          isMobile={isMobile}
+        />
       </div>
-      <Footer />{" "}
+
+      <Footer />
     </div>
   );
 }

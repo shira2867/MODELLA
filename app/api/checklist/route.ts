@@ -80,10 +80,8 @@ export async function PUT(req: Request) {
       );
     }
 
-    // עדכון במסד הנתונים
     const updated = await updateChecklistItem(id, { text, completed });
 
-    // החזרת אובייקט מלא ל־client
     return NextResponse.json({
       message: "Item updated",
       item: {
