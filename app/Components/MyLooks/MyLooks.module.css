@@ -195,13 +195,13 @@ border-color: #340b0b;
 /* ====== Media Queries ====== */
 @media (max-width: 1200px) {
   .cardsWrapper {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 }
 
 @media (max-width: 900px) {
   .cardsWrapper {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 }
 

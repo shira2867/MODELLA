@@ -1,3 +1,4 @@
+
 /* ====== Fonts ====== */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
@@ -14,14 +15,13 @@
   box-sizing: border-box;
 }
 
-/* שניים בשורה במסכים בינוניים */
 @media (min-width: 900px) {
   .cardsWrapper {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* שלושה בשורה למסכים רחבים יותר */
+/* שלושה בשורה למסכים רחבים */
 @media (min-width: 1200px) {
   .cardsWrapper {
     grid-template-columns: repeat(3, 1fr);
@@ -104,6 +104,9 @@
 .cardBody {
   border-top: 1px solid var(--color-border);
   padding-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .grid {
@@ -154,12 +157,13 @@
 /* ====== Card Footer ====== */
 .cardFooter {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
   border-top: 1px solid var(--color-border);
   padding-top: 1rem;
   flex-wrap: wrap;
+  margin-top: auto; /* דוחף את הפוטר לתחתית הכרטיס */
 }
 
 .shareLabel {
@@ -223,6 +227,7 @@
   color: #fff;
 }
 
+/* ====== Modal ====== */
 .modalBackdrop {
   position: fixed;
   inset: 0;
@@ -253,6 +258,7 @@
   gap: 1.25rem;
 }
 
+/* ====== Responsive adjustments ====== */
 @media (max-width: 1200px) {
   .cardsWrapper { grid-template-columns: repeat(2, 1fr); }
 }
@@ -269,6 +275,10 @@
   .shareButton { width: 38px; height: 38px; }
   .cardTitle { font-size: 1.15rem; }
 }
+
+/* ====== Animations ====== */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: translateY(0); } }
 
 @media (prefers-reduced-motion: reduce) {
   .card, .itemWrapper, .shareButton, .modalBackdrop { transition: none; animation: none; }
