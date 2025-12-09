@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import styles from "./CheckList.module.css";
 import NoteEditor from "../NewNote/NewNote";
-import { FaEdit, FaTrash, FaCheckCircle, FaUndo, FaThumbtack } from "react-icons/fa"; 
+// import { useToast } from "../Toast/ToastProvider";
+import { FaEdit, FaTrash, FaCheckCircle, FaUndo } from "react-icons/fa";
 
 export type ChecklistItem = {
   _id: string;
@@ -21,41 +22,20 @@ type Props = {
   userId: string;
 };
 
-const getRandomRotation = (): string => {
-  const min = -2;
-  const max = 2;
-  return `${Math.random() * (max - min) + min}deg`;
-};
-
 export default function CheckList({ userId }: Props) {
   const queryClient = useQueryClient();
   const [editingNote, setEditingNote] = useState<ChecklistItem | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
+  // const { showToast } = useToast();
 
-  const { data: fetchedItems = [], isLoading } = useQuery<ChecklistItem[]>({
+  const { data: items = [], isLoading } = useQuery<ChecklistItem[]>({
     queryKey: ["checklist", userId],
     queryFn: async () => {
       const res = await axios.get(`/api/checklist?userId=${userId}`);
       return res.data;
     },
   });
-
-  // **שינוי: מיון הפריטים - הלא-מושלמים (completed: false) ראשונים**
-  const items = useMemo(() => {
-    // מיון: אם completed זה false זה -1 (יופיע ראשון), אם true זה 1 (יופיע אחרון).
-    return [...fetchedItems].sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1));
-  }, [fetchedItems]);
-
-
-  // **שמירת ההטיה הקבועה לכל פתק**
-  const rotations = useMemo(() => {
-    const rotationMap: { [key: string]: string } = {};
-    fetchedItems.forEach(item => { // שימוש ב-fetchedItems למניעת שינוי סיבוב במיון
-      rotationMap[item._id] = getRandomRotation();
-    });
-    return rotationMap;
-  }, [fetchedItems]);
 
   const addMutation = useMutation({
     mutationFn: async (text: string) => {
@@ -74,6 +54,10 @@ export default function CheckList({ userId }: Props) {
         (old = []) => [...old, newItem]
       );
       setIsEditorOpen(false);
+      // showToast("Note created successfully", "success");
+    },
+    onError: () => {
+      // showToast("Error creating note", "error");
     },
   });
 
@@ -98,6 +82,10 @@ export default function CheckList({ userId }: Props) {
             item._id === id ? { ...item, completed: !item.completed } : item
           )
       );
+      // showToast("Note updated successfully", "success");
+    },
+    onError: () => {
+      // showToast("Error updating note", "error");
     },
   });
 
@@ -111,6 +99,10 @@ export default function CheckList({ userId }: Props) {
         ["checklist", userId],
         (old = []) => old.filter((item) => item._id !== id)
       );
+      // showToast("Note deleted successfully", "success");
+    },
+    onError: () => {
+      // showToast("Error deleting note", "error");
     },
   });
 
@@ -126,42 +118,51 @@ export default function CheckList({ userId }: Props) {
         .then(() => {
           queryClient.invalidateQueries({ queryKey: ["checklist", userId] });
           setIsEditorOpen(false);
+          // showToast("Note updated successfully", "success");
         })
-        .catch((err) => alert("Error updating note: " + err.message));
+        .catch(() => {
+          // showToast("Error updating note", "error");
+        });
     } else {
       addMutation.mutate(text);
+      // showToast("Note created successfully", "success");
     }
   };
 
-  const truncateText = (text: string) => text;
-
+  const truncateText = (text: string, limit = 100) => {
+    if (text.length <= limit) return text;
+    return text.slice(0, limit) + "...";
+  };
 
   return (
     <div className={styles.container}>
       <Header />{" "}
       <div className={styles.pageWrapper}>
-
+        {" "}
         <button
           className={`${styles.ctaButton} ${styles.primaryCta}`}
           onClick={() => openEditor()}
         >
-          Create New Note + {" "}
+          Create New Note{" "}
         </button>{" "}
-
         <div className={styles.cardsWrapper}>
           {items.map((item) => (
-            <div key={item._id} className={styles.noteCardWrapper}>
-              
-              {/* **שינוי: הוספת סיכת הנעוץ** */}
-              <div className={styles.notePin}>
-                <FaThumbtack />
+            <div key={item._id} className={styles.noteHangerWrapper}>
+              <div className={styles.hangerContainer}>
+                <img
+                  src="/e09956b6-4cd9-4d2b-aac5-7f0cb1fd7aba-removebg-preview.png"
+                  alt="Clothes Hanger"
+                  className={styles.hangerImage}
+                />
               </div>
-
               <div
                 className={`${styles.introCard} ${item.completed ? styles.completedCard : ""
-                  }`}
-                style={{ '--rotation': rotations[item._id] || '0deg' } as React.CSSProperties}
-                onClick={() => setExpandedNoteId(null)}
+                  } ${expandedNoteId === item._id ? styles.expanded : ""}`}
+                onClick={() =>
+                  setExpandedNoteId(
+                    expandedNoteId === item._id ? null : item._id
+                  )
+                }
               >
                 <div className={styles.introContent}>
                   <p
@@ -170,52 +171,57 @@ export default function CheckList({ userId }: Props) {
                       textDecoration: item.completed ? "line-through" : "none",
                     }}
                   >
-                    {item.text}
+                    {expandedNoteId === item._id
+                      ? item.text
+                      : truncateText(item.text)}
                   </p>
 
+                </div>
+
+                <div className={styles.iconActions}>
                   <p className={styles.cardEyebrow}>
                     {item.createdAt
                       ? new Date(item.createdAt).toLocaleDateString()
                       : "No Date"}
                   </p>
+                  <div className={styles.actionButtons}>
+                    <button
+                      className={styles.iconButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEditor(item);
+                      }}
+                      title="Edit"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className={styles.iconButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleMutation.mutate({
+                          id: item._id,
+                          completed: item.completed,
+                          text: item.text,
+                        });
+                      }}
+                      title={item.completed ? "Undo" : "Done"}
+                    >
+                      {item.completed ? <FaUndo /> : <FaCheckCircle />}
+                    </button>
+                    <button
+                      className={styles.iconButton}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteMutation.mutate(item._id);
+                      }}
+                      title="Delete"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
 
-                <div className={styles.iconActions}>
-                  <button
-                    className={styles.iconButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openEditor(item);
-                    }}
-                    title="Edit"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className={styles.iconButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleMutation.mutate({
-                        id: item._id,
-                        completed: item.completed,
-                        text: item.text,
-                      });
-                    }}
-                    title={item.completed ? "Undo" : "Done"}
-                  >
-                    {item.completed ? <FaUndo /> : <FaCheckCircle />}
-                  </button>
-                  <button
-                    className={styles.iconButton}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteMutation.mutate(item._id);
-                    }}
-                    title="Delete"
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
               </div>
             </div>
           ))}
@@ -226,8 +232,7 @@ export default function CheckList({ userId }: Props) {
             onSave={handleSave}
             onClose={() => setIsEditorOpen(false)}
           />
-        )}
-        {" "}
+        )}{" "}
       </div>
       <Footer />{" "}
     </div>

@@ -1,26 +1,27 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 
-.container { display: flex; flex-direction: column; min-height: 100vh; font-family: "Montserrat", sans-serif; }
+.container {
+  display: flex;
+  flex-direction: column;
+  font-family: "Arial", sans-serif;
+  min-height: 100vh;
+}
 
 .pageWrapper {
-  margin-top: 2%; /* הופחת לטובת ה-CTA */
   flex-grow: 1;
   width: 100%;
-  height: 70%;
   padding: 2rem;
+  font-family: "Montserrat", sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-
-
- 
 }
 
+
 .ctaButton {
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.65rem 1.5rem;
+  border-radius:8px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -28,30 +29,80 @@
   align-items: center;
   gap: 0.5rem;
   max-width: 300px;
-  margin-top: 20px; 
-  margin-bottom: 50px;
-  transition: 0.2s;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+  width: auto;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  margin-top: 50px;
+  margin-bottom: 20px;
 }
 
-.primaryCta {background-color: #050505; color: white; transform: translateY(-1px); }
+.primaryCta {
+  color: #eee9e9;
+  border: black 1.8px solid;
+  background-color: #000;
+
+
+}
+
+.primaryCta:hover {
+  transform: translateY(-1px);
+  color: white;
+  background-color: #050505;
+}
 
 .cardsWrapper {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 70px 50px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
   width: 100%;
   max-width: 1260px;
+  margin-left: auto;
+  margin-right: auto;
   margin-top: 30px;
   padding-bottom: 100px;
 }
 
+@media (max-width: 1200px) {
+  .cardsWrapper {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 
-@media (max-width: 1200px) { .cardsWrapper { grid-template-columns: repeat(3, 1fr); gap: 60px 30px; } }
-@media (max-width: 900px) { .cardsWrapper { grid-template-columns: repeat(2, 1fr); gap: 50px 20px; } }
-@media (max-width: 600px) { .cardsWrapper { grid-template-columns: 1fr; gap: 40px; } }
+@media (max-width: 900px) {
+  .cardsWrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
-.noteCardWrapper { position: relative; display: flex; flex-direction: column; align-items: center; margin-top: 50px; padding-top: 0; }
+@media (max-width: 600px) {
+  .cardsWrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+.noteHangerWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.hangerContainer {
+  position: absolute;
+  top: -68px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hangerImage {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+}
+
 .introCard {
   width: 300px;
   min-height: 300px;
@@ -70,67 +121,106 @@
 
 
 .introCard:hover {
-  transform: translateY(-4px) rotate(var(--rotation, 0deg));
-  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-.completedCard 
-{ 
-  opacity: 0.6; 
-  background: #f0f0f0; 
-  pointer-events: none; 
+
+
+.introCard.expanded {
+  max-height: 1000px;
 }
 
-.introContent { flex-grow: 1; height: auto; 
-  display: block;
-    overflow: visible;
-    }
-.introContent p { -webkit-line-clamp: unset !important;
-    -webkit-box-orient: unset !important;
-     overflow: visible !important; }
 
-.cardTitle { font-size: 1.2rem;
-    font-weight: 600; color:
-     #0b0b0b; word-break: break-word; }
-.cardEyebrow { font-size: 0.85rem; letter-spacing: 0.12em;
-    text-transform: uppercase; 
-    color: #888; }
 
-.iconActions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 10px; padding-top: 5px; z-index: 20; }
-.iconButton { background: none; border: none; cursor: pointer; font-size: 1.2rem; transition: 0.1s; }
-.iconButton:hover { transform: scale(1.2); color: #5c1a1a; }
-
-.notePin {
-  position: absolute;
-  top: -15px; left: -15px;
-  font-size: 1.5rem;
-  color: #5c1a1a; 
-  transform: rotate(-15deg);
-  z-index: 15;
-  pointer-events: none;
+.introCard.expanded .introContent::after {
+  display: none;
 }
 
-.imageCard {
-  width: 300px;
-  height: 300px;
-  background: white;
-  border-radius: 14px;
+.completedCard {
+  background: #f0f0f0;
+}
+
+.introContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
   overflow: hidden;
-  box-shadow:
-    1px 1px 5px rgba(0,0,0,0.12),
-    inset 0 0 10px rgba(0,0,0,0.04);
-  transform: rotate(var(--rotation, 0deg));
-  transition: all 0.28s ease;
   position: relative;
+  transition: all 0.3s ease;
 }
 
-.imageCard:hover {
-  transform: translateY(-6px) rotate(var(--rotation, 0deg));
-  box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #0b0b0b;
+  word-break: break-word;
 }
 
-.imageCard img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.cardEyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888;
+  margin: 0;
+}
+
+.iconActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding-top: 0.75rem;
+  background: linear-gradient(to top,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0));
+  z-index: 1;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #000;
+  transition: transform 0.1s;
+}
+
+.iconButton:hover {
+  transform: scale(1.2);
+  color: #5c1a1a;
+}
+
+@media (max-width: 600px) {
+  .noteHangerWrapper {
+    margin-top: 90px;
+  }
+
+  .introCard {
+    min-height: 200px;
+    max-height: 200px;
+  }
+}
+
+
+.iconActions {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  margin-top: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding-top: 0.75rem;
+  background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+  z-index: 1;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
 }
