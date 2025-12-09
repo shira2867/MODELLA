@@ -1,4 +1,3 @@
-// Updated Header component with profile popup menu
 "use client";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +27,7 @@ export default function Header() {
     }
   };
 
-  const handleGoWelcome = () => {
+  const handleUpdateProfile = () => {
     router.push("/profile");
   };
 
@@ -77,7 +76,7 @@ export default function Header() {
             <button className={styles.profileButton} onClick={handleLogout}>
               Logout
             </button>
-            <button className={styles.profileButton} onClick={handleGoWelcome}>
+            <button className={styles.profileButton} onClick={handleUpdateProfile}>
               update profile
             </button>
           </div>

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import styles from "./CheckList.module.css";
 import NoteEditor from "../NewNote/NewNote";
-import { FaEdit, FaTrash, FaCheckCircle, FaUndo } from "react-icons/fa";
+import { FaEdit, FaTrash, FaCheckCircle, FaUndo, FaThumbtack } from "react-icons/fa"; 
 
 export type ChecklistItem = {
   _id: string;
@@ -21,19 +21,41 @@ type Props = {
   userId: string;
 };
 
+const getRandomRotation = (): string => {
+  const min = -2;
+  const max = 2;
+  return `${Math.random() * (max - min) + min}deg`;
+};
+
 export default function CheckList({ userId }: Props) {
   const queryClient = useQueryClient();
   const [editingNote, setEditingNote] = useState<ChecklistItem | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
 
-  const { data: items = [], isLoading } = useQuery<ChecklistItem[]>({
+  const { data: fetchedItems = [], isLoading } = useQuery<ChecklistItem[]>({
     queryKey: ["checklist", userId],
     queryFn: async () => {
       const res = await axios.get(`/api/checklist?userId=${userId}`);
       return res.data;
     },
   });
+
+  // **שינוי: מיון הפריטים - הלא-מושלמים (completed: false) ראשונים**
+  const items = useMemo(() => {
+    // מיון: אם completed זה false זה -1 (יופיע ראשון), אם true זה 1 (יופיע אחרון).
+    return [...fetchedItems].sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1));
+  }, [fetchedItems]);
+
+
+  // **שמירת ההטיה הקבועה לכל פתק**
+  const rotations = useMemo(() => {
+    const rotationMap: { [key: string]: string } = {};
+    fetchedItems.forEach(item => { // שימוש ב-fetchedItems למניעת שינוי סיבוב במיון
+      rotationMap[item._id] = getRandomRotation();
+    });
+    return rotationMap;
+  }, [fetchedItems]);
 
   const addMutation = useMutation({
     mutationFn: async (text: string) => {
@@ -111,41 +133,35 @@ export default function CheckList({ userId }: Props) {
     }
   };
 
-  const truncateText = (text: string, limit = 100) => {
-    if (text.length <= limit) return text;
-    return text.slice(0, limit) + "...";
-  };
+  const truncateText = (text: string) => text;
+
 
   return (
     <div className={styles.container}>
       <Header />{" "}
       <div className={styles.pageWrapper}>
-        {" "}
+
         <button
           className={`${styles.ctaButton} ${styles.primaryCta}`}
           onClick={() => openEditor()}
         >
-          Create New Note{" "}
+          Create New Note + {" "}
         </button>{" "}
+
         <div className={styles.cardsWrapper}>
           {items.map((item) => (
-            <div key={item._id} className={styles.noteHangerWrapper}>
-              <div className={styles.hangerContainer}>
-                <img
-                  src="/e09956b6-4cd9-4d2b-aac5-7f0cb1fd7aba-removebg-preview.png"
-                  alt="Clothes Hanger"
-                  className={styles.hangerImage}
-                />
+            <div key={item._id} className={styles.noteCardWrapper}>
+              
+              {/* **שינוי: הוספת סיכת הנעוץ** */}
+              <div className={styles.notePin}>
+                <FaThumbtack />
               </div>
+
               <div
-                className={`${styles.introCard} ${
-                  item.completed ? styles.completedCard : ""
-                } ${expandedNoteId === item._id ? styles.expanded : ""}`}
-                onClick={() =>
-                  setExpandedNoteId(
-                    expandedNoteId === item._id ? null : item._id
-                  )
-                }
+                className={`${styles.introCard} ${item.completed ? styles.completedCard : ""
+                  }`}
+                style={{ '--rotation': rotations[item._id] || '0deg' } as React.CSSProperties}
+                onClick={() => setExpandedNoteId(null)}
               >
                 <div className={styles.introContent}>
                   <p
@@ -154,9 +170,7 @@ export default function CheckList({ userId }: Props) {
                       textDecoration: item.completed ? "line-through" : "none",
                     }}
                   >
-                    {expandedNoteId === item._id
-                      ? item.text
-                      : truncateText(item.text)}
+                    {item.text}
                   </p>
 
                   <p className={styles.cardEyebrow}>
@@ -215,7 +229,7 @@ export default function CheckList({ userId }: Props) {
         )}
         {" "}
       </div>
-       <Footer />{" "}
+      <Footer />{" "}
     </div>
   );
 }
