@@ -1,0 +1,37 @@
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #5c1a1a;
+  font-weight: 600;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(92, 26, 26, 0.25);
+  z-index: 2000;
+  animation: fadeSlide 0.35s ease forwards;
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.success {
+  border-color: rgba(92, 26, 26, 0.35);
+}
+
+.error {
+  background: #5c1a1a;
+  color: #fff;
+  border-color: #3a0f0f;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

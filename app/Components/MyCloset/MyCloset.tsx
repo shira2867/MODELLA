@@ -10,6 +10,7 @@ import coat from "../../../public/clothes_15930120.png";
 import shirt from "../../../public/crop-top_10339535.png";
 import accessories from "../../../public/accessories_5029392.png";
 import DeleteHandleLooksModal from "../DeleteHandleLooksModal/DeleteHandleLooksModal";
+import { useToast } from "../Toast/ToastProvider";
 import pants from "../../../public/short_13387117.png";
 import { ClothingItem } from "@/types/clothTypes";
 import { FaTrash } from "react-icons/fa";
@@ -90,7 +91,7 @@ const MyCloset: React.FC<MyClosetProps> = ({
 
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>("none");
   const filterPanelId = "closet-filter-panel";
-
+  const { showToast } = useToast();
   const [selectedClothing, setSelectedClothing] = useState<ClothingItem | null>(
     null
   );
@@ -418,11 +419,14 @@ const MyCloset: React.FC<MyClosetProps> = ({
             setSelectedClothing(null);
           }}
           onComplete={({ updated, deleted }) => {
-            alert(
-              updated.length + deleted.length > 0
-                ? `Updated ${updated.length} looks, deleted ${deleted.length} looks.`
-                : "Item deleted."
-            );
+            if (updated.length + deleted.length > 0) {
+              showToast(
+                `Updated ${updated.length} looks, deleted ${deleted.length} looks.`,
+                "success"
+              );
+            } else {
+              showToast("Item deleted.", "success");
+            }
           }}
           userId={userId}
         />

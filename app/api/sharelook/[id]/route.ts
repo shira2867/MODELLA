@@ -4,13 +4,6 @@ import { shareLooksCollection } from "@/services/server/shareLook";
 import { usersCollection } from "@/services/server/users";
 import { ObjectId } from "mongodb";
 
-/**
- * GET /api/sharelook/[id]
- * Returns a shared look with:
- * - likes, items
- * - comments enriched with latest userName and profileImage
- * - profileImage of the look owner
- */
 export async function GET(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -133,10 +126,7 @@ export async function GET(
   }
 }
 
-/**
- * DELETE /api/sharelook/[id]
- * Deletes a shared look if the current user is the owner.
- */
+
 export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }

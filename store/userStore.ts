@@ -16,9 +16,6 @@ interface UserStore {
   clearUser: () => void;
 }
 
-// --------------------------
-// Helper: Cookie management
-// --------------------------
 function setUserIdCookie(id: string | null) {
   if (typeof document === "undefined") return;
 
@@ -29,9 +26,6 @@ function setUserIdCookie(id: string | null) {
   }
 }
 
-// --------------------------
-// Zustand Store
-// --------------------------
 export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
@@ -46,24 +40,20 @@ export const useUserStore = create<UserStore>()(
       setUserId: (id) => {
         set({ userId: id });
 
-        // LocalStorage
         if (id) {
           localStorage.setItem("userId", id);
         } else {
           localStorage.removeItem("userId");
         }
 
-        // Cookies (for middleware + API)
         setUserIdCookie(id);
       },
 
       clearUser: () => {
         set({ user: null, userId: null });
 
-        // Remove localStorage
         localStorage.removeItem("userId");
 
-        // Remove cookie
         setUserIdCookie(null);
       },
     }),

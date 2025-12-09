@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { ObjectId } from "mongodb";
-
 import { shareLooksCollection } from "@/services/server/shareLook";
 import { looksCollection } from "@/services/server/looks";
 import { usersCollection } from "@/services/server/users";
 import { ShareLookType } from "@/types/shareLookType";
 
-// --------------------- POST --------------------- //
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,7 +39,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Ensure user does not share someone else's look
     if (originalLook.userId && originalLook.userId !== userId) {
       return NextResponse.json(
         { error: "Forbidden" },
@@ -49,7 +46,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Strip old profileImage and _id from original look
     const {
       profileImage: _oldProfileImage,
       _id: _oldId,
@@ -64,7 +60,6 @@ export async function POST(req: NextRequest) {
       likes: [],
       comments: [],
       _id: `shared_${Date.now()}`,
-      // do NOT persist profileImage on the shared look document.
     };
 
     const shareCol = await shareLooksCollection();
@@ -83,7 +78,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// --------------------- GET --------------------- //
 
 export async function GET() {
   try {
@@ -99,15 +93,9 @@ export async function GET() {
 
     const shareCol = await shareLooksCollection();
     const userCol = await usersCollection();
-
-    // Get current user to know their gender
     const currentUser = await userCol.findOne({ _id: new ObjectId(userId) });
     const currentUserGender = currentUser?.gender || null;
-
-    // Fetch all shared looks, newest first
     const allLooks = await shareCol.find().sort({ createdAt: -1 }).toArray();
-
-    // Attach creator gender + profileImage (owner avatar) to each look
     const looksWithOwnerMeta = await Promise.all(
       allLooks.map(async (look: any) => {
         if (!look.userId) {
@@ -140,7 +128,7 @@ export async function GET() {
       })
     );
 
-    // Filter looks by current user's gender
+
     const filteredLooks = looksWithOwnerMeta.filter(
       (look) => look.gender === currentUserGender
     );
@@ -150,7 +138,6 @@ export async function GET() {
       (look: any) => look.comments || []
     );
 
-    // Collect unique userIds from all comments
     const userIds = Array.from(
       new Set(
         allRawComments
@@ -162,7 +149,6 @@ export async function GET() {
     let usersById: Record<string, any> = {};
 
     if (userIds.length > 0) {
-      // Convert userIds to ObjectId[]
       const objectIds = userIds
         .filter((id) => ObjectId.isValid(id))
         .map((id) => new ObjectId(id));
@@ -178,7 +164,6 @@ export async function GET() {
       }, {});
     }
 
-    // Enrich comments of each look with up-to-date userName and profileImage
     const enrichedLooks = filteredLooks.map((look: any) => {
       const rawComments = look.comments || [];
 

@@ -4,10 +4,11 @@ import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import styles from "./LookCreator.module.css";
+import { useToast } from "../Toast/ToastProvider";
 import { ClothingItem } from "@/types/clothTypes";
 import { LookType as Look } from "@/types/lookTypes";
 import { updateClick } from "@/services/client/clickSuggestions";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 type Props = {
   readonly look: Look;
@@ -27,6 +28,7 @@ export default function BuildSimilarLook({ look }: Props) {
     null
   );
   const [existingNotes, setExistingNotes] = useState<string[]>([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -78,7 +80,7 @@ export default function BuildSimilarLook({ look }: Props) {
     const colorName = item.colorName;
     const noteText = `${category} - ${colorName}`;
     try {
-      const updateResult = await updateClick( category, colorName!);
+      const updateResult = await updateClick(category, colorName!);
       const isExistingNote = existingNotes.includes(noteText);
       const isAlreadySelected = selectedItems[category]?._id === item._id;
       const isUserItemMatch =
@@ -101,7 +103,7 @@ export default function BuildSimilarLook({ look }: Props) {
     }
     setActiveCategory((prev) => (prev === category ? null : category));
   };
-  
+
   const handleAddNote = async () => {
     if (!noteCandidate || !userId) return;
 
@@ -141,12 +143,12 @@ export default function BuildSimilarLook({ look }: Props) {
     if (!userId || !look) return;
     try {
       const res = await axios.post("/api/looks", { userId, items: newLook });
-      alert("New Look created!");
+      showToast("New Look created!", "success");
       console.log("Saved look:", res.data);
-      router.push('/stylefeed')
+      router.push("/stylefeed");
     } catch (err) {
       console.error("Error saving look:", err);
-      alert("Error saving look");
+      showToast("Error saving look", "error");
     }
   };
 
@@ -246,9 +248,7 @@ export default function BuildSimilarLook({ look }: Props) {
         <div className={styles.buttonContainer}>
           <button className={styles.button} onClick={handleConfirm}>
             Confirm Look
-            
           </button>
-          
         </div>
       </div>
       {noteCandidate && (

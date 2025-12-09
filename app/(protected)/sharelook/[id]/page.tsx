@@ -4,14 +4,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-
 import SharedLookCard from "../../../Components/ShareLookCard/ShareLookCard";
 import {
   LikeButton,
   CommentForm,
 } from "../../../Components/LikeAndComment/LikeAndComment";
 import styles from "./shareLookId.module.css";
-
 import { ShareLookType } from "@/types/shareLookType";
 import { useUserStore } from "@/store/userStore";
 

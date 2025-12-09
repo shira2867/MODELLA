@@ -7,6 +7,7 @@ import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import styles from "./CheckList.module.css";
 import NoteEditor from "../NewNote/NewNote";
+import { useToast } from "../Toast/ToastProvider";
 import { FaEdit, FaTrash, FaCheckCircle, FaUndo } from "react-icons/fa";
 
 export type ChecklistItem = {
@@ -26,6 +27,7 @@ export default function CheckList({ userId }: Props) {
   const [editingNote, setEditingNote] = useState<ChecklistItem | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const { data: items = [], isLoading } = useQuery<ChecklistItem[]>({
     queryKey: ["checklist", userId],
@@ -52,6 +54,10 @@ export default function CheckList({ userId }: Props) {
         (old = []) => [...old, newItem]
       );
       setIsEditorOpen(false);
+      showToast("Note created successfully", "success");
+    },
+    onError: () => {
+      showToast("Error creating note", "error");
     },
   });
 
@@ -76,6 +82,10 @@ export default function CheckList({ userId }: Props) {
             item._id === id ? { ...item, completed: !item.completed } : item
           )
       );
+      showToast("Note updated successfully", "success");
+    },
+    onError: () => {
+      showToast("Error updating note", "error");
     },
   });
 
@@ -89,6 +99,10 @@ export default function CheckList({ userId }: Props) {
         ["checklist", userId],
         (old = []) => old.filter((item) => item._id !== id)
       );
+      showToast("Note deleted successfully", "success");
+    },
+    onError: () => {
+      showToast("Error deleting note", "error");
     },
   });
 
@@ -104,10 +118,14 @@ export default function CheckList({ userId }: Props) {
         .then(() => {
           queryClient.invalidateQueries({ queryKey: ["checklist", userId] });
           setIsEditorOpen(false);
+          showToast("Note updated successfully", "success");
         })
-        .catch((err) => alert("Error updating note: " + err.message));
+        .catch(() => {
+          showToast("Error updating note", "error");
+        });
     } else {
       addMutation.mutate(text);
+      showToast("Note created successfully", "success");
     }
   };
 
@@ -212,10 +230,9 @@ export default function CheckList({ userId }: Props) {
             onSave={handleSave}
             onClose={() => setIsEditorOpen(false)}
           />
-        )}
-        {" "}
+        )}{" "}
       </div>
-       <Footer />{" "}
+      <Footer />{" "}
     </div>
   );
 }

@@ -11,7 +11,6 @@ import { FiStar } from "react-icons/fi";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import arrowDown from "../../../public/img/down.png";
 import sunIcon from "../../../public/img/sunny_17145991.png";
 import WeatherWidget from "../WeatherWidget/WeatherWidget";
 import { StepProps } from "@/types/types";
@@ -20,7 +19,6 @@ const heroImages = [
   "slider_6_fpl8b5",
   "slider_5_z5v73p",
   "slider_7_e93yg3",
-  // "slider_9_j36kbz.avif",
   "slider_8_lgv50b.avif",
   "oejxpjs8o2viabihjkyx.webp",
   "f469db1182d3b9da38c505eb2d7db785_j1g48w.jpg",
@@ -112,7 +110,7 @@ export default function HomePage() {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/newcloth"); // כתובת העמוד של יצירת פריט חדש
+    router.push("/newcloth");
   };
   const nextVideo = () => {
     if (activeIndex !== null)
@@ -193,30 +191,6 @@ export default function HomePage() {
     <div className={styles.page}>
       <Header />
 
-      {/* {showPopup && user && (
-        <div className={styles.popupOverlay}>
-          <div className={styles.popupContent}>
-            <button
-              className={styles.closeButton}
-              onClick={() => setShowPopup(false)}
-            ></button>
-            <div className={styles.welcomeIconWrapper}>
-              <FiStar className={styles.welcomeIcon} />
-            </div>
-            <h1 className={styles.title}>Hello, {user?.name} </h1>
-            <p className={styles.subtitle}>Ready to style your day?</p>
-            <div className={styles.buttonContainer}>
-              <button
-                className={styles.button}
-                onClick={() => setShowPopup(false)}
-              >
-                Let's go!
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
-
       <main className={styles.content}>
         <section className={styles.heroSection}>
           <div className={styles.sliderWrapper}>
@@ -292,55 +266,6 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
-        {/* <section className={styles.stepsShell} id="steps" ref={stepsSectionRef}>
-          <div className={styles.sectionHeader}>
-            <p className={styles.sectionEyebrow}>How it works</p>
-            <h2>Our three-step styling ritual</h2>
-            <p>
-              Each feature feels handcrafted so you can glide from inspiration
-              to outfit planning without losing your signature taste.
-            </p>
-          </div>
-          <div className={styles.stepsWrapper}>
-            {stepsData.map((step, index) => (
-              <Step
-                key={index}
-                title={step.title}
-                description={step.description}
-                imageUrl={step.imageUrl}
-                reverse={index % 2 !== 0}
-              />
-            ))}
-          </div>
-        </section> */}
-        {/* <section className={styles.stepsShell} id="steps">
-          <div className={styles.sectionHeader}>
-            <p className={styles.sectionEyebrow}>How it works</p>
-            <h2>Our three-step styling ritual</h2>
-            <p className={styles.stepsIntro}>
-              Glide from inspiration to outfit planning effortlessly. Each step
-              is designed to make your mornings luxurious and intentional.
-            </p>
-          </div>
-
-          <div className={styles.stepsWrapper}>
-            {stepsData.map((step, index) => (
-              <Step
-                key={index}
-                title={step.title}
-                description={step.description}
-                imageUrl={step.imageUrl}
-                reverse={index % 2 !== 0}
-                bullets={step.bullets}
-              />
-            ))}
-          </div>
-
-          <div className={styles.stepsCTA}>
-            <button className={styles.heroPrimary}>Start Styling</button>
-          </div>
-        </section> */}
         <section className={styles.stepsShell} id="steps">
           <div className={styles.sectionHeader}>
             <p className={styles.sectionEyebrow}>How it works</p>
@@ -387,24 +312,6 @@ export default function HomePage() {
             </button>
           </div>
         </section>
-
-        {/* <section className={styles.aboutSection} id="about">
-          <div className={styles.sectionHeader}>
-            <p className={styles.sectionEyebrow}>About</p>
-            <h2>Effortless luxury every morning</h2>
-            <p>
-              YourCloset curates what you own, suggests weather-ready looks, and
-              keeps inspiration close so every outfit feels intentional.
-            </p>
-          </div>
-          <div className={styles.aboutCard}>
-            <p>
-              Organize garments, drag pieces into new combinations, and let our
-              styling guidance do the hard work. Stay sustainable, feel
-              polished, and reclaim your time.
-            </p>
-          </div>
-        </section> */}
         <section className={styles.testimonialsSection}>
           <div className={styles.sectionHeader}>
             <p className={styles.sectionEyebrow}>What people say</p>

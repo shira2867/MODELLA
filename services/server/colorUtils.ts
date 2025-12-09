@@ -78,12 +78,6 @@ export function isRedRGB([r, g, b]: RGB): boolean {
   return r > 150 && g < 80 && b < 80;
 }
 
-/**
- * Finds the closest color name to a given RGB value using LAB color space distance,
- * incorporating specific clothing color checks for better accuracy (e.g., denim, burgundy).
- * @param rgb - The RGB color tuple to classify.
- * @returns The closest descriptive color name (string).
- */
 export function closestColorLAB(rgb: RGB): string {
     const lab = chroma(rgb).lab();
   const L = lab[0];
@@ -134,18 +128,6 @@ const greenShades = ["Green", "Olive", "Teal", "Turquoise"];
 
   return closest;
 }
-
-/**
- * Extracts dominant colors from the center region of an image.
- * Ignores very bright (White) and low-saturation/high-lightness pixels.
- * Merges highly similar colors to ensure distinct dominant colors are returned.
- *
- * @param img - The HTMLImageElement to analyze.
- * @param size - The half-width/height of the square region (total area is 2*size x 2*size).
- * @param topN - The number of top dominant colors to return.
- * @returns An array of dominant colors as RGB tuples.
- */
-
 
 export function getDominantColorsKMeans(
   img: HTMLImageElement,
