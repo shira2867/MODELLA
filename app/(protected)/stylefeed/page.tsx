@@ -43,7 +43,7 @@ export default function StyleFeedPage() {
     <div className={styles.pageContainer}>
       <Header />
 
-      <h1 className={styles.title}>Style Feed</h1>
+      {/* <h1 className={styles.title}>Style Feed</h1> */}
 
       <div className={styles.grid}>
         {looks.map((look) => (

@@ -5,10 +5,15 @@ import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import SharedLookCard from "../../../Components/ShareLookCard/ShareLookCard";
-import { LikeButton, CommentForm } from "../../../Components/LikeAndComment/LikeAndComment";
+import {
+  LikeButton,
+  CommentForm,
+} from "../../../Components/LikeAndComment/LikeAndComment";
 import styles from "./shareLookId.module.css";
 import { ShareLookType } from "@/types/shareLookType";
-import { useUserStore } from "@/store/userStore";   
+import { useUserStore } from "@/store/userStore";
+
+type CommentType = ShareLookType["comments"][number];
 
 export default function ShareLookPage() {
   const params = useParams();
@@ -24,7 +29,12 @@ export default function ShareLookPage() {
   const { user } = useUserStore();
   const userName = user?.name || "";
 
-  const { data: look, isLoading, refetch } = useQuery({
+  // 1) Fetch the shared look (items, likes, etc.)
+  const {
+    data: look,
+    isLoading: isLookLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["share-look", lookId],
     queryFn: async () => {
       const res = await axios.get(`/api/sharelook/${lookId}`);
@@ -33,18 +43,32 @@ export default function ShareLookPage() {
     enabled: !!lookId,
   });
 
-  const addCommentToState = (comments: any[]) => {
-    queryClient.setQueryData<ShareLookType>(["share-look", lookId], (old) => {
-      if (!old) return old;
-      return {
-        ...old,
-        comments,
-      };
-    });
+  // 2) Fetch comments separately from /comment (always enriched)
+  const {
+    data: comments = [],
+    isLoading: isCommentsLoading,
+  } = useQuery<CommentType[]>({
+    queryKey: ["share-look-comments", lookId],
+    queryFn: async () => {
+      const res = await axios.get(`/api/sharelook/${lookId}/comment`);
+      return (res.data.comments || []) as CommentType[];
+    },
+    enabled: !!lookId,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: "always",
+  });
+
+  // 3) When CommentForm returns new comments, update the comments cache
+  const addCommentToState = (newComments: CommentType[]) => {
+    queryClient.setQueryData<CommentType[]>(
+      ["share-look-comments", lookId],
+      newComments
+    );
   };
 
   if (!userId) return <p>Loading user…</p>;
-  if (isLoading) return <p>Loading look…</p>;
+  if (isLookLoading || isCommentsLoading) return <p>Loading look…</p>;
   if (!look) return <p>Look not found</p>;
 
   return (
@@ -61,12 +85,12 @@ export default function ShareLookPage() {
       <CommentForm
         lookId={look._id}
         userId={userId}
-        userName={userName}             
+        userName={userName}
         onNewComment={addCommentToState}
       />
 
       <ul className={styles.commentList}>
-        {look.comments?.map((c, i) => (
+        {comments.map((c, i) => (
           <li key={i} className={styles.commentItem}>
             <strong>{(c as any).userName || c.userId}</strong>: {c.text}
           </li>
