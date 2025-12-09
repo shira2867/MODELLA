@@ -631,3 +631,318 @@
   display: flex;
   justify-content: center;
 }
+/* ==== Buttons responsive fix for small screens ==== */
+@media (max-width: 1024px) {
+  .weatherBannerWrapper {
+    position: absolute;
+    top: 20px;        /* מעלה את הקופסה */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    z-index: 50;      /* מעל הכפתורים */
+  }
+
+  .heroOverlay {
+    padding-top: 120px; /* מפנה מקום שהחלונית לא תדרוס את הכפתורים */
+  }
+}
+/* ==== Buttons responsive fix for small screens ==== */
+@media (max-width: 600px) {
+  .heroActions {
+    gap: 0.5rem;
+    margin-top: 1rem; /* רווח בין התמונה לכפתורים */
+  }
+
+  .heroPrimary,
+  .heroSecondary {
+    padding: 0.5rem 1rem;  /* קטן יותר */
+    font-size: 0.75rem;    /* טקסט קטן */
+    border-radius: 999px;
+  }
+
+  .heroSecondary img,
+  .bounceIcon {
+    width: 22px !important;  
+    height: 22px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroOverlay {
+    padding-top: 180px !important; /* רווח גדול יותר למובייל */
+  }
+
+  .heroActions {
+    margin-top: 1.2rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .heroOverlay {
+    padding-top: 200px !important;
+  }
+
+  .heroActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .heroPrimary,
+  .heroSecondary {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.7rem;
+  }
+
+  .bounceIcon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+/* ==== Weather box above buttons on all mobile sizes ==== */
+@media (max-width: 1024px) {
+  .weatherBannerWrapper {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    z-index: 99;
+  }
+
+  .heroOverlay {
+    padding-top: 160px !important; /* יותר מקום כך הכפתורים לא נעלמים */
+  }
+}
+
+
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fefaf6 0%, #f8f2ec 45%, #f4efea 100%);
+  color: var(--home-text);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  width: min(100%, 1380px);
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 3rem) clamp(1rem, 3vw, 2rem) 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 3vw, 3.5rem);
+}
+
+/* ===== Hero Section ===== */
+.heroSection {
+  position: relative;
+  width: 100%;
+}
+
+.sliderWrapper {
+  position: relative;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(20, 12, 8, 0.2);
+}
+
+.heroImage {
+  width: 100%;
+  height: clamp(440px, 55vw, 620px);
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.95);
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* הכפתורים תמיד בתחתית */
+  padding: clamp(1rem, 3vw, 3rem);
+  gap: 1rem;
+  background: linear-gradient(120deg, rgba(10,8,6,0.7) 10%, rgba(12,10,9,0.35) 45%, rgba(10,9,8,0.05) 70%);
+  color: #fff;
+  z-index: 10;
+}
+
+.heroCopy {
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.heroEyebrow {
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.heroCopy h1 {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.heroSubcopy {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem; /* רווח גמיש מהתמונה */
+}
+
+.heroPrimary,
+.heroSecondary {
+  border-radius: 999px;
+  padding: 0.85rem 1.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.heroPrimary {
+  background: #fef7f1;
+  color: #1b1a17;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+.heroPrimary:hover {
+  transform: translateY(-2px);
+}
+
+.heroSecondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.heroSecondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== Weather Banner ===== */
+.weatherBannerWrapper {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  z-index: 50;
+}
+
+.weatherContainer {
+  border-radius: 24px;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+              0 20px 45px rgba(10, 9, 8, 0.35);
+}
+
+.weatherContainer h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  color: #fff;
+}
+
+.weatherContainer h2 span {
+  display: block;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===== Media Queries ===== */
+@media (max-width: 1024px) {
+  .heroOverlay {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 2rem;
+  }
+  .weatherBannerWrapper {
+    width: 90%;
+  }
+  .stepSection,
+  .reverse {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 1rem;
+  }
+  .videoItem {
+    width: 200px;
+    height: 320px;
+  }
+}
+
+@media (max-width: 600px) {
+  .heroActions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .heroPrimary,
+  .heroSecondary {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+  .heroSecondary img,
+  .bounceIcon {
+    width: 22px !important;  
+    height: 22px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroOverlay {
+    padding: 3rem 1.5rem 1.5rem 1.5rem;
+  }
+  .heroActions {
+    margin-bottom: 1.2rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .heroOverlay {
+    padding: 3.5rem 1rem 1rem 1rem;
+  }
+  .heroActions {
+    gap: 0.45rem;
+  }
+  .heroPrimary,
+  .heroSecondary {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.7rem;
+  }
+  .bounceIcon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
