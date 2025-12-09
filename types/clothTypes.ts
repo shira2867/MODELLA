@@ -5,19 +5,16 @@ export type ClothingItem = {
   category: string;
   colorName?: string;
   color?: string;
-  thickness?: "light" | "medium" | "heavy";
+  thickness?: "light" | "medium" | "heavy" | " ";
   style?: string;
 };
-
 
 export type ClothingItemPayload = {
   userId: string;
   category: string;
-  thickness: "light" | "medium" | "heavy";
+  thickness: "light" | "medium" | "heavy" | " ";
   style: string;
   imageUrl: string;
   color: string;
   colorName: string;
 };
-
-

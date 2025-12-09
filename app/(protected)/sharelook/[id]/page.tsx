@@ -4,13 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-
 import SharedLookCard from "../../../Components/ShareLookCard/ShareLookCard";
 import { LikeButton, CommentForm } from "../../../Components/LikeAndComment/LikeAndComment";
 import styles from "./shareLookId.module.css";
-
 import { ShareLookType } from "@/types/shareLookType";
-import { useUserStore } from "@/store/userStore";   // 👈 חדש
+import { useUserStore } from "@/store/userStore";   
 
 export default function ShareLookPage() {
   const params = useParams();
@@ -23,7 +21,6 @@ export default function ShareLookPage() {
     setUserId(storedUserId);
   }, []);
 
-  // 👇 השם מגיע מה־userStore המעודכן (אחרי פרופיל)
   const { user } = useUserStore();
   const userName = user?.name || "";
 
@@ -61,7 +58,6 @@ export default function ShareLookPage() {
         onLike={() => refetch()}
       />
 
-      {/* טופס תגובות */}
       <CommentForm
         lookId={look._id}
         userId={userId}
@@ -72,7 +68,6 @@ export default function ShareLookPage() {
       <ul className={styles.commentList}>
         {look.comments?.map((c, i) => (
           <li key={i} className={styles.commentItem}>
-            {/* אם יש userName מהשרת – נשתמש בו, אחרת נ fallback ל-userId */}
             <strong>{(c as any).userName || c.userId}</strong>: {c.text}
           </li>
         ))}

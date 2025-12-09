@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { shareLooksCollection } from "@/services/server/shareLook";
-import { usersCollection } from "@/services/server/users"; // נניח שיש מסד משתמשים
+import { usersCollection } from "@/services/server/users"; 
 
 export async function GET(
   req: NextRequest,
@@ -47,8 +47,6 @@ export async function GET(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-
-
 
 
 export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {

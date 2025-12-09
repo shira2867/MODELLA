@@ -54,7 +54,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ lookNames: relatedLooks.map((l) => l._id) });
     }
 
-    // אם אין itemId – מחזירים את כל הבגדים של המשתמש המחובר
     const items = await getAllClothingItem(userId);
     return NextResponse.json(items);
 

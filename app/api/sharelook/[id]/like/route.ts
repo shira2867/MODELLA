@@ -16,11 +16,10 @@ export async function POST(
         { status: 401 }
       );
     }
-    const { id } = await context.params; // id כבר סטרינג
+    const { id } = await context.params; 
 
     const collection = await shareLooksCollection();
 
-    // שולף את הלוק
     const look = await collection.findOne({ _id: id });
     if (!look) {
       return NextResponse.json({ error: "Look not found" }, { status: 404 });
@@ -28,10 +27,8 @@ export async function POST(
 
     let updatedLikes;
     if (look.likes?.includes(userId)) {
-      // אם כבר קיים, מסיר את הלייק
       updatedLikes = look.likes.filter((uid: string) => uid !== userId);
     } else {
-      // אם לא קיים, מוסיף לייק
       updatedLikes = [...(look.likes || []), userId];
     }
 

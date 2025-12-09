@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import styles from "./DeleteHandleLooksModal.module.css";
+import { useToast } from "../Toast/ToastProvider";
 import { LookType as Look } from "@/types/lookTypes";
 
 type Props = {
@@ -41,6 +42,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
   userId,
 }) => {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   const [actions, setActions] = useState<Record<string, "update" | "delete">>(
     {}
   );
@@ -87,7 +89,7 @@ const DeleteHandleLooksModal: React.FC<Props> = ({
 
       onClose();
     },
-    onError: () => alert("Error processing. Try again."),
+    onError: () => showToast("Error processing. Try again.", "error"),
   });
 
   const handleActionChange = (lookId: string, action: "update" | "delete") => {

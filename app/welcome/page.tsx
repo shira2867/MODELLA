@@ -1,4 +1,3 @@
-// app/welcome/page.tsx
 
 import { Suspense } from "react";
 import Welcome from "../Components/Welcome/Welcome";

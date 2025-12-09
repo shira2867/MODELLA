@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { ObjectId } from "mongodb";
-
 import { shareLooksCollection } from "@/services/server/shareLook";
 import { looksCollection } from "@/services/server/looks";
 import { usersCollection } from "@/services/server/users";
 import { ShareLookType } from "@/types/shareLookType";
 
-// --------------------- POST --------------------- //
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,7 +39,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // ודאות שהמשתמש לא משתף לוק שלא שלו
     if (originalLook.userId && originalLook.userId !== userId) {
       return NextResponse.json(
         { error: "Forbidden" },
@@ -76,7 +73,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// --------------------- GET --------------------- //
 
 export async function GET() {
   try {
@@ -93,14 +89,11 @@ export async function GET() {
     const shareCol = await shareLooksCollection();
     const userCol = await usersCollection();
 
-    // מביאים את המשתמש כדי לדעת את המגדר
     const currentUser = await userCol.findOne({ _id: new ObjectId(userId) });
     const currentUserGender = currentUser?.gender || null;
 
-    // מביאים את כל הלוקים ששופו
     const allLooks = await shareCol.find().sort({ createdAt: -1 }).toArray();
 
-    // מוסיפים מידע על המגדר של היוצר לכל לוק
     const looksWithGender = await Promise.all(
       allLooks.map(async (look: any) => {
         if (!look.userId) return { ...look, gender: null };
@@ -114,7 +107,6 @@ export async function GET() {
       })
     );
 
-    // מסננים לפי המגדר של המשתמש הנוכחי
     const filteredLooks = looksWithGender.filter(
       (look) => look.gender === currentUserGender
     );
