@@ -36,10 +36,9 @@
 }
 
 .primaryCta {
-  color: #eee9e9;
-  border: black 1.8px solid;
-  background-color: #000;
-
+  color: #121212;
+border-color: #340b0b;
+  box-shadow: 0 0 0 3px rgba(92, 26, 26, 0.12); 
 
 }
 
