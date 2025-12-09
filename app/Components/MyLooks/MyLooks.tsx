@@ -82,8 +82,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
           className={`${styles.categoryButton} ${styles.filterToggle}`}
           onClick={() => setSidebarOpen(true)}
         >
-            filter       <Image width={24} src={filter} alt="filter"></Image>
-
+            filter      
         </button>
 
         <div
