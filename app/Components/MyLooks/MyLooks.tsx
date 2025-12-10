@@ -8,7 +8,7 @@ import { LookType } from "@/types/lookTypes";
 import { fetchLooks } from "@/services/client/look";
 import styles from "./MyLooks.module.css";
 import close from "../../../public/remove.png";
-import filter from "../../../public/filter_7420963.png"
+import filter from "../../../public/filter_7420963.png";
 
 type MyLooksProps = {
   userId: string;
@@ -29,7 +29,6 @@ const COLOR_MAP: Record<string, [number, number, number]> = {
   Black: [0, 0, 0],
   White: [255, 255, 255],
   Beige: [245, 245, 220],
-
 };
 
 const styleOptions = ["All", "casual", "formal", "sporty", "party"];
@@ -66,8 +65,10 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
     const itemColors = look.items.map((i) => (i.colorName || "").toLowerCase());
     const itemStyles = look.items.map((i) => i.style || "casual");
 
-    const styleMatch = styleFilter === "All" || itemStyles.includes(styleFilter!);
-    const colorMatch = !colorFilter || itemColors.includes(colorFilter.toLowerCase());
+    const styleMatch =
+      styleFilter === "All" || itemStyles.includes(styleFilter!);
+    const colorMatch =
+      !colorFilter || itemColors.includes(colorFilter.toLowerCase());
     const seasonMatch =
       !seasonFilter || look.items.some((i) => isItemInSeason(i, seasonFilter));
 
@@ -82,11 +83,13 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
           className={`${styles.categoryButton} ${styles.filterToggle}`}
           onClick={() => setSidebarOpen(true)}
         >
-            filter      
+          filter
         </button>
 
         <div
-          className={`${styles.sidebarFilter} ${sidebarOpen ? styles.open : ""}`}
+          className={`${styles.sidebarFilter} ${
+            sidebarOpen ? styles.open : ""
+          }`}
           aria-hidden={!sidebarOpen}
         >
           <div className={styles.sidebarHeader}>
@@ -102,19 +105,21 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
             <span>Close</span>
           </button>
 
-
-
-
           <div className={styles.filterGroup}>
             <p className={styles.filterLabel}>Color</p>
             <div className={styles.colorOptions}>
               {Object.keys(COLOR_MAP).map((color) => (
                 <div
                   key={color}
-                  className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""
-                    }`}
-                  style={{ backgroundColor: `rgb(${COLOR_MAP[color].join(",")})` }}
-                  onClick={() => setColorFilter(colorFilter === color ? null : color)}
+                  className={`${styles.colorCircle} ${
+                    colorFilter === color ? styles.activeColor : ""
+                  }`}
+                  style={{
+                    backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
+                  }}
+                  onClick={() =>
+                    setColorFilter(colorFilter === color ? null : color)
+                  }
                   title={color}
                 />
               ))}
@@ -127,7 +132,9 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
                 <button
                   key={style}
                   type="button"
-                  className={`${styles.filterButton} ${styleFilter === style ? styles.active : ""}`}
+                  className={`${styles.filterButton} ${
+                    styleFilter === style ? styles.active : ""
+                  }`}
                   onClick={() =>
                     setStyleFilter(styleFilter === style ? null : style)
                   }
@@ -144,7 +151,9 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
                 <button
                   key={s}
                   type="button"
-                  className={`${styles.filterButton} ${seasonFilter === s ? styles.active : ""}`}
+                  className={`${styles.filterButton} ${
+                    seasonFilter === s ? styles.active : ""
+                  }`}
                   onClick={() => setSeasonFilter(seasonFilter === s ? null : s)}
                 >
                   {s}
@@ -154,9 +163,25 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
           </div>
         </div>
 
-        {sidebarOpen && <div className={styles.filterBackdrop} onClick={() => setSidebarOpen(false)} />}
-
+        {sidebarOpen && (
+          <div
+            className={styles.filterBackdrop}
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
         {isLoading ? (
+          <p className={styles.loading}>Loading...</p>
+        ) : filteredLooks.length === 0 ? (
+          <p className={styles.noClothes}>No looks found.</p>
+        ) : (
+          <div className={styles.cardsWrapper}>
+            {filteredLooks.map((look) => (
+              <LookCard key={look._id} items={look.items} lookId={look._id} />
+            ))}
+          </div>
+        )}
+
+        {/* {isLoading ? (
           <p>Loading...</p>
         ) : filteredLooks.length === 0 ? (
           <p>No looks found.</p>
@@ -166,7 +191,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
               <LookCard key={look._id} items={look.items} lookId={look._id} />
             ))}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

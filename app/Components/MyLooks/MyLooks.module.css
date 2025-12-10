@@ -114,7 +114,7 @@
 
 /* ====== Color Circles ====== */
 .colorCircle {
-  width: 2.1rem;  /* ~34px */
+  width: 2.1rem; /* ~34px */
   height: 2.1rem;
   border-radius: 50%;
   border: 2px solid transparent;
@@ -160,9 +160,9 @@
   margin-top: 3rem;
   margin-left: 2%;
   border-radius: 0.5rem;
-    color: #121212;
-border-color: #340b0b;
-  box-shadow: 0 0 0 3px rgba(92, 26, 26, 0.12); 
+  color: #121212;
+  border-color: #340b0b;
+  box-shadow: 0 0 0 3px rgba(92, 26, 26, 0.12);
   transition: all 0.3s ease;
 }
 
@@ -172,7 +172,6 @@ border-color: #340b0b;
   color: #fff;
 }
 
-/* ====== Titles ====== */
 .title {
   font-family: "Playfair Display", serif;
   font-size: 3.5rem;
@@ -192,7 +191,6 @@ border-color: #340b0b;
   }
 }
 
-/* ====== Media Queries ====== */
 @media (max-width: 1200px) {
   .cardsWrapper {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -209,4 +207,20 @@ border-color: #340b0b;
   .cardsWrapper {
     grid-template-columns: 1fr;
   }
+}
+.loading,
+.noClothes {
+  width: 60%;
+  margin: 2rem auto;
+  text-align: center;
+
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.noClothes {
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--color-border);
+  background: rgba(92, 26, 26, 0.04);
 }

@@ -109,6 +109,20 @@ const NewLook: FC<NewLookProps> = ({
     },
   });
 
+  // const handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
+  //   event.preventDefault();
+  //   const data = event.dataTransfer.getData("application/json");
+  //   if (!data) return;
+
+  //   try {
+  //     const item: ClothingItem = JSON.parse(data);
+  //     if (!selectedItems.some((i) => i._id === item._id)) {
+  //       setSelectedItems((prev) => [...prev, item]);
+  //     }
+  //   } catch (err) {
+  //     console.error("Invalid dragged item data", err);
+  //   }
+  // };
   const handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     const data = event.dataTransfer.getData("application/json");
@@ -116,6 +130,18 @@ const NewLook: FC<NewLookProps> = ({
 
     try {
       const item: ClothingItem = JSON.parse(data);
+
+      // בדיקה האם כבר יש פריט מהקטגוריה הזו
+      const categoryExists = selectedItems.some(
+        (i) => i.category.toLowerCase() === item.category.toLowerCase()
+      );
+
+      if (categoryExists) {
+        showToast(`You already added a ${item.category} to the look.`, "error");
+        return; // לא מוסיפים!
+      }
+
+      // בדיקה האם כבר יש את אותו פריט בדיוק
       if (!selectedItems.some((i) => i._id === item._id)) {
         setSelectedItems((prev) => [...prev, item]);
       }

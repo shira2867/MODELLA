@@ -88,7 +88,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
   const [colorFilter, setColorFilter] = useState<string | null>(null);
   const [styleFilter, setStyleFilter] = useState<string | null>(null);
   const [seasonFilter, setSeasonFilter] = useState<string | null>(null);
-
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>("none");
   const filterPanelId = "closet-filter-panel";
   const { showToast } = useToast();
@@ -189,7 +188,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
-        {/* Mobile: centered buttons that open side panels */}
         {isMobile && (
           <div className={styles.mobileToggleContainer}>
             <button
@@ -217,7 +215,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
           </div>
         )}
 
-        {/* Categories row – desktop only, unchanged */}
         {!isMobile && (
           <div className={styles.categoryFilterRow}>
             <div className={styles.categoryRow}>
@@ -241,7 +238,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
               ))}
             </div>
 
-            {/* Desktop filters pill on the right – same behavior as before */}
             {!isFiltersMode && (
               <button
                 type="button"
@@ -256,7 +252,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
           </div>
         )}
 
-        {/* Shared sidebar – filters OR categories */}
         <div
           id={filterPanelId}
           className={`${styles.sidebarFilter} ${isSidebarOpen ? styles.open : ""
@@ -282,7 +277,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
             <span>Close</span>
           </button>
 
-          {/* Filters content */}
           {isFiltersMode && (
             <>
               {inspirationColors.length > 0 && (
@@ -372,7 +366,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
             </>
           )}
 
-          {/* Categories content – for sidebar "Categories" mode */}
           {isCategoriesMode && (
             <div className={styles.filterGroup}>
               <p className={styles.filterLabel}>Category</p>
@@ -385,8 +378,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
                       }`}
                     onClick={() => {
                       setCategoryFilter(cat.key === "All" ? null : cat.key);
-                      // optionally close sidebar on select:
-                      // setSidebarMode("none");
                     }}
                     aria-pressed={categoryFilter === cat.key}
                   >
