@@ -142,8 +142,6 @@ export function closestColorLAB(rgb: RGB): string {
   return closest;
 }
 
-//
-// ⭐⭐ KMEANS – focus on central region + distance-based weighting ⭐⭐
 export function getDominantColorsKMeans(
   img: HTMLImageElement,
   size = 250,
@@ -160,21 +158,24 @@ export function getDominantColorsKMeans(
   const centerX = Math.floor(img.width / 2);
   const centerY = Math.floor(img.height / 2);
 
-  // Use only a large central circle (about 70% of min(width, height))
   const radius = Math.min(img.width, img.height) * 0.6;
   const maxRadius = radius;
 
   const pixels: number[][] = [];
 
-  for (let x = Math.floor(centerX - radius); x < Math.ceil(centerX + radius); x++) {
-    for (let y = Math.floor(centerY - radius); y < Math.ceil(centerY + radius); y++) {
-      if (x < 0 || x >= img.width || y < 0 || y >= img.height) continue;
+  const startX = Math.floor(img.width * 0.25);
+  const endX   = Math.ceil(img.width * 0.65);
+
+  const startY = Math.floor(img.height * 0.25);
+  const endY   = img.height;
+
+  for (let x = startX; x < endX; x++) {
+    for (let y = startY; y < endY; y++) {
 
       const dx = x - centerX;
       const dy = y - centerY;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Skip anything outside the central circle
       if (dist > radius) continue;
 
       const data = ctx.getImageData(x, y, 1, 1).data;
@@ -183,18 +184,14 @@ export function getDominantColorsKMeans(
       const [L] = chroma([r, g, b]).lab();
       const saturation = chroma([r, g, b]).hsl()[1];
 
-      // 1) Filter out almost pure white background
       if (L > 97 && saturation < 0.01) continue;
-
-      // 2) Filter out very flat mid-range grayish pixels
       if (saturation < 0.02 && L > 30 && L < 80) continue;
 
-      // Distance-based weighting: closer to center = more weight
       const normDist = dist / maxRadius;
 
       let repeats = 1;
-      if (normDist < 0.25) repeats = 4;   // very central pixels
-      else if (normDist < 0.6) repeats = 2; // middle ring
+      if (normDist < 0.25) repeats = 4;
+      else if (normDist < 0.6) repeats = 2;
 
       for (let i = 0; i < repeats; i++) {
         pixels.push([r, g, b]);
@@ -209,8 +206,9 @@ export function getDominantColorsKMeans(
   return centroids.map(c => c.map(Math.round) as RGB);
 }
 
-//
-// —— Rectangular center-based fallback (no KMeans weighting) —— //
+
+
+
 export function getDominantColorsFromCenter(
   img: HTMLImageElement,
   size = 200,
@@ -238,7 +236,6 @@ export function getDominantColorsFromCenter(
       const [L] = chroma(rgb).lab();
       const saturation = chroma(rgb).hsl()[1];
 
-      // Same background/flat filtering as KMeans version
       if (L > 97 && saturation < 0.01) continue;
       if (saturation < 0.02 && L > 30 && L < 80) continue;
 
