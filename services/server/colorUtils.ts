@@ -37,7 +37,7 @@ export const COLOR_MAP: Record<string, RGB> = {
   Turquoise: [64, 224, 208],
 };
 
-// ——— Simple heuristics for specific color families ——— //
+// ——— Simple heuristics ——— //
 
 export function isGrayRGB([r, g, b]: RGB): boolean {
   return Math.max(r, g, b) - Math.min(r, g, b) < 20 && r > 50 && r < 200;
@@ -48,7 +48,7 @@ export function isYellowRGB([r, g, b]: RGB): boolean {
 }
 
 export function isBrownRGB([r, g, b]: RGB): boolean {
-  return r > 100 && g > 50 && g < 120 && b < 80;
+  return r > 50 && g > 30 && g < 90 && b < 70 && r > b && g < r;
 }
 
 export function isCyanRGB([r, g, b]: RGB): boolean {
@@ -60,10 +60,28 @@ export function isPinkRGB([r, g, b]: RGB): boolean {
 }
 
 export function isDenimRGB([r, g, b]: RGB): boolean {
-  if (b > r && b > g && b - r >= 20 && b - g >= 10 && r >= 60 && g >= 60 && b >= 60 && b <= 185)
+  if (
+    b > r &&
+    b > g &&
+    b - r >= 20 &&
+    b - g >= 10 &&
+    r >= 60 &&
+    g >= 60 &&
+    b >= 60 &&
+    b <= 185
+  )
     return true;
 
-  if (b > r && b > g && b - r >= 10 && b - g >= 5 && r >= 120 && g >= 140 && b >= 160 && b <= 200)
+  if (
+    b > r &&
+    b > g &&
+    b - r >= 10 &&
+    b - g >= 5 &&
+    r >= 120 &&
+    g >= 140 &&
+    b >= 160 &&
+    b <= 200
+  )
     return true;
 
   return false;
@@ -73,15 +91,18 @@ export function isGreenRGB([r, g, b]: RGB): boolean {
   return g > r + 5 && g > b + 5 && g >= 50;
 }
 
+// *** Fixed Burgundy ***
 export function isBurgundyRGB([r, g, b]: RGB): boolean {
-  return r > 50 && r < 150 && g < 60 && b < 70;
+  const redDominant = r > g + 10 && r > b + 5;
+  const dark = r < 140 && g < 90 && b < 90;
+  return redDominant && dark;
 }
 
 export function isRedRGB([r, g, b]: RGB): boolean {
   return r > 150 && g < 80 && b < 80;
 }
 
-// ——— LAB-based matching + fallback to closest color in COLOR_MAP ——— //
+// ——— LAB-based matching ——— //
 
 export function closestColorLAB(rgb: RGB): string {
   const lab = chroma(rgb).lab();
@@ -89,35 +110,33 @@ export function closestColorLAB(rgb: RGB): string {
   const a = lab[1];
   const bLab = lab[2];
 
-  // Extremely dark neutral → treat as Black
   if (L < 20 && Math.abs(a) < 10 && Math.abs(bLab) < 10) return "Black";
-  // Very bright → White
   if (L > 95) return "White";
 
-  // Hand-tuned rules for specific families
+  // FIX: Burgundy first
+  if (isBurgundyRGB(rgb)) return "Burgundy";
+  if (isRedRGB(rgb)) return "Red";
   if (isDenimRGB(rgb)) return "Blue";
   if (isGreenRGB(rgb)) return "Green";
-  if (isRedRGB(rgb)) return "Red";
-  if (isBurgundyRGB(rgb)) return "Burgundy";
+  if (isBrownRGB(rgb)) return "Brown";
   if (isGrayRGB(rgb)) return "Gray";
   if (isYellowRGB(rgb)) return "Yellow";
-  if (isBrownRGB(rgb)) return "Brown";
   if (isCyanRGB(rgb)) return "LightBlue";
   if (isPinkRGB(rgb)) return "Pink";
 
   const [r, g, b] = rgb;
 
-  // More hand-crafted heuristics
-  if (r >= 150 && g >= 60 && g <= 150 && b <= 40) return "Orange";
-  if (r >= 150 && g < 60 && b < 60) return "Red";
-  if (b > r && b > g && r < 60 && g < 60 && b < 70) return "Blue";
-  if (r < 70 && g < 70 && b < 70) return "Brown";
-  if (g > r + 10 && g > b + 10 && g < 70) return "Green";
-  if (g > r + 20 && g > b + 20 && g >= 70 && g <= 180) return "Green";
+  // LAB FIX against pink for burgundy shades
+  if (r > 70 && r < 150 && g < 80 && b < 80 && r > g + 15) {
+    return "Burgundy";
+  }
 
-  // Fallback: pick the closest predefined color in LAB space
+  // additional heuristic
+  if (r >= 150 && g >= 60 && g <= 150 && b <= 40) return "Orange";
+
   let closest = "";
   let minDistance = Infinity;
+
   for (const [colorName, colorRgb] of Object.entries(COLOR_MAP)) {
     const distance = chroma.distance(rgb, colorRgb, "lab");
     if (distance < minDistance) {
@@ -126,7 +145,6 @@ export function closestColorLAB(rgb: RGB): string {
     }
   }
 
-  // Normalize similar shades into a single label
   const blueShades = ["Blue", "DenimBlue", "DarkDenim", "MediumDenim", "LightDenim", "Navy", "Indigo"];
   if (blueShades.includes(closest)) return "Blue";
 
@@ -142,6 +160,8 @@ export function closestColorLAB(rgb: RGB): string {
   return closest;
 }
 
+// ——— KMeans dominant colors ——— //
+
 export function getDominantColorsKMeans(
   img: HTMLImageElement,
   size = 250,
@@ -155,59 +175,50 @@ export function getDominantColorsKMeans(
 
   ctx.drawImage(img, 0, 0);
 
-  const centerX = Math.floor(img.width / 2);
-  const centerY = Math.floor(img.height / 2);
-
-  const radius = Math.min(img.width, img.height) * 0.6;
-  const maxRadius = radius;
-
   const pixels: number[][] = [];
 
-  const startX = Math.floor(img.width * 0.25);
-  const endX   = Math.ceil(img.width * 0.65);
+  // --- Sample areas (top + bottom clothing zones) ---
+  const startX = Math.floor(img.width * 0.40);
+  const endX = Math.ceil(img.width * 0.60);
 
-  const startY = Math.floor(img.height * 0.25);
-  const endY   = img.height;
+  const topStartY = Math.floor(img.height * 0.15);
+  const topEndY   = Math.floor(img.height * 0.45);
 
-  for (let x = startX; x < endX; x++) {
-    for (let y = startY; y < endY; y++) {
+  const bottomStartY = Math.floor(img.height * 0.45);
+  const bottomEndY   = Math.floor(img.height * 0.85);
 
-      const dx = x - centerX;
-      const dy = y - centerY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+  // Helper to sample region
+  const sampleRegion = (sx: number, ex: number, sy: number, ey: number) => {
+    for (let x = sx; x < ex; x++) {
+      for (let y = sy; y < ey; y++) {
+        const data = ctx.getImageData(x, y, 1, 1).data;
+        const [r, g, b] = [data[0], data[1], data[2]];
 
-      if (dist > radius) continue;
+        const [L] = chroma([r, g, b]).lab();
+        const saturation = chroma([r, g, b]).hsl()[1];
 
-      const data = ctx.getImageData(x, y, 1, 1).data;
-      const [r, g, b] = [data[0], data[1], data[2]];
+        // remove background / nearly white
+        if (L > 96 && saturation < 0.03) continue;
 
-      const [L] = chroma([r, g, b]).lab();
-      const saturation = chroma([r, g, b]).hsl()[1];
+        // remove skin tones
+        if (r > 150 && g > 80 && b < 90) continue;
 
-      if (L > 97 && saturation < 0.01) continue;
-      if (saturation < 0.02 && L > 30 && L < 80) continue;
-
-      const normDist = dist / maxRadius;
-
-      let repeats = 1;
-      if (normDist < 0.25) repeats = 4;
-      else if (normDist < 0.6) repeats = 2;
-
-      for (let i = 0; i < repeats; i++) {
         pixels.push([r, g, b]);
       }
     }
-  }
+  };
+
+  // Sample top and bottom
+  sampleRegion(startX, endX, topStartY, topEndY);
+  sampleRegion(startX, endX, bottomStartY, bottomEndY);
 
   if (!pixels.length) return [[0, 0, 0]];
 
-  const dataForKMeans = pixels.map(p => [p[0], p[1], p[2]]);
-  const { centroids } = kmeans(dataForKMeans, topN, {});
+  const { centroids } = kmeans(pixels, topN, {});
   return centroids.map(c => c.map(Math.round) as RGB);
 }
 
-
-
+// ——— Center region dominant colors ——— //
 
 export function getDominantColorsFromCenter(
   img: HTMLImageElement,
@@ -221,6 +232,7 @@ export function getDominantColorsFromCenter(
   if (!ctx) return [];
 
   ctx.drawImage(img, 0, 0);
+
   const centerX = Math.floor(img.width / 2);
   const centerY = Math.floor(img.height / 2);
 
@@ -236,8 +248,8 @@ export function getDominantColorsFromCenter(
       const [L] = chroma(rgb).lab();
       const saturation = chroma(rgb).hsl()[1];
 
-      if (L > 97 && saturation < 0.01) continue;
-      if (saturation < 0.02 && L > 30 && L < 80) continue;
+      if (L > 95) continue;
+      if (saturation < 0.05 && L > 20) continue;
 
       pixels.push(rgb);
     }
@@ -256,7 +268,7 @@ export function getDominantColorsFromCenter(
   };
 
   const colorMap: Record<string, { rgb: RGB; count: number }> = {};
-  pixels.forEach((rgb) => {
+  pixels.forEach(rgb => {
     const key = rgb.join(",");
     if (!colorMap[key]) colorMap[key] = { rgb, count: 0 };
     colorMap[key].count++;
