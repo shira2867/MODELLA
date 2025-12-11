@@ -31,6 +31,8 @@ export const COLOR_MAP: Record<string, RGB> = {
   Beige: [245, 245, 220],
   Navy: [0, 0, 128],
   Indigo: [75, 0, 130],
+  LightPurple: [214, 206, 219],
+  Lavender: [230, 230, 250],
   Burgundy: [128, 0, 32],
   Olive: [85, 107, 47],
   Teal: [0, 128, 128],
@@ -48,7 +50,22 @@ export function isYellowRGB([r, g, b]: RGB): boolean {
 }
 
 export function isBrownRGB([r, g, b]: RGB): boolean {
-  return r > 50 && g > 30 && g < 90 && b < 70 && r > b && g < r;
+  // חום אמיתי: R גבוה מ-G ומ-B, אבל בלי אדום חזק מדי
+  const warm = r > g && r > b;
+  const lowBlue = b < 90;
+  const midRange = r >= 60 && r <= 160;
+  const notTooRed = r - g < 25 && r - b < 40;
+
+  return warm && lowBlue && midRange && notTooRed;
+}
+
+// בורדו אמיתי: אדום חזק, נטייה לסגול/אדום כהה
+export function isBurgundyRGB([r, g, b]: RGB): boolean {
+  const redDominant = r > g + 25 && r > b + 20;
+  const dark = r < 120 && g < 70 && b < 70;
+  const burgundyHue = r > 80 && b > 30; // מעט כחול = גוון יין
+
+  return redDominant && dark && burgundyHue;
 }
 
 export function isCyanRGB([r, g, b]: RGB): boolean {
@@ -91,15 +108,44 @@ export function isGreenRGB([r, g, b]: RGB): boolean {
   return g > r + 5 && g > b + 5 && g >= 50;
 }
 
-// *** Fixed Burgundy ***
-export function isBurgundyRGB([r, g, b]: RGB): boolean {
-  const redDominant = r > g + 10 && r > b + 5;
-  const dark = r < 140 && g < 90 && b < 90;
-  return redDominant && dark;
-}
+
 
 export function isRedRGB([r, g, b]: RGB): boolean {
   return r > 150 && g < 80 && b < 80;
+}
+
+export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
+  const [L, a, labB] = chroma([r, g, b]).lab();
+
+  // ירוק חייב להיות נמוך יחסית (סגול נוצר מר + כחול)
+  if (g > r || g > b) return false;
+
+  // סגול בהיר → L גבוה (לילך, לבנדר)
+  const isLightPurple =
+    L > 65 &&
+    r > 150 &&
+    b > 150 &&
+    Math.abs(r - b) < 70 &&
+    g < 160;
+
+  // סגול בינוני → L בינוני
+  const isMediumPurple =
+    L >= 35 &&
+    L <= 70 &&
+    r > 80 &&
+    b > 80 &&
+    Math.abs(r - b) < 80 &&
+    g < Math.min(r, b) - 10;
+
+  // סגול כהה → L נמוך
+  const isDarkPurple =
+    L < 35 &&
+    r > 40 &&
+    b > 40 &&
+    Math.abs(r - b) < 60 &&
+    g < Math.min(r, b) - 5;
+
+  return isLightPurple || isMediumPurple || isDarkPurple;
 }
 
 // ——— LAB-based matching ——— //
@@ -123,6 +169,7 @@ export function closestColorLAB(rgb: RGB): string {
   if (isYellowRGB(rgb)) return "Yellow";
   if (isCyanRGB(rgb)) return "LightBlue";
   if (isPinkRGB(rgb)) return "Pink";
+  if (isPurpleShadeRGB(rgb)) return "Purple";
 
   const [r, g, b] = rgb;
 
@@ -147,7 +194,8 @@ export function closestColorLAB(rgb: RGB): string {
 
   const blueShades = ["Blue", "DenimBlue", "DarkDenim", "MediumDenim", "LightDenim", "Navy", "Indigo"];
   if (blueShades.includes(closest)) return "Blue";
-
+const purplrShades = ["Purple", "LightPurple", "Lavender"];
+  if (purplrShades.includes(closest)) return "Purple";
   const greenShades = ["Green", "Olive", "Teal", "Turquoise"];
   if (greenShades.includes(closest)) return "Green";
 
@@ -182,10 +230,10 @@ export function getDominantColorsKMeans(
   const endX = Math.ceil(img.width * 0.60);
 
   const topStartY = Math.floor(img.height * 0.15);
-  const topEndY   = Math.floor(img.height * 0.45);
+  const topEndY = Math.floor(img.height * 0.45);
 
   const bottomStartY = Math.floor(img.height * 0.45);
-  const bottomEndY   = Math.floor(img.height * 0.85);
+  const bottomEndY = Math.floor(img.height * 0.85);
 
   // Helper to sample region
   const sampleRegion = (sx: number, ex: number, sy: number, ey: number) => {
