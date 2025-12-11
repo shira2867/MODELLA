@@ -30,7 +30,7 @@ export default function Welcome() {
         />
         <h1 className={styles.title}>Dress. Style. Shine.</h1>
         <p className={styles.subtitle}>
-          Discover your perfect look with SnapFit{" "}
+          Discover your perfect look with Modella{" "}
         </p>
         <p className={styles.subtitle}>- where fashion meets technology!</p>
         <div className={styles.buttonContainer}>
