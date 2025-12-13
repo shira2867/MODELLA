@@ -15,12 +15,12 @@
 
 .newLookMobilePanel {
   position: fixed;
-  bottom: 90px; /* מרחק מהכפתור */
+  bottom: 90px; 
   right: 20px;
-  width: 80%;           /* קטן יותר מרוחב המסך */
-  max-width: 320px;     /* רוחב מקסימלי קטן יותר */
-  height: 50%;          /* גובה קטן יותר */
-  max-height: 400px;    /* לא יתפוס יותר מדי מסך */
+  width: 80%;       
+  max-width: 320px;     
+  height: 50%;         
+  max-height: 400px;    
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.3);

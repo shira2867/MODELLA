@@ -44,14 +44,10 @@ export default function StyleFeedPage() {
 
   const looks: ShareLookType[] = data || [];
 
-  // if (isLoading) return <p>Loading looks...</p>;
-  // if (isError) return <p>An error occurred while loading looks</p>;
-
   return (
     <div className={styles.pageContainer}>
       <Header />
 
-      {/* <h1 className={styles.title}>Style Feed</h1> */}
       <main className={styles.mainContent}>
         {isLoading ? (
           <Loader />

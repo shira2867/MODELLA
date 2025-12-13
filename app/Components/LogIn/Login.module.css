@@ -158,7 +158,7 @@
   border: none;
   padding: 0.5rem 0;
   width: 100%;
-  text-align: center;       /* 👈 מרכז טקסט */
+  text-align: center;    
   font-size: 0.9rem;
   text-decoration: underline;
   cursor: pointer;

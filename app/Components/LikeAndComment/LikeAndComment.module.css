@@ -1,5 +1,3 @@
-/* LikeAndComment.module.css */
-
 .likeButton {
   display: flex;
   align-items: center;
@@ -169,7 +167,7 @@
   }
 }
 .commentInputWrapper {
-  position: relative; /* כדי שה-picker יהיה מוחס בתוך השדה */
+  position: relative; 
   display: flex;
   align-items: center;
   gap: 6px;
@@ -250,7 +248,7 @@
   top: 100%;
   left: 0;
   display: flex;
-  flex-direction: column; /* מסדר את הקטגוריות מעל האימוגים */
+  flex-direction: column;
   gap: 6px;
   background: #fff;
   border: 1px solid #ddd;
@@ -263,7 +261,7 @@
 .emojiCategories {
   display: flex;
   gap: 6px;
-  margin-bottom: 6px; /* רווח בין הקטגוריות לרשת האימוגים */
+  margin-bottom: 6px; 
 }
 
 .emojiCategories button {
