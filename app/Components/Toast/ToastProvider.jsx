@@ -9,7 +9,6 @@ import {
 } from "react";
 import styles from "./toast.module.css";
 
-// const ToastContext = createContext(null);
 const ToastContext = createContext({
   showToast: (msg, type) => {},
 });
@@ -22,7 +21,7 @@ export const ToastProvider = ({ children }) => {
 
     setTimeout(() => {
       setToast(null);
-    }, 2000); // נעלם אחרי 2 שניות
+    }, 2000); 
   }, []);
 
   return (

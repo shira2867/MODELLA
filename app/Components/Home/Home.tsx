@@ -266,7 +266,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-        <section className={styles.stepsShell} id="steps">
+        <section className={styles.stepsShell} id="steps" ref={stepsSectionRef}>
           <div className={styles.sectionHeader}>
             <p className={styles.sectionEyebrow}>How it works</p>
             <h2>Our three-step styling ritual</h2>
@@ -285,11 +285,7 @@ export default function HomePage() {
                 }`}
               >
                 <div className={styles.stepImageWrapper}>
-                  <img
-                    // src={getCloudinaryUrl(step.imageUrl)}
-                    src={step.img}
-                    className={styles.stepImageWide}
-                  />
+                  <img src={step.img} className={styles.stepImageWide} />
                 </div>
                 <div className={styles.stepContent}>
                   <h3>{step.title}</h3>

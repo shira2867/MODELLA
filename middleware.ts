@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// אלו הנתיבים שרק משתמש מחובר יכול לראות
 const PROTECTED_PATHS = [
   "/look",
   "/closet",
@@ -25,7 +24,6 @@ const PROTECTED_PATHS = [
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // בדיקה האם הנתיב מוגן
   const isProtected = PROTECTED_PATHS.some((path) =>
     pathname.startsWith(path)
   );
@@ -34,18 +32,15 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // בודקים גם את authToken וגם את userId
   const authToken = req.cookies.get("authToken")?.value;
   const userId = req.cookies.get("userId")?.value;
 
   const isLoggedIn = Boolean(authToken || userId);
 
-  // אם המשתמש לא מחובר → שולחים ל־welcome
   if (!isLoggedIn) {
     const url = req.nextUrl.clone();
     url.pathname = "/welcome";
 
-    // תמיכה במקרה שנכנסים ל־look ספציפי
     if (pathname.startsWith("/look/")) {
       url.searchParams.set(
         "redirectLookId",
@@ -56,11 +51,9 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // אם הכול טוב → ממשיכים
   return NextResponse.next();
 }
 
-// באילו נתיבים המידלוואר יופעל
 export const config = {
   matcher: [
     "/look/:path*",

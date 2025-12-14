@@ -4,11 +4,6 @@ import { usersCollection } from "@/services/server/users";
 import { cookies } from "next/headers";
 import { ObjectId } from "mongodb";
 
-/**
- * POST /api/sharelook/[id]/comment
- * Adds a new comment to a shared look.
- * Uses userId from cookie and saves only userId + text + createdAt.
- */
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -70,12 +65,6 @@ export async function POST(
   }
 }
 
-/**
- * GET /api/sharelook/[id]/comment
- * Returns the comments of a shared look,
- * enriched with the latest userName and profileImage
- * from the users collection based on userId.
- */
 export async function GET(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -84,10 +73,8 @@ export async function GET(
     const { id } = await context.params;
     const collection = await shareLooksCollection();
 
-    // Try to find by _id
     let look = await collection.findOne({ _id: id });
 
-    // Fallback: some documents may store the identifier as lookId
     if (!look) {
       look = await collection.findOne({ lookId: id });
     }
@@ -101,7 +88,6 @@ export async function GET(
 
     const rawComments = look.comments || [];
 
-    // Collect unique userIds from comments
     const userIds = Array.from(
       new Set(
         rawComments
@@ -115,7 +101,6 @@ export async function GET(
     if (userIds.length > 0) {
       const usersCol = await usersCollection();
 
-      // Convert userIds from strings to ObjectId[]
       const objectIds = userIds
         .filter((id) => ObjectId.isValid(id))
         .map((id) => new ObjectId(id));
@@ -125,14 +110,12 @@ export async function GET(
         .project({ _id: 1, name: 1, profileImage: 1 })
         .toArray();
 
-      // Index users by their stringified _id for easy lookup
       usersById = users.reduce((acc: Record<string, any>, user: any) => {
         acc[user._id.toString()] = user;
         return acc;
       }, {});
     }
 
-    // Enrich comments with up-to-date userName and profileImage
     const comments = rawComments.map((c: any) => {
       const user = c.userId ? usersById[c.userId] : null;
 

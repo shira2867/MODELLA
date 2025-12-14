@@ -123,7 +123,7 @@ export async function GET() {
         return {
           ...look,
           gender,
-          profileImage: ownerProfileImage, // avatar of the look owner
+          profileImage: ownerProfileImage, 
         };
       })
     );
@@ -133,7 +133,6 @@ export async function GET() {
       (look) => look.gender === currentUserGender
     );
 
-    // Collect all comments from all filtered looks
     const allRawComments = filteredLooks.flatMap(
       (look: any) => look.comments || []
     );
