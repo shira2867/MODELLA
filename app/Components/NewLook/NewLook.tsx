@@ -109,20 +109,7 @@ const NewLook: FC<NewLookProps> = ({
     },
   });
 
-  // const handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
-  //   event.preventDefault();
-  //   const data = event.dataTransfer.getData("application/json");
-  //   if (!data) return;
-
-  //   try {
-  //     const item: ClothingItem = JSON.parse(data);
-  //     if (!selectedItems.some((i) => i._id === item._id)) {
-  //       setSelectedItems((prev) => [...prev, item]);
-  //     }
-  //   } catch (err) {
-  //     console.error("Invalid dragged item data", err);
-  //   }
-  // };
+  
   const handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     const data = event.dataTransfer.getData("application/json");

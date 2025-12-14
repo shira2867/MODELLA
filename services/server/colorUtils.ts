@@ -117,10 +117,8 @@ export function isRedRGB([r, g, b]: RGB): boolean {
 export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
   const [L, a, labB] = chroma([r, g, b]).lab();
 
-  // ירוק חייב להיות נמוך יחסית (סגול נוצר מר + כחול)
   if (g > r || g > b) return false;
 
-  // סגול בהיר → L גבוה (לילך, לבנדר)
   const isLightPurple =
     L > 65 &&
     r > 150 &&
@@ -128,7 +126,6 @@ export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
     Math.abs(r - b) < 70 &&
     g < 160;
 
-  // סגול בינוני → L בינוני
   const isMediumPurple =
     L >= 35 &&
     L <= 70 &&
@@ -137,7 +134,6 @@ export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
     Math.abs(r - b) < 80 &&
     g < Math.min(r, b) - 10;
 
-  // סגול כהה → L נמוך
   const isDarkPurple =
     L < 35 &&
     r > 40 &&
@@ -148,7 +144,6 @@ export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
   return isLightPurple || isMediumPurple || isDarkPurple;
 }
 
-// ——— LAB-based matching ——— //
 
 export function closestColorLAB(rgb: RGB): string {
   const lab = chroma(rgb).lab();
@@ -159,7 +154,6 @@ export function closestColorLAB(rgb: RGB): string {
   if (L < 20 && Math.abs(a) < 10 && Math.abs(bLab) < 10) return "Black";
   if (L > 95) return "White";
 
-  // FIX: Burgundy first
   if (isBurgundyRGB(rgb)) return "Burgundy";
   if (isRedRGB(rgb)) return "Red";
   if (isDenimRGB(rgb)) return "Blue";
@@ -173,12 +167,10 @@ export function closestColorLAB(rgb: RGB): string {
 
   const [r, g, b] = rgb;
 
-  // LAB FIX against pink for burgundy shades
   if (r > 70 && r < 150 && g < 80 && b < 80 && r > g + 15) {
     return "Burgundy";
   }
 
-  // additional heuristic
   if (r >= 150 && g >= 60 && g <= 150 && b <= 40) return "Orange";
 
   let closest = "";
@@ -208,11 +200,9 @@ const purplrShades = ["Purple", "LightPurple", "Lavender"];
   return closest;
 }
 
-// ——— KMeans dominant colors ——— //
 
 export function getDominantColorsKMeans(
   img: HTMLImageElement,
-  size = 250,
   topN = 4
 ): RGB[] {
   const canvas = document.createElement("canvas");
@@ -225,7 +215,6 @@ export function getDominantColorsKMeans(
 
   const pixels: number[][] = [];
 
-  // --- Sample areas (top + bottom clothing zones) ---
   const startX = Math.floor(img.width * 0.40);
   const endX = Math.ceil(img.width * 0.60);
 
@@ -235,7 +224,6 @@ export function getDominantColorsKMeans(
   const bottomStartY = Math.floor(img.height * 0.45);
   const bottomEndY = Math.floor(img.height * 0.85);
 
-  // Helper to sample region
   const sampleRegion = (sx: number, ex: number, sy: number, ey: number) => {
     for (let x = sx; x < ex; x++) {
       for (let y = sy; y < ey; y++) {
@@ -245,10 +233,8 @@ export function getDominantColorsKMeans(
         const [L] = chroma([r, g, b]).lab();
         const saturation = chroma([r, g, b]).hsl()[1];
 
-        // remove background / nearly white
         if (L > 96 && saturation < 0.03) continue;
 
-        // remove skin tones
         if (r > 150 && g > 80 && b < 90) continue;
 
         pixels.push([r, g, b]);
@@ -256,7 +242,6 @@ export function getDominantColorsKMeans(
     }
   };
 
-  // Sample top and bottom
   sampleRegion(startX, endX, topStartY, topEndY);
   sampleRegion(startX, endX, bottomStartY, bottomEndY);
 
@@ -266,7 +251,6 @@ export function getDominantColorsKMeans(
   return centroids.map(c => c.map(Math.round) as RGB);
 }
 
-// ——— Center region dominant colors ——— //
 
 export function getDominantColorsFromCenter(
   img: HTMLImageElement,
