@@ -1,10 +1,10 @@
 "use client";
+
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
-  signInWithPopup,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   User,
@@ -13,7 +13,8 @@ import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import styles from "./Login.module.css";
 import { FormData } from "../../../types/userTypes";
-import { auth, provider } from "@/app/firebase/config";
+import { auth } from "@/app/firebase/config";
+import { useGoogleAuth } from "@/services/server/useGoogleAuth";
 
 export default function LoginForm() {
   const { register, handleSubmit, getValues } = useForm<FormData>();
@@ -25,42 +26,42 @@ export default function LoginForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [isSendingReset, setIsSendingReset] = useState(false);
 
+  // Unified Google auth hook (shared between Login and Signup)
+  const {
+    signInWithGoogle,
+    isLoading: isGoogleLoading,
+    error: googleError,
+  } = useGoogleAuth();
+
+  /**
+   * Email/password login mutation.
+   * Google login is NOT handled here anymore (only in useGoogleAuth).
+   */
   const loginMutation = useMutation<
     { firebaseUser: User; dbUser: any },
     any,
-    FormData & { method: "google" | "email" }
+    FormData
   >({
     mutationFn: async (data) => {
-      if (data.method === "google") {
-        const result = await signInWithPopup(auth, provider);
-        const firebaseUser = result.user;
+      // 1. Check user exists in DB
+      const res = await fetch(`/api/user?email=${data.email}`);
+      const dbData = await res.json();
+      if (!dbData.exists)
+        throw new Error("User not found. Please register first.");
 
-        const res = await fetch(`/api/user?email=${firebaseUser.email}`);
-        const dbData = await res.json();
+      // 2. Firebase sign in with email/password
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email!,
+        data.password!
+      );
 
-        if (!dbData.exists)
-          throw new Error("User not found. Please register first.");
-
-        const dbUser = dbData.user;
-        return { firebaseUser, dbUser };
-      } else {
-        const res = await fetch(`/api/user?email=${data.email}`);
-        const dbData = await res.json();
-        if (!dbData.exists)
-          throw new Error("User not found. Please register first.");
-
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          data.email!,
-          data.password!
-        );
-
-        const dbUser = dbData.user;
-        return { firebaseUser: userCredential.user, dbUser };
-      }
+      const dbUser = dbData.user;
+      return { firebaseUser: userCredential.user, dbUser };
     },
 
     onSuccess: async ({ firebaseUser, dbUser }) => {
+      // 3. Store user in Zustand
       setUser({
         name: dbUser?.name ?? null,
         email: firebaseUser.email ?? null,
@@ -72,8 +73,8 @@ export default function LoginForm() {
         setUserId(dbUser.id);
       }
 
+      // 4. Set auth cookie on server
       const idToken = await firebaseUser.getIdToken();
-
       const cookieRes = await fetch("/api/auth/set-cookie", {
         method: "POST",
         headers: {
@@ -85,6 +86,7 @@ export default function LoginForm() {
         throw new Error("Failed to set authentication cookie.");
       }
 
+      // 5. Redirect logic for email/password login
       const redirectLookId = localStorage.getItem("redirectLookId");
       if (redirectLookId) {
         localStorage.removeItem("redirectLookId");
@@ -100,18 +102,21 @@ export default function LoginForm() {
     },
   });
 
+  // Trigger Google unified flow
   const handleGoogleLogin = () => {
     setErrorMessage("");
     setSuccessMessage("");
-    loginMutation.mutate({ method: "google", email: "", password: "" });
+    signInWithGoogle();
   };
 
+  // Trigger email/password login
   const handleEmailLogin = (data: FormData) => {
     setErrorMessage("");
     setSuccessMessage("");
-    loginMutation.mutate({ ...data, method: "email" });
+    loginMutation.mutate(data);
   };
 
+  // Forgot password (email-based reset)
   const handleForgotPassword = async () => {
     setErrorMessage("");
     setSuccessMessage("");
@@ -145,14 +150,14 @@ export default function LoginForm() {
         <form onSubmit={handleSubmit(handleEmailLogin)} className={styles.form}>
           <h2>Login</h2>
 
+          {/* Google login button (uses shared hook) */}
           <button
             type="button"
             onClick={handleGoogleLogin}
             className={styles.googleButton}
-            disabled={loginMutation.isPending}
+            disabled={isGoogleLoading}
           >
-            {loginMutation.isPending &&
-            loginMutation.variables?.method === "google" ? (
+            {isGoogleLoading ? (
               "Logging in..."
             ) : (
               <>
@@ -164,6 +169,7 @@ export default function LoginForm() {
 
           <div className={styles.orDivider}>Or</div>
 
+          {/* Email/password inputs */}
           <input
             {...register("email")}
             placeholder="Email address"
@@ -176,7 +182,7 @@ export default function LoginForm() {
             className={styles.input}
           />
 
-          {/* שכחתי סיסמה */}
+          {/* Forgot password handler */}
           <button
             type="button"
             onClick={handleForgotPassword}
@@ -186,21 +192,19 @@ export default function LoginForm() {
             {isSendingReset ? "Sending reset link..." : "Forgot your password?"}
           </button>
 
-          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {/* Show either email/password error or Google error */}
+          {(errorMessage || googleError) && (
+            <p className={styles.error}>{errorMessage || googleError}</p>
+          )}
           {successMessage && <p className={styles.success}>{successMessage}</p>}
 
+          {/* Email/password login submit */}
           <button
             type="submit"
             className={styles.button}
-            disabled={
-              loginMutation.isPending &&
-              loginMutation.variables?.method === "email"
-            }
+            disabled={loginMutation.isPending}
           >
-            {loginMutation.isPending &&
-            loginMutation.variables?.method === "email"
-              ? "Logging in..."
-              : "Login"}
+            {loginMutation.isPending ? "Logging in..." : "Login"}
           </button>
 
           <p className={styles.signupLink}>
