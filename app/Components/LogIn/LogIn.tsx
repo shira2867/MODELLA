@@ -176,7 +176,6 @@ export default function LoginForm() {
             className={styles.input}
           />
 
-          {/* שכחתי סיסמה */}
           <button
             type="button"
             onClick={handleForgotPassword}

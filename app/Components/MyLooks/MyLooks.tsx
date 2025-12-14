@@ -10,6 +10,14 @@ import styles from "./MyLooks.module.css";
 import close from "../../../public/remove.png";
 import filter from "../../../public/filter_7420963.png";
 
+function Loader() {
+  return (
+    <div className={styles.loaderContainer}>
+      <div className={styles.dashedSpinner}></div>
+    </div>
+  );
+}
+
 type MyLooksProps = {
   userId: string;
 };
@@ -170,7 +178,7 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
           />
         )}
         {isLoading ? (
-          <p className={styles.loading}>Loading...</p>
+          <Loader />
         ) : filteredLooks.length === 0 ? (
           <p className={styles.noClothes}>No looks found.</p>
         ) : (
@@ -180,18 +188,6 @@ const MyLooks: React.FC<MyLooksProps> = ({ userId }) => {
             ))}
           </div>
         )}
-
-        {/* {isLoading ? (
-          <p>Loading...</p>
-        ) : filteredLooks.length === 0 ? (
-          <p>No looks found.</p>
-        ) : (
-          <div className={styles.cardsWrapper}>
-            {filteredLooks.map((look) => (
-              <LookCard key={look._id} items={look.items} lookId={look._id} />
-            ))}
-          </div>
-        )} */}
       </div>
     </div>
   );

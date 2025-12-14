@@ -11,10 +11,7 @@ export async function GET(
   try {
     const { id } = await context.params;
     const collection = await shareLooksCollection();
-
-    // Find look either by _id or by lookId
     let look = await collection.findOne({ _id: id });
-
     if (!look) {
       look = await collection.findOne({ lookId: id });
     }
@@ -33,7 +30,6 @@ export async function GET(
       );
     }
 
-    // Resolve profile image of the look owner
     let profileImage: string | null = null;
 
     if (look.userId) {
@@ -54,7 +50,6 @@ export async function GET(
 
     const rawComments = look.comments || [];
 
-    // Collect unique userIds from comments
     const userIds = Array.from(
       new Set(
         rawComments
@@ -68,7 +63,6 @@ export async function GET(
     if (userIds.length > 0) {
       const usersCol = await usersCollection();
 
-      // Convert userIds from strings to ObjectId[]
       const objectIds = userIds
         .filter((uid) => ObjectId.isValid(uid))
         .map((uid) => new ObjectId(uid));
@@ -78,14 +72,12 @@ export async function GET(
         .project({ _id: 1, name: 1, profileImage: 1 })
         .toArray();
 
-      // Index users by their stringified _id
       usersById = users.reduce((acc: Record<string, any>, user: any) => {
         acc[user._id.toString()] = user;
         return acc;
       }, {});
     }
 
-    // Enrich comments with up-to-date userName and profileImage
     const comments = rawComments.map((c: any) => {
       const user = c.userId ? usersById[c.userId] : null;
 

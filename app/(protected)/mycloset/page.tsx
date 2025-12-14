@@ -36,7 +36,7 @@ export default function ShowMyCloset() {
   return (
     <div className={styles.pageContainer}>
       <Header />
-      <div className={styles.pageTitleWrapper}>{/* optional title */}</div>
+      <div className={styles.pageTitleWrapper}></div>
 
       {isMobile && (
         <MobileNewLookBanner

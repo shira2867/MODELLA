@@ -39,7 +39,6 @@ export const COLOR_MAP: Record<string, RGB> = {
   Turquoise: [64, 224, 208],
 };
 
-// ——— Simple heuristics ——— //
 
 export function isGrayRGB([r, g, b]: RGB): boolean {
   return Math.max(r, g, b) - Math.min(r, g, b) < 20 && r > 50 && r < 200;
@@ -50,7 +49,6 @@ export function isYellowRGB([r, g, b]: RGB): boolean {
 }
 
 export function isBrownRGB([r, g, b]: RGB): boolean {
-  // חום אמיתי: R גבוה מ-G ומ-B, אבל בלי אדום חזק מדי
   const warm = r > g && r > b;
   const lowBlue = b < 90;
   const midRange = r >= 60 && r <= 160;
@@ -59,11 +57,10 @@ export function isBrownRGB([r, g, b]: RGB): boolean {
   return warm && lowBlue && midRange && notTooRed;
 }
 
-// בורדו אמיתי: אדום חזק, נטייה לסגול/אדום כהה
 export function isBurgundyRGB([r, g, b]: RGB): boolean {
   const redDominant = r > g + 25 && r > b + 20;
   const dark = r < 120 && g < 70 && b < 70;
-  const burgundyHue = r > 80 && b > 30; // מעט כחול = גוון יין
+  const burgundyHue = r > 80 && b > 30; 
 
   return redDominant && dark && burgundyHue;
 }

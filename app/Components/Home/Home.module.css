@@ -51,8 +51,8 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* מציב את התוכן במרכז האנכי */
-  align-items: flex-start; /* מיישר את הכיתוב לצד שמאל */
+  justify-content: center; 
+  align-items: flex-start; 
   padding: clamp(1.5rem, 5vw, 3.75rem);
   background: linear-gradient(
     120deg,
@@ -60,9 +60,9 @@
     rgba(12, 10, 9, 0.35) 45%,
     rgba(10, 9, 8, 0.05) 70%
   );
-  color: #fff; /* צבע הכיתוב לבן */
+  color: #fff; 
   z-index: 10;
-  text-align: left; /* מבטיח שהטקסט מיושר שמאל */
+  text-align: left; 
 }
 
 .heroCopy {
@@ -72,7 +72,6 @@
   gap: 1rem;
   color: #fff; 
 }
-
 
 .heroEyebrow {
   letter-spacing: 0.35em;
@@ -495,8 +494,6 @@
   }
 }
 
-/* ---- Testimonials Section ---- */
-
 .testimonialsSection {
   padding: 3rem 0;
   display: flex;
@@ -550,7 +547,7 @@
 .starIcon {
   width: 20px;
   height: 20px;
-  color: #d6a85a; /* זהב עדין */
+  color: #d6a85a; 
   stroke-width: 2.2;
 }
 
@@ -589,7 +586,7 @@
 }
 
 .stepImageWrapper {
-  flex: 1 1 35%; /* התמונה תופסת כ-1/3 מהרוחב */
+  flex: 1 1 35%; 
 }
 
 .stepImageWide {
@@ -606,7 +603,7 @@
 }
 
 .stepContent {
-  flex: 1 1 60%; /* הכיתוב תופס את השאר */
+  flex: 1 1 60%; 
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -638,34 +635,31 @@
   justify-content: center;
 }
 
-
-/* ==== Buttons responsive fix for small screens ==== */
 @media (max-width: 1024px) {
   .weatherBannerWrapper {
     position: absolute;
-    top: 20px;        /* מעלה את הקופסה */
+    top: 20px;     
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
     height: 15%;
-    z-index: 50;      /* מעל הכפתורים */
+    z-index: 50;     
   }
 
   .heroOverlay {
-    padding-top: 120px; /* מפנה מקום שהחלונית לא תדרוס את הכפתורים */
+    padding-top: 120px; 
   }
 }
-/* ==== Buttons responsive fix for small screens ==== */
 @media (max-width: 600px) {
   .heroActions {
     gap: 0.5rem;
-    margin-top: 1rem; /* רווח בין התמונה לכפתורים */
+    margin-top: 1rem;
   }
 
   .heroPrimary,
   .heroSecondary {
-    padding: 0.5rem 1rem;  /* קטן יותר */
-    font-size: 0.75rem;    /* טקסט קטן */
+    padding: 0.5rem 1rem;  
+    font-size: 0.75rem;    
     border-radius: 999px;
   }
 
@@ -678,7 +672,7 @@
 
 @media (max-width: 480px) {
   .heroOverlay {
-    padding-top: 180px !important; /* רווח גדול יותר למובייל */
+    padding-top: 180px !important; 
   }
 
   .heroActions {
@@ -710,7 +704,6 @@
   }
 }
 
-/* ==== Weather box above buttons on all mobile sizes ==== */
 @media (max-width: 1024px) {
   .weatherBannerWrapper {
     position: absolute;
@@ -722,11 +715,9 @@
   }
 
   .heroOverlay {
-    padding-top: 160px !important; /* יותר מקום כך הכפתורים לא נעלמים */
+    padding-top: 160px !important; 
   }
 }
-
-
 
 .page {
   min-height: 100vh;
@@ -746,7 +737,6 @@
   gap: clamp(2rem, 3vw, 3.5rem);
 }
 
-/* ===== Hero Section ===== */
 .heroSection {
   position: relative;
   width: 100%;
@@ -772,7 +762,7 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* הכפתורים תמיד בתחתית */
+  justify-content: flex-end; 
   padding: clamp(1rem, 3vw, 3rem);
   gap: 1rem;
   background: linear-gradient(120deg, rgba(10,8,6,0.7) 10%, rgba(12,10,9,0.35) 45%, rgba(10,9,8,0.05) 70%);
@@ -811,7 +801,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-bottom: 1rem; /* רווח גמיש מהתמונה */
+  margin-bottom: 1rem; 
 }
 
 .heroPrimary,
@@ -848,7 +838,6 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* ===== Weather Banner ===== */
 .weatherBannerWrapper {
   position: absolute;
   top: 15px;
@@ -883,7 +872,6 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* ===== Media Queries ===== */
 @media (max-width: 1024px) {
   .heroOverlay {
     flex-direction: column;

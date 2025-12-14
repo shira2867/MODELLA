@@ -27,7 +27,6 @@ const LookCard: React.FC<LookCardProps> = ({ items, lookId }) => {
   const BASE_URL = globalThis?.location?.origin ?? "";
   const lookUrl = `${BASE_URL}/sharelookpersonal/${lookId}`;
 
-  // Fetch current share status
   const { data: shareStatus } = useQuery({
     queryKey: ["shareLookStatus", lookId],
     queryFn: async () => {

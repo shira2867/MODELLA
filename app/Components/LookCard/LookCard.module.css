@@ -1,10 +1,7 @@
-
-/* ====== Fonts ====== */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 
-/* ====== Grid Wrapper ====== */
 .cardsWrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -21,14 +18,12 @@
   }
 }
 
-/* שלושה בשורה למסכים רחבים */
 @media (min-width: 1200px) {
   .cardsWrapper {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-/* ====== LookCard ====== */
 .card {
   display: flex;
   flex-direction: column;
@@ -52,7 +47,6 @@
   box-shadow: var(--shadow-strong);
 }
 
-/* ====== Card Header ====== */
 .cardHeader {
   display: flex;
   justify-content: space-between;
@@ -100,7 +94,6 @@
   color: #5c1a1a;
 }
 
-/* ====== Card Body ====== */
 .cardBody {
   border-top: 1px solid var(--color-border);
   padding-top: 1rem;
@@ -154,7 +147,6 @@
   transform: scale(1.05);
 }
 
-/* ====== Card Footer ====== */
 .cardFooter {
   display: flex;
   align-items: center;
@@ -163,7 +155,7 @@
   border-top: 1px solid var(--color-border);
   padding-top: 1rem;
   flex-wrap: wrap;
-  margin-top: auto; /* דוחף את הפוטר לתחתית הכרטיס */
+  margin-top: auto; 
 }
 
 .shareLabel {
@@ -227,7 +219,6 @@
   color: #fff;
 }
 
-/* ====== Modal ====== */
 .modalBackdrop {
   position: fixed;
   inset: 0;
@@ -258,7 +249,6 @@
   gap: 1.25rem;
 }
 
-/* ====== Responsive adjustments ====== */
 @media (max-width: 1200px) {
   .cardsWrapper { grid-template-columns: repeat(2, 1fr); }
 }
@@ -276,7 +266,6 @@
   .cardTitle { font-size: 1.15rem; }
 }
 
-/* ====== Animations ====== */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { from { opacity: 0; transform: translateY(10px) scale(0.99); } to { opacity: 1; transform: translateY(0); } }
 

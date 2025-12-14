@@ -11,6 +11,16 @@ import { signOutUser } from "@/app/firebase/authActions";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const navLinks = [
+    { label: "Home", href: "/home" },
+    { label: "About", href: "/about" },
+    { label: "My Closet", href: "/mycloset" },
+    { label: "New Cloth", href: "/newcloth" },
+    { label: "My Looks", href: "/mylooks" },
+    { label: "Style Feed", href: "/stylefeed" },
+    { label: "Wishlist", href: "/checklist" },
+  ];
+
   const [isOpen, setIsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const user = useUserStore((state) => state.user);
@@ -38,16 +48,15 @@ export default function Header() {
           <Image src={logo} alt="Logo" width={250} height={150} />
         </Link>
       </div>
-
       <nav className={`${styles.nav} ${isOpen ? styles.open : ""}`}>
-        {["Home", "About", "My Closet", "New Cloth", "My Looks", "Style Feed", "Checklist"].map((text, i) => (
+        {navLinks.map((link, i) => (
           <Link
             key={i}
-            href={`/${text.toLowerCase().replace(/\s/g, "")}`}
+            href={link.href}
             className={styles.link}
             onClick={() => setIsOpen(false)}
           >
-            {text}
+            {link.label}
           </Link>
         ))}
       </nav>
@@ -76,13 +85,20 @@ export default function Header() {
             <button className={styles.profileButton} onClick={handleLogout}>
               Logout
             </button>
-            <button className={styles.profileButton} onClick={handleUpdateProfile}>
+            <button
+              className={styles.profileButton}
+              onClick={handleUpdateProfile}
+            >
               update profile
             </button>
           </div>
         )}
 
-        <button className={styles.hamburger} onClick={toggleMenu} aria-label="Toggle Menu">
+        <button
+          className={styles.hamburger}
+          onClick={toggleMenu}
+          aria-label="Toggle Menu"
+        >
           {isOpen ? (
             <Image src={close} alt="Close Menu" width={50} height={50} />
           ) : (
@@ -91,7 +107,9 @@ export default function Header() {
         </button>
       </div>
 
-      {isOpen && <div className={styles.overlay} onClick={() => setIsOpen(false)} />}
+      {isOpen && (
+        <div className={styles.overlay} onClick={() => setIsOpen(false)} />
+      )}
     </header>
   );
 }

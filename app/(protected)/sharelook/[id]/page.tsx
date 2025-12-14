@@ -29,7 +29,6 @@ export default function ShareLookPage() {
   const { user } = useUserStore();
   const userName = user?.name || "";
 
-  // 1) Fetch the shared look (items, likes, etc.)
   const {
     data: look,
     isLoading: isLookLoading,
@@ -43,7 +42,6 @@ export default function ShareLookPage() {
     enabled: !!lookId,
   });
 
-  // 2) Fetch comments separately from /comment (always enriched)
   const {
     data: comments = [],
     isLoading: isCommentsLoading,
@@ -59,7 +57,6 @@ export default function ShareLookPage() {
     refetchOnWindowFocus: "always",
   });
 
-  // 3) When CommentForm returns new comments, update the comments cache
   const addCommentToState = (newComments: CommentType[]) => {
     queryClient.setQueryData<CommentType[]>(
       ["share-look-comments", lookId],
