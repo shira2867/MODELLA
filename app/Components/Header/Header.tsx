@@ -8,7 +8,7 @@ import menu from "../../../public/menu.png";
 import close from "../../../public/remove.png";
 import { useUserStore } from "@/store/userStore";
 import { signOutUser } from "@/app/firebase/authActions";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Header() {
   const navLinks = [
@@ -25,6 +25,7 @@ export default function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
   const user = useUserStore((state) => state.user);
   const router = useRouter();
+  const pathname = usePathname();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleProfile = () => setProfileOpen(!profileOpen);
@@ -53,7 +54,9 @@ export default function Header() {
           <Link
             key={i}
             href={link.href}
-            className={styles.link}
+            className={`${styles.link} ${
+              pathname === link.href ? styles.activeLink : ""
+            }`}
             onClick={() => setIsOpen(false)}
           >
             {link.label}
@@ -89,7 +92,7 @@ export default function Header() {
               className={styles.profileButton}
               onClick={handleUpdateProfile}
             >
-              update profile
+              Update Profile
             </button>
           </div>
         )}

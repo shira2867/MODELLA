@@ -33,6 +33,12 @@
   color: #5c1a1a;
 }
 
+
+.activeLink {
+  font-weight: bold;
+  color: #5c1a1a;
+}
+
 .rightControls {
   display: flex;
   align-items: center;
