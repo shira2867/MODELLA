@@ -109,6 +109,7 @@ const NewLook: FC<NewLookProps> = ({
     },
   });
 
+
   const handleDrop: React.DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     const data = event.dataTransfer.getData("application/json");
@@ -116,6 +117,16 @@ const NewLook: FC<NewLookProps> = ({
 
     try {
       const item: ClothingItem = JSON.parse(data);
+
+      const categoryExists = selectedItems.some(
+        (i) => i.category.toLowerCase() === item.category.toLowerCase()
+      );
+
+      if (categoryExists) {
+        showToast(`You already added a ${item.category} to the look.`, "error");
+        return; 
+      }
+
       if (!selectedItems.some((i) => i._id === item._id)) {
         setSelectedItems((prev) => [...prev, item]);
       }

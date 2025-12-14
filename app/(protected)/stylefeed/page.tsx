@@ -8,6 +8,14 @@ import { ShareLookType } from "@/types/shareLookType";
 import Header from "../../Components/Header/Header";
 import Footer from "../../Components/Footer/Footer";
 
+function Loader() {
+  return (
+    <div className={styles.loaderContainer}>
+      <div className={styles.dashedSpinner}></div>
+    </div>
+  );
+}
+
 export default function StyleFeedPage() {
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -36,23 +44,25 @@ export default function StyleFeedPage() {
 
   const looks: ShareLookType[] = data || [];
 
-  if (isLoading) return <p>Loading looks...</p>;
-  if (isError) return <p>An error occurred while loading looks</p>;
-
   return (
     <div className={styles.pageContainer}>
       <Header />
 
-      {/* <h1 className={styles.title}>Style Feed</h1> */}
-
-      <div className={styles.grid}>
-        {looks.map((look) => (
-          <div key={look._id} className={styles.card}>
-            <SharedLookCard look={look} />
+      <main className={styles.mainContent}>
+        {isLoading ? (
+          <Loader />
+        ) : isError ? (
+          <p className={styles.error}>An error occurred while loading looks</p>
+        ) : (
+          <div className={styles.grid}>
+            {looks.map((look) => (
+              <div key={look._id} className={styles.card}>
+                <SharedLookCard look={look} />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
+        )}
+      </main>
       <Footer />
     </div>
   );

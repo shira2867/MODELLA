@@ -1,28 +1,24 @@
-/* fonts */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
 
-/* ====== Container ראשי ====== */
 .container {
   padding: 1rem;
   position: relative;
   box-sizing: border-box;
 }
 
-/* ====== עמוד מרכזי ====== */
 .pageContainer {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  max-width: 1400px; /* מגביל רוחב במסכים רחבים */
+  max-width: 1400px;
   margin: 0 auto;
   text-align: center;
   font-family: "Montserrat", sans-serif;
 }
 
-/* ====== תוכן ראשי ====== */
 .mainContent {
   flex: 1;
   display: flex;
@@ -30,7 +26,6 @@
   gap: 1rem;
 }
 
-/* ====== Sidebar ====== */
 .sidebarFilter {
   position: fixed;
   top: 0;
@@ -72,7 +67,6 @@
   color: #333;
 }
 
-/* ====== Filters ====== */
 .filterGroup {
   display: flex;
   flex-direction: column;
@@ -112,9 +106,8 @@
   color: #5c1a1a;
 }
 
-/* ====== Color Circles ====== */
 .colorCircle {
-  width: 2.1rem;  /* ~34px */
+  width: 2.1rem;
   height: 2.1rem;
   border-radius: 50%;
   border: 2px solid transparent;
@@ -160,9 +153,9 @@
   margin-top: 3rem;
   margin-left: 2%;
   border-radius: 0.5rem;
-    color: #121212;
-border-color: #340b0b;
-  box-shadow: 0 0 0 3px rgba(92, 26, 26, 0.12); 
+  color: #121212;
+  border-color: #340b0b;
+  box-shadow: 0 0 0 3px rgba(92, 26, 26, 0.12);
   transition: all 0.3s ease;
 }
 
@@ -172,7 +165,6 @@ border-color: #340b0b;
   color: #fff;
 }
 
-/* ====== Titles ====== */
 .title {
   font-family: "Playfair Display", serif;
   font-size: 3.5rem;
@@ -192,7 +184,6 @@ border-color: #340b0b;
   }
 }
 
-/* ====== Media Queries ====== */
 @media (max-width: 1200px) {
   .cardsWrapper {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -208,5 +199,45 @@ border-color: #340b0b;
 @media (max-width: 600px) {
   .cardsWrapper {
     grid-template-columns: 1fr;
+  }
+}
+.loading,
+.noClothes {
+  width: 60%;
+  margin: 2rem auto;
+  text-align: center;
+
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.noClothes {
+  padding: 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--color-border);
+  background: rgba(92, 26, 26, 0.04);
+}
+.loaderContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+.dashedSpinner {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 4px dashed #0b0b0b;
+  animation: rotateDashed 1.2s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.15));
+}
+
+@keyframes rotateDashed {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

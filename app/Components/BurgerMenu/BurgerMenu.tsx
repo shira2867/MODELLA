@@ -9,6 +9,16 @@ import close from "../../../public/remove.png";
 import { useUserStore } from "@/store/userStore";
 
 export default function BurgerMenu() {
+  const navLinks = [
+    { label: "Home", href: "/home" },
+    { label: "About", href: "/about" },
+    { label: "My Closet", href: "/mycloset" },
+    { label: "New Cloth", href: "/newcloth" },
+    { label: "My Looks", href: "/mylooks" },
+    { label: "Style Feed", href: "/stylefeed" },
+    { label: "Wishlist", href: "/checklist" },
+  ];
+
   const [isOpen, setIsOpen] = useState(false);
   const user = useUserStore((state) => state.user);
 
@@ -23,21 +33,14 @@ export default function BurgerMenu() {
       </div>
 
       <nav className={`${styles.nav} ${isOpen ? styles.open : ""}`}>
-        {[
-          "Home",
-          "About",
-          "My Closet",
-          "New Cloth",
-          "My Looks",
-          "Style Feed",
-        ].map((text, i) => (
+        {navLinks.map((link, i) => (
           <Link
             key={i}
-            href={`/${text.toLowerCase().replace(/\s/g, "")}`}
+            href={link.href}
             className={styles.link}
             onClick={() => setIsOpen(false)}
           >
-            {text}
+            {link.label}
           </Link>
         ))}
       </nav>

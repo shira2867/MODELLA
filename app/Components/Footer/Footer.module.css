@@ -40,8 +40,8 @@
 .social {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-bottom: 15px;
+  gap: 20px;
+  Margin-top: 48px;
 }
 
 .social a {

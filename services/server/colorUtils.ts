@@ -31,13 +31,14 @@ export const COLOR_MAP: Record<string, RGB> = {
   Beige: [245, 245, 220],
   Navy: [0, 0, 128],
   Indigo: [75, 0, 130],
+  LightPurple: [214, 206, 219],
+  Lavender: [230, 230, 250],
   Burgundy: [128, 0, 32],
   Olive: [85, 107, 47],
   Teal: [0, 128, 128],
   Turquoise: [64, 224, 208],
 };
 
-// ——— Simple heuristics for specific color families ——— //
 
 export function isGrayRGB([r, g, b]: RGB): boolean {
   return Math.max(r, g, b) - Math.min(r, g, b) < 20 && r > 50 && r < 200;
@@ -48,7 +49,20 @@ export function isYellowRGB([r, g, b]: RGB): boolean {
 }
 
 export function isBrownRGB([r, g, b]: RGB): boolean {
-  return r > 100 && g > 50 && g < 120 && b < 80;
+  const warm = r > g && r > b;
+  const lowBlue = b < 90;
+  const midRange = r >= 60 && r <= 160;
+  const notTooRed = r - g < 25 && r - b < 40;
+
+  return warm && lowBlue && midRange && notTooRed;
+}
+
+export function isBurgundyRGB([r, g, b]: RGB): boolean {
+  const redDominant = r > g + 25 && r > b + 20;
+  const dark = r < 120 && g < 70 && b < 70;
+  const burgundyHue = r > 80 && b > 30; 
+
+  return redDominant && dark && burgundyHue;
 }
 
 export function isCyanRGB([r, g, b]: RGB): boolean {
@@ -60,10 +74,28 @@ export function isPinkRGB([r, g, b]: RGB): boolean {
 }
 
 export function isDenimRGB([r, g, b]: RGB): boolean {
-  if (b > r && b > g && b - r >= 20 && b - g >= 10 && r >= 60 && g >= 60 && b >= 60 && b <= 185)
+  if (
+    b > r &&
+    b > g &&
+    b - r >= 20 &&
+    b - g >= 10 &&
+    r >= 60 &&
+    g >= 60 &&
+    b >= 60 &&
+    b <= 185
+  )
     return true;
 
-  if (b > r && b > g && b - r >= 10 && b - g >= 5 && r >= 120 && g >= 140 && b >= 160 && b <= 200)
+  if (
+    b > r &&
+    b > g &&
+    b - r >= 10 &&
+    b - g >= 5 &&
+    r >= 120 &&
+    g >= 140 &&
+    b >= 160 &&
+    b <= 200
+  )
     return true;
 
   return false;
@@ -73,15 +105,42 @@ export function isGreenRGB([r, g, b]: RGB): boolean {
   return g > r + 5 && g > b + 5 && g >= 50;
 }
 
-export function isBurgundyRGB([r, g, b]: RGB): boolean {
-  return r > 50 && r < 150 && g < 60 && b < 70;
-}
+
 
 export function isRedRGB([r, g, b]: RGB): boolean {
   return r > 150 && g < 80 && b < 80;
 }
 
-// ——— LAB-based matching + fallback to closest color in COLOR_MAP ——— //
+export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
+  const [L, a, labB] = chroma([r, g, b]).lab();
+
+  if (g > r || g > b) return false;
+
+  const isLightPurple =
+    L > 65 &&
+    r > 150 &&
+    b > 150 &&
+    Math.abs(r - b) < 70 &&
+    g < 160;
+
+  const isMediumPurple =
+    L >= 35 &&
+    L <= 70 &&
+    r > 80 &&
+    b > 80 &&
+    Math.abs(r - b) < 80 &&
+    g < Math.min(r, b) - 10;
+
+  const isDarkPurple =
+    L < 35 &&
+    r > 40 &&
+    b > 40 &&
+    Math.abs(r - b) < 60 &&
+    g < Math.min(r, b) - 5;
+
+  return isLightPurple || isMediumPurple || isDarkPurple;
+}
+
 
 export function closestColorLAB(rgb: RGB): string {
   const lab = chroma(rgb).lab();
@@ -89,35 +148,31 @@ export function closestColorLAB(rgb: RGB): string {
   const a = lab[1];
   const bLab = lab[2];
 
-  // Extremely dark neutral → treat as Black
   if (L < 20 && Math.abs(a) < 10 && Math.abs(bLab) < 10) return "Black";
-  // Very bright → White
   if (L > 95) return "White";
 
-  // Hand-tuned rules for specific families
+  if (isBurgundyRGB(rgb)) return "Burgundy";
+  if (isRedRGB(rgb)) return "Red";
   if (isDenimRGB(rgb)) return "Blue";
   if (isGreenRGB(rgb)) return "Green";
-  if (isRedRGB(rgb)) return "Red";
-  if (isBurgundyRGB(rgb)) return "Burgundy";
+  if (isBrownRGB(rgb)) return "Brown";
   if (isGrayRGB(rgb)) return "Gray";
   if (isYellowRGB(rgb)) return "Yellow";
-  if (isBrownRGB(rgb)) return "Brown";
   if (isCyanRGB(rgb)) return "LightBlue";
   if (isPinkRGB(rgb)) return "Pink";
+  if (isPurpleShadeRGB(rgb)) return "Purple";
 
   const [r, g, b] = rgb;
 
-  // More hand-crafted heuristics
-  if (r >= 150 && g >= 60 && g <= 150 && b <= 40) return "Orange";
-  if (r >= 150 && g < 60 && b < 60) return "Red";
-  if (b > r && b > g && r < 60 && g < 60 && b < 70) return "Blue";
-  if (r < 70 && g < 70 && b < 70) return "Brown";
-  if (g > r + 10 && g > b + 10 && g < 70) return "Green";
-  if (g > r + 20 && g > b + 20 && g >= 70 && g <= 180) return "Green";
+  if (r > 70 && r < 150 && g < 80 && b < 80 && r > g + 15) {
+    return "Burgundy";
+  }
 
-  // Fallback: pick the closest predefined color in LAB space
+  if (r >= 150 && g >= 60 && g <= 150 && b <= 40) return "Orange";
+
   let closest = "";
   let minDistance = Infinity;
+
   for (const [colorName, colorRgb] of Object.entries(COLOR_MAP)) {
     const distance = chroma.distance(rgb, colorRgb, "lab");
     if (distance < minDistance) {
@@ -126,10 +181,10 @@ export function closestColorLAB(rgb: RGB): string {
     }
   }
 
-  // Normalize similar shades into a single label
   const blueShades = ["Blue", "DenimBlue", "DarkDenim", "MediumDenim", "LightDenim", "Navy", "Indigo"];
   if (blueShades.includes(closest)) return "Blue";
-
+const purplrShades = ["Purple", "LightPurple", "Lavender"];
+  if (purplrShades.includes(closest)) return "Purple";
   const greenShades = ["Green", "Olive", "Teal", "Turquoise"];
   if (greenShades.includes(closest)) return "Green";
 
@@ -142,11 +197,9 @@ export function closestColorLAB(rgb: RGB): string {
   return closest;
 }
 
-//
-// ⭐⭐ KMEANS – focus on central region + distance-based weighting ⭐⭐
+
 export function getDominantColorsKMeans(
   img: HTMLImageElement,
-  size = 250,
   topN = 4
 ): RGB[] {
   const canvas = document.createElement("canvas");
@@ -157,60 +210,45 @@ export function getDominantColorsKMeans(
 
   ctx.drawImage(img, 0, 0);
 
-  const centerX = Math.floor(img.width / 2);
-  const centerY = Math.floor(img.height / 2);
-
-  // Use only a large central circle (about 70% of min(width, height))
-  const radius = Math.min(img.width, img.height) * 0.6;
-  const maxRadius = radius;
-
   const pixels: number[][] = [];
 
-  for (let x = Math.floor(centerX - radius); x < Math.ceil(centerX + radius); x++) {
-    for (let y = Math.floor(centerY - radius); y < Math.ceil(centerY + radius); y++) {
-      if (x < 0 || x >= img.width || y < 0 || y >= img.height) continue;
+  const startX = Math.floor(img.width * 0.40);
+  const endX = Math.ceil(img.width * 0.60);
 
-      const dx = x - centerX;
-      const dy = y - centerY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+  const topStartY = Math.floor(img.height * 0.15);
+  const topEndY = Math.floor(img.height * 0.45);
 
-      // Skip anything outside the central circle
-      if (dist > radius) continue;
+  const bottomStartY = Math.floor(img.height * 0.45);
+  const bottomEndY = Math.floor(img.height * 0.85);
 
-      const data = ctx.getImageData(x, y, 1, 1).data;
-      const [r, g, b] = [data[0], data[1], data[2]];
+  const sampleRegion = (sx: number, ex: number, sy: number, ey: number) => {
+    for (let x = sx; x < ex; x++) {
+      for (let y = sy; y < ey; y++) {
+        const data = ctx.getImageData(x, y, 1, 1).data;
+        const [r, g, b] = [data[0], data[1], data[2]];
 
-      const [L] = chroma([r, g, b]).lab();
-      const saturation = chroma([r, g, b]).hsl()[1];
+        const [L] = chroma([r, g, b]).lab();
+        const saturation = chroma([r, g, b]).hsl()[1];
 
-      // 1) Filter out almost pure white background
-      if (L > 97 && saturation < 0.01) continue;
+        if (L > 96 && saturation < 0.03) continue;
 
-      // 2) Filter out very flat mid-range grayish pixels
-      if (saturation < 0.02 && L > 30 && L < 80) continue;
+        if (r > 150 && g > 80 && b < 90) continue;
 
-      // Distance-based weighting: closer to center = more weight
-      const normDist = dist / maxRadius;
-
-      let repeats = 1;
-      if (normDist < 0.25) repeats = 4;   // very central pixels
-      else if (normDist < 0.6) repeats = 2; // middle ring
-
-      for (let i = 0; i < repeats; i++) {
         pixels.push([r, g, b]);
       }
     }
-  }
+  };
+
+  sampleRegion(startX, endX, topStartY, topEndY);
+  sampleRegion(startX, endX, bottomStartY, bottomEndY);
 
   if (!pixels.length) return [[0, 0, 0]];
 
-  const dataForKMeans = pixels.map(p => [p[0], p[1], p[2]]);
-  const { centroids } = kmeans(dataForKMeans, topN, {});
+  const { centroids } = kmeans(pixels, topN, {});
   return centroids.map(c => c.map(Math.round) as RGB);
 }
 
-//
-// —— Rectangular center-based fallback (no KMeans weighting) —— //
+
 export function getDominantColorsFromCenter(
   img: HTMLImageElement,
   size = 200,
@@ -223,6 +261,7 @@ export function getDominantColorsFromCenter(
   if (!ctx) return [];
 
   ctx.drawImage(img, 0, 0);
+
   const centerX = Math.floor(img.width / 2);
   const centerY = Math.floor(img.height / 2);
 
@@ -238,9 +277,8 @@ export function getDominantColorsFromCenter(
       const [L] = chroma(rgb).lab();
       const saturation = chroma(rgb).hsl()[1];
 
-      // Same background/flat filtering as KMeans version
-      if (L > 97 && saturation < 0.01) continue;
-      if (saturation < 0.02 && L > 30 && L < 80) continue;
+      if (L > 95) continue;
+      if (saturation < 0.05 && L > 20) continue;
 
       pixels.push(rgb);
     }
@@ -259,7 +297,7 @@ export function getDominantColorsFromCenter(
   };
 
   const colorMap: Record<string, { rgb: RGB; count: number }> = {};
-  pixels.forEach((rgb) => {
+  pixels.forEach(rgb => {
     const key = rgb.join(",");
     if (!colorMap[key]) colorMap[key] = { rgb, count: 0 };
     colorMap[key].count++;

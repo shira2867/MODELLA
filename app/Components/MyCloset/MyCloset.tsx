@@ -15,6 +15,13 @@ import pants from "../../../public/short_13387117.png";
 import { ClothingItem } from "@/types/clothTypes";
 import { FaTrash } from "react-icons/fa";
 import { fetchClothes } from "@/services/client/closet";
+function Loader() {
+  return (
+    <div className={styles.loaderContainer}>
+      <div className={styles.dashedSpinner}></div>
+    </div>
+  );
+}
 
 const COLOR_MAP: Record<string, [number, number, number]> = {
   Red: [255, 0, 0],
@@ -88,7 +95,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
   const [colorFilter, setColorFilter] = useState<string | null>(null);
   const [styleFilter, setStyleFilter] = useState<string | null>(null);
   const [seasonFilter, setSeasonFilter] = useState<string | null>(null);
-
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>("none");
   const filterPanelId = "closet-filter-panel";
   const { showToast } = useToast();
@@ -146,7 +152,7 @@ const MyCloset: React.FC<MyClosetProps> = ({
 
   let closetContent: React.ReactNode;
   if (isLoading) {
-    closetContent = <p className={styles.loading}>Loading...</p>;
+    closetContent = <Loader />;
   } else if (filteredClothes.length === 0) {
     closetContent = <p className={styles.noClothes}>No items found.</p>;
   } else {
@@ -189,7 +195,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.mainContent}>
-        {/* Mobile: centered buttons that open side panels */}
         {isMobile && (
           <div className={styles.mobileToggleContainer}>
             <button
@@ -217,7 +222,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
           </div>
         )}
 
-        {/* Categories row – desktop only, unchanged */}
         {!isMobile && (
           <div className={styles.categoryFilterRow}>
             <div className={styles.categoryRow}>
@@ -225,8 +229,9 @@ const MyCloset: React.FC<MyClosetProps> = ({
                 <button
                   key={cat.key}
                   type="button"
-                  className={`${styles.categoryButton} ${categoryFilter === cat.key ? styles.active : ""
-                    }`}
+                  className={`${styles.categoryButton} ${
+                    categoryFilter === cat.key ? styles.active : ""
+                  }`}
                   onClick={() =>
                     setCategoryFilter(cat.key === "All" ? null : cat.key)
                   }
@@ -241,7 +246,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
               ))}
             </div>
 
-            {/* Desktop filters pill on the right – same behavior as before */}
             {!isFiltersMode && (
               <button
                 type="button"
@@ -256,11 +260,11 @@ const MyCloset: React.FC<MyClosetProps> = ({
           </div>
         )}
 
-        {/* Shared sidebar – filters OR categories */}
         <div
           id={filterPanelId}
-          className={`${styles.sidebarFilter} ${isSidebarOpen ? styles.open : ""
-            }`}
+          className={`${styles.sidebarFilter} ${
+            isSidebarOpen ? styles.open : ""
+          }`}
           aria-hidden={!isSidebarOpen}
         >
           <div className={styles.sidebarHeader}>
@@ -282,7 +286,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
             <span>Close</span>
           </button>
 
-          {/* Filters content */}
           {isFiltersMode && (
             <>
               {inspirationColors.length > 0 && (
@@ -314,8 +317,9 @@ const MyCloset: React.FC<MyClosetProps> = ({
                     {Object.keys(COLOR_MAP).map((color) => (
                       <div
                         key={color}
-                        className={`${styles.colorCircle} ${colorFilter === color ? styles.activeColor : ""
-                          }`}
+                        className={`${styles.colorCircle} ${
+                          colorFilter === color ? styles.activeColor : ""
+                        }`}
                         style={{
                           backgroundColor: `rgb(${COLOR_MAP[color].join(",")})`,
                         }}
@@ -335,8 +339,9 @@ const MyCloset: React.FC<MyClosetProps> = ({
                     <button
                       key={style}
                       type="button"
-                      className={`${styles.filterButton} ${styleFilter === style ? styles.active : ""
-                        }`}
+                      className={`${styles.filterButton} ${
+                        styleFilter === style ? styles.active : ""
+                      }`}
                       onClick={() =>
                         setStyleFilter(styleFilter === style ? null : style)
                       }
@@ -355,12 +360,11 @@ const MyCloset: React.FC<MyClosetProps> = ({
                     <button
                       key={season}
                       type="button"
-                      className={`${styles.filterButton} ${seasonFilter === season ? styles.active : ""
-                        }`}
+                      className={`${styles.filterButton} ${
+                        seasonFilter === season ? styles.active : ""
+                      }`}
                       onClick={() =>
-                        setSeasonFilter(
-                          seasonFilter === season ? null : season
-                        )
+                        setSeasonFilter(seasonFilter === season ? null : season)
                       }
                       aria-pressed={seasonFilter === season}
                     >
@@ -372,7 +376,6 @@ const MyCloset: React.FC<MyClosetProps> = ({
             </>
           )}
 
-          {/* Categories content – for sidebar "Categories" mode */}
           {isCategoriesMode && (
             <div className={styles.filterGroup}>
               <p className={styles.filterLabel}>Category</p>
@@ -381,12 +384,11 @@ const MyCloset: React.FC<MyClosetProps> = ({
                   <button
                     key={cat.key}
                     type="button"
-                    className={`${styles.filterButton} ${categoryFilter === cat.key ? styles.active : ""
-                      }`}
+                    className={`${styles.filterButton} ${
+                      categoryFilter === cat.key ? styles.active : ""
+                    }`}
                     onClick={() => {
                       setCategoryFilter(cat.key === "All" ? null : cat.key);
-                      // optionally close sidebar on select:
-                      // setSidebarMode("none");
                     }}
                     aria-pressed={categoryFilter === cat.key}
                   >

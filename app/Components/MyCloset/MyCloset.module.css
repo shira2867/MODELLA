@@ -13,7 +13,6 @@
   gap: 1.25rem;
 }
 
-/* Mobile buttons for Filters / Categories */
 .mobileToggleContainer {
   display: none;
   justify-content: flex-start;
@@ -57,18 +56,17 @@
   background: var(--color-surface);
 }
 
-/* ---- שורת קטגוריות – הכי חשוב לתיקון ---- */
 .categoryRow {
   display: flex;
   gap: 0.35rem;
-  flex-wrap: nowrap;       /* הכל בשורה אחת */
+  flex-wrap: nowrap;       
   align-items: center;
-  overflow-x: auto;        /* גלילה כשהטאבים ארוכים */
+  overflow-x: auto;        
   padding-bottom: 0.15rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
   flex: 1;
-  min-width: 0;            /* מאפשר לשורה להצטמצם ולא לדחוף את הכפתור */
+  min-width: 0;            
 }
 
 .categoryRow::-webkit-scrollbar {
@@ -113,7 +111,6 @@
   position: relative;
 }
 
-/* --- גריד כרטיסים רספונסיבי --- */
 .cardsWrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -351,7 +348,6 @@
   font-size: 0.9em;
 }
 
-/* --- רספונסיביות לגריד --- */
 @media (max-width: 639px) {
   .cardsWrapper {
     grid-template-columns: 1fr;
@@ -374,14 +370,12 @@
   }
 }
 
-/* Mobile – show toggle buttons */
 @media (max-width: 960px) {
   .mobileToggleContainer {
     display: flex;
   }
 }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .card,
   .categoryButton,
