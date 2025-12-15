@@ -8,5 +8,5 @@ export default function CompleteProfilePage() {
 
   if (!user) return <p>Loading...</p>;
 
-  return <CompleteProfile userEmail={user.email!} />;
+  return <CompleteProfile  />;
 }
