@@ -5,48 +5,41 @@ import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, name, profileImage } = await req.json();
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      );
+    if (!email) {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
     const col = await usersCollection();
-
-    const existingUser = await col.findOne({ email });
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "User already exists" },
-        { status: 400 }
-      );
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
     const now = new Date();
 
-    const result = await col.insertOne({
-      email,
-      passwordHash,
-      createdAt: now,
-      updatedAt: now,
-    });
+    let user = await col.findOne({ email });
 
-    // ✅ חובה await
+    if (!user) {
+      const passwordHash = password ? await bcrypt.hash(password, 10) : null;
+
+      const result = await col.insertOne({
+        email,
+        name: name || null,
+        profileImage: profileImage || null,
+        passwordHash,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      user = { _id: result.insertedId, email };
+    }
+
     const cookieStore = await cookies();
-    cookieStore.set("userId", result.insertedId.toString(), {
+    cookieStore.set("userId", user._id.toString(), {
       httpOnly: true,
       path: "/",
     });
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, userExists: !!user });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: "Server error", ok: false },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Server error", ok: false }, { status: 500 });
   }
 }

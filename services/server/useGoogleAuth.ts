@@ -25,14 +25,11 @@ export function useGoogleAuth() {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
-      if (!firebaseUser.email) {
-        throw new Error("Google account has no email.");
-      }
-
+      if (!firebaseUser.email) throw new Error("Google account has no email.");
       const email = firebaseUser.email;
 
       // 2. Upsert ב־Mongo דרך /api/user/register
-      const registerRes = await fetch("/api/user/register", {
+      await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -42,21 +39,14 @@ export function useGoogleAuth() {
         }),
       });
 
-      if (!registerRes.ok) {
-        throw new Error("Failed to sync user with server.");
-      }
-
-      const registerData = await registerRes.json();
-      const isExistingUser = !!registerData.exists; // true = User updated, false = User created
-
-      // 3. להביא את המשתמש המלא (כולל id) דרך /api/user?email
+      // 3. להביא את המשתמש המלא (כולל id)
       const userRes = await fetch(`/api/user?email=${encodeURIComponent(email)}`);
-      if (!userRes.ok) {
-        throw new Error("Failed to load user data.");
-      }
-
+      if (!userRes.ok) throw new Error("Failed to load user data.");
       const userData = await userRes.json();
       const dbUser = userData.user;
+
+      // בדיקה אם הפרופיל מלא
+      const isProfileComplete = !!dbUser?.name && !!dbUser?.gender;
 
       // 4. לשמור ב־Zustand
       setUser({
@@ -65,46 +55,35 @@ export function useGoogleAuth() {
         profileImage: dbUser?.profileImage ?? firebaseUser.photoURL ?? null,
         gender: (dbUser?.gender as "male" | "female" | null) ?? null,
       });
-
-      if (dbUser?.id) {
-        setUserId(dbUser.id);
-      }
+      if (dbUser?.id) setUserId(dbUser.id);
 
       // 5. לשמור cookie מהשרת
       const idToken = await firebaseUser.getIdToken();
-      const cookieRes = await fetch("/api/auth/set-cookie", {
+      await fetch("/api/auth/set-cookie", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
       });
 
-      if (!cookieRes.ok) {
-        console.error("Failed to set auth cookie");
-      }
-
-      // 6. ניווט – קודם כל לבדוק redirectLookId
+      // 6. ניווט
       const redirectLookId = localStorage.getItem("redirectLookId");
-
       if (redirectLookId) {
         localStorage.removeItem("redirectLookId");
         router.replace(`/sharelookpersonal/${redirectLookId}`);
-      } else if (!isExistingUser) {
-        // משתמש חדש → השלמת פרופיל
+      } else if (!isProfileComplete) {
         router.push("/complete-profile");
       } else {
-        // משתמש קיים → בית
         router.replace("/home");
       }
 
       showToast(
-        isExistingUser ? "Welcome back!" : "Account created successfully",
+        isProfileComplete ? "Welcome back!" : "Account created successfully",
         "success"
       );
     } catch (err: any) {
       console.error(err);
-      const msg = err?.message || "Google login failed";
-      setError(msg);
-      showToast(msg, "error");
+      setError(err?.message || "Google login failed");
+      showToast(err?.message || "Google login failed", "error");
     } finally {
       setIsLoading(false);
     }
