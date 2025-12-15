@@ -18,11 +18,10 @@ const PROTECTED_PATHS = [
   "/sharelookpersonal",
   "/sharelook",
   "/home",
-
 ];
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const { pathname, search } = req.nextUrl;
 
   const isProtected = PROTECTED_PATHS.some((path) =>
     pathname.startsWith(path)
@@ -41,12 +40,9 @@ export function middleware(req: NextRequest) {
     const url = req.nextUrl.clone();
     url.pathname = "/welcome";
 
-    if (pathname.startsWith("/look/")) {
-      url.searchParams.set(
-        "redirectLookId",
-        pathname.split("/look/")[1]
-      );
-    }
+    // 👇 Save the full original path (including query params)
+    const nextPath = `${pathname}${search}`;
+    url.searchParams.set("next", nextPath);
 
     return NextResponse.redirect(url);
   }

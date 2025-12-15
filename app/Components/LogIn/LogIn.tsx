@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
   signInWithEmailAndPassword,
@@ -19,6 +19,11 @@ import { useGoogleAuth } from "@/services/server/useGoogleAuth";
 export default function LoginForm() {
   const { register, handleSubmit, getValues } = useForm<FormData>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ✅ the path we should return to after login
+  const nextPath = searchParams.get("next"); // string | null
+
   const setUser = useUserStore((state) => state.setUser);
   const setUserId = useUserStore((state) => state.setUserId);
 
@@ -26,42 +31,33 @@ export default function LoginForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [isSendingReset, setIsSendingReset] = useState(false);
 
-  // Unified Google auth hook (shared between Login and Signup)
   const {
     signInWithGoogle,
     isLoading: isGoogleLoading,
     error: googleError,
   } = useGoogleAuth();
 
-  /**
-   * Email/password login mutation.
-   * Google login is NOT handled here anymore (only in useGoogleAuth).
-   */
   const loginMutation = useMutation<
     { firebaseUser: User; dbUser: any },
     any,
     FormData
   >({
     mutationFn: async (data) => {
-      // 1. Check user exists in DB
       const res = await fetch(`/api/user?email=${data.email}`);
       const dbData = await res.json();
       if (!dbData.exists)
         throw new Error("User not found. Please register first.");
 
-      // 2. Firebase sign in with email/password
       const userCredential = await signInWithEmailAndPassword(
         auth,
         data.email!,
         data.password!
       );
 
-      const dbUser = dbData.user;
-      return { firebaseUser: userCredential.user, dbUser };
+      return { firebaseUser: userCredential.user, dbUser: dbData.user };
     },
 
     onSuccess: async ({ firebaseUser, dbUser }) => {
-      // 3. Store user in Zustand
       setUser({
         name: dbUser?.name ?? null,
         email: firebaseUser.email ?? null,
@@ -69,31 +65,35 @@ export default function LoginForm() {
         gender: (dbUser?.gender as "male" | "female" | null) ?? null,
       });
 
-      if (dbUser?.id) {
-        setUserId(dbUser.id);
-      }
+      if (dbUser?.id) setUserId(dbUser.id);
 
-      // 4. Set auth cookie on server
+      // If you really DON'T have this route, remove this block in your project,
+      // or implement the route. Keeping it as-is from your code:
       const idToken = await firebaseUser.getIdToken();
       const cookieRes = await fetch("/api/auth/set-cookie", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
       });
       if (!cookieRes.ok) {
         throw new Error("Failed to set authentication cookie.");
       }
 
-      // 5. Redirect logic for email/password login
+      // ✅ NEW: prefer nextPath from query
+      if (nextPath) {
+        router.replace(nextPath);
+        return;
+      }
+
+      // legacy fallback (if still used somewhere)
       const redirectLookId = localStorage.getItem("redirectLookId");
       if (redirectLookId) {
         localStorage.removeItem("redirectLookId");
         router.replace(`/sharelookpersonal/${redirectLookId}`);
-      } else {
-        router.replace("/home");
+        return;
       }
+
+      router.replace("/home");
     },
 
     onError: (err: any) => {
@@ -102,27 +102,23 @@ export default function LoginForm() {
     },
   });
 
-  // Trigger Google unified flow
   const handleGoogleLogin = () => {
     setErrorMessage("");
     setSuccessMessage("");
-    signInWithGoogle();
+    signInWithGoogle(nextPath); // ✅ pass nextPath to Google flow
   };
 
-  // Trigger email/password login
   const handleEmailLogin = (data: FormData) => {
     setErrorMessage("");
     setSuccessMessage("");
     loginMutation.mutate(data);
   };
 
-  // Forgot password (email-based reset)
   const handleForgotPassword = async () => {
     setErrorMessage("");
     setSuccessMessage("");
 
     const email = getValues("email");
-
     if (!email) {
       setErrorMessage("Please enter your email first.");
       return;
@@ -150,7 +146,6 @@ export default function LoginForm() {
         <form onSubmit={handleSubmit(handleEmailLogin)} className={styles.form}>
           <h2>Login</h2>
 
-          {/* Google login button (uses shared hook) */}
           <button
             type="button"
             onClick={handleGoogleLogin}
@@ -169,7 +164,6 @@ export default function LoginForm() {
 
           <div className={styles.orDivider}>Or</div>
 
-          {/* Email/password inputs */}
           <input
             {...register("email")}
             placeholder="Email address"
@@ -182,7 +176,6 @@ export default function LoginForm() {
             className={styles.input}
           />
 
-          {/* Forgot password handler */}
           <button
             type="button"
             onClick={handleForgotPassword}
@@ -192,13 +185,11 @@ export default function LoginForm() {
             {isSendingReset ? "Sending reset link..." : "Forgot your password?"}
           </button>
 
-          {/* Show either email/password error or Google error */}
           {(errorMessage || googleError) && (
             <p className={styles.error}>{errorMessage || googleError}</p>
           )}
           {successMessage && <p className={styles.success}>{successMessage}</p>}
 
-          {/* Email/password login submit */}
           <button
             type="submit"
             className={styles.button}
@@ -208,7 +199,16 @@ export default function LoginForm() {
           </button>
 
           <p className={styles.signupLink}>
-            Don't have an account? <a href="/register">Sign up here</a>
+            Don't have an account?{" "}
+            <a
+              href={
+                nextPath
+                  ? `/register?next=${encodeURIComponent(nextPath)}`
+                  : "/register"
+              }
+            >
+              Sign up here
+            </a>
           </p>
         </form>
       </div>

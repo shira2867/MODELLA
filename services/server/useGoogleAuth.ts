@@ -16,12 +16,18 @@ export function useGoogleAuth() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const signInWithGoogle = async () => {
+  const readNextFromUrl = () => {
+    if (typeof window === "undefined") return null;
+    const sp = new URLSearchParams(window.location.search);
+    return sp.get("next");
+  };
+
+  const signInWithGoogle = async (nextParam?: string | null) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // 1. Firebase popup
+      // 1) Firebase popup
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
@@ -31,7 +37,7 @@ export function useGoogleAuth() {
 
       const email = firebaseUser.email;
 
-      // 2. Upsert ב־Mongo דרך /api/user/register
+      // 2) Upsert user in DB
       const registerRes = await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,18 +53,16 @@ export function useGoogleAuth() {
       }
 
       const registerData = await registerRes.json();
-      const isExistingUser = !!registerData.exists; // true = User updated, false = User created
+      const isExistingUser = !!registerData.exists;
 
-      // 3. להביא את המשתמש המלא (כולל id) דרך /api/user?email
+      // 3) Load full user data (including id)
       const userRes = await fetch(`/api/user?email=${encodeURIComponent(email)}`);
-      if (!userRes.ok) {
-        throw new Error("Failed to load user data.");
-      }
+      if (!userRes.ok) throw new Error("Failed to load user data.");
 
       const userData = await userRes.json();
       const dbUser = userData.user;
 
-      // 4. לשמור ב־Zustand
+      // 4) Save to Zustand
       setUser({
         name: dbUser?.name ?? firebaseUser.displayName ?? null,
         email: dbUser?.email ?? firebaseUser.email ?? null,
@@ -70,7 +74,7 @@ export function useGoogleAuth() {
         setUserId(dbUser.id);
       }
 
-      // 5. לשמור cookie מהשרת
+      // 5) Set auth cookie (MUST succeed)
       const idToken = await firebaseUser.getIdToken();
       const cookieRes = await fetch("/api/auth/set-cookie", {
         method: "POST",
@@ -79,21 +83,25 @@ export function useGoogleAuth() {
       });
 
       if (!cookieRes.ok) {
-        console.error("Failed to set auth cookie");
+        throw new Error("Failed to set authentication cookie.");
       }
 
-      // 6. ניווט – קודם כל לבדוק redirectLookId
-      const redirectLookId = localStorage.getItem("redirectLookId");
+      // 6) Redirect: prefer next flow
+      const next = nextParam ?? readNextFromUrl() ?? null;
 
-      if (redirectLookId) {
-        localStorage.removeItem("redirectLookId");
-        router.replace(`/sharelookpersonal/${redirectLookId}`);
-      } else if (!isExistingUser) {
-        // משתמש חדש → השלמת פרופיל
-        router.push("/complete-profile");
+      if (next) {
+        router.replace(next);
       } else {
-        // משתמש קיים → בית
-        router.replace("/home");
+        // legacy fallback (optional)
+        const redirectLookId = localStorage.getItem("redirectLookId");
+        if (redirectLookId) {
+          localStorage.removeItem("redirectLookId");
+          router.replace(`/sharelookpersonal/${redirectLookId}`);
+        } else if (!isExistingUser) {
+          router.replace("/complete-profile");
+        } else {
+          router.replace("/home");
+        }
       }
 
       showToast(

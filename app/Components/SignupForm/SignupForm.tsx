@@ -3,15 +3,11 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import logo from "../../../public/logo.png";
 import Link from "next/link";
 import { FormData } from "@/types/userTypes";
-import {
-  createUserWithEmailAndPassword,
-  signOut,
-  User,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, signOut, User } from "firebase/auth";
 import { auth } from "@/app/firebase/config";
 import { useToast } from "../Toast/ToastProvider";
 import { useUserStore } from "@/store/userStore";
@@ -23,16 +19,16 @@ export default function AuthForm() {
   const [user, setUser] = useState<User | null>(null);
   const { register, handleSubmit } = useForm<FormData>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ✅ the path we should return to after auth
+  const nextPath = searchParams.get("next"); // string | null
+
   const setUserStore = useUserStore((state) => state.setUser);
   const { showToast } = useToast();
 
-  // Shared Google auth hook
   const { signInWithGoogle, isLoading: isGoogleLoading } = useGoogleAuth();
 
-  /**
-   * Email/password registration mutation (DB side).
-   * Google registration is handled by useGoogleAuth instead.
-   */
   const registerUserMutation = useMutation({
     mutationFn: async (payload: any) => {
       const res = await fetch("/api/user/register", {
@@ -43,7 +39,6 @@ export default function AuthForm() {
       return res.json();
     },
     onSuccess: (data, variables) => {
-      // Store user in Zustand
       setUserStore({
         name: variables.name || "",
         email: variables.email || null,
@@ -51,12 +46,18 @@ export default function AuthForm() {
         gender: null,
       });
 
-      // Redirect depending on backend response
       if (data.message === "User updated") {
         showToast("You need to login", "info");
-        router.push("/login");
+        router.push(
+          nextPath ? `/login?next=${encodeURIComponent(nextPath)}` : "/login"
+        );
       } else {
-        router.push("/complete-profile");
+        // Keep nextPath in case you want to redirect after complete-profile later
+        router.push(
+          nextPath
+            ? `/complete-profile?next=${encodeURIComponent(nextPath)}`
+            : "/complete-profile"
+        );
       }
     },
     onError: (error: any) => {
@@ -64,11 +65,6 @@ export default function AuthForm() {
     },
   });
 
-  /**
-   * Email/password signup flow:
-   *  - Create Firebase user
-   *  - Create DB user via /api/user/register
-   */
   async function onSubmit(data: FormData) {
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -76,6 +72,7 @@ export default function AuthForm() {
         data.email,
         data.password
       );
+
       const firebaseUser = userCredential.user;
       setUser(firebaseUser);
 
@@ -97,9 +94,6 @@ export default function AuthForm() {
     }
   }
 
-  /**
-   * Optional logout helper (not used directly in the signup form UI).
-   */
   function signOutUser() {
     signOut(auth)
       .then(() => {
@@ -120,15 +114,15 @@ export default function AuthForm() {
           <Image src={logo} alt="Project Logo" width={210} height={210} />
         </Link>
       </div>
+
       <div className={styles.container}>
         {!user ? (
           <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
             <h2>Create Your Account</h2>
 
-            {/* Google signup/login using shared hook */}
             <button
               type="button"
-              onClick={signInWithGoogle}
+              onClick={() => signInWithGoogle(nextPath)} // ✅ correct usage
               className={styles.googleButton}
               disabled={isGoogleLoading}
             >
@@ -144,7 +138,6 @@ export default function AuthForm() {
 
             <div className={styles.orDivider}>Or</div>
 
-            {/* Email/password registration */}
             <input
               {...register("email")}
               placeholder="Email address"
@@ -173,7 +166,16 @@ export default function AuthForm() {
             </p>
 
             <p className={styles.loginLink}>
-              Already have an account? <a href="/login">Log in here</a>
+              Already have an account?{" "}
+              <a
+                href={
+                  nextPath
+                    ? `/login?next=${encodeURIComponent(nextPath)}`
+                    : "/login"
+                }
+              >
+                Log in here
+              </a>
             </p>
           </form>
         ) : (
