@@ -1,53 +1,47 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { usersCollection } from "@/services/server/users";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { name, email, password, gender, profileImage } = body;
-console.log("profileImage",profileImage)
-    if (!email) {
+    const { email, password } = await req.json();
+
+    if (!email || !password) {
       return NextResponse.json(
-        { error: "Email is required" },
+        { error: "Email and password are required" },
         { status: 400 }
       );
     }
 
     const col = await usersCollection();
-    const now = new Date();
 
     const existingUser = await col.findOne({ email });
-
     if (existingUser) {
-      await col.updateOne(
-        { email },
-        {
-          $set: {
-            name: name || existingUser.name,
-            gender: gender || existingUser.gender,
-            profileImage: profileImage || existingUser.profileImage,
-            updatedAt: now,
-          },
-        }
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 400 }
       );
-
-      return NextResponse.json({ ok: true, exists: true, message: "User updated" });
     }
 
-    const passwordHash = password ? await bcrypt.hash(password, 10) : null;
+    const passwordHash = await bcrypt.hash(password, 10);
+    const now = new Date();
 
-    await col.insertOne({
-      name: name || null,
+    const result = await col.insertOne({
       email,
       passwordHash,
-      gender: gender || null,
-      profileImage: profileImage || null,
       createdAt: now,
       updatedAt: now,
     });
 
-    return NextResponse.json({ ok: true, exists: false, message: "User created" });
+    // ✅ חובה await
+    const cookieStore = await cookies();
+    cookieStore.set("userId", result.insertedId.toString(), {
+      httpOnly: true,
+      path: "/",
+    });
+
+    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

@@ -5,23 +5,18 @@ import { ObjectId } from "mongodb";
 
 export async function PUT(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const userId = cookieStore.get("userId")?.value;
-
+const cookieStore = await cookies();
+const userId = cookieStore.get("userId")?.value;
     if (!userId) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { name, gender, profileImage } = body;
+    const { name, gender, profileImage } = await req.json();
 
     const col = await usersCollection();
 
     const result = await col.updateOne(
-      { _id: new ObjectId(userId) }, 
+      { _id: new ObjectId(userId) },
       {
         $set: {
           name,
@@ -33,18 +28,12 @@ export async function PUT(req: Request) {
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ ok: true, profileImage });
+    return NextResponse.json({ ok: true });
   } catch (err) {
     console.error(err);
-    return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
