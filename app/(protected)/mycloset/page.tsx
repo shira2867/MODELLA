@@ -9,7 +9,13 @@ import { useEffect, useState } from "react";
 import styles from "./mycloset.module.css";
 
 type LookCreationMode = "default" | "inspiration";
-
+function Loader() {
+  return (
+    <div className={styles.loaderContainer}>
+      <div className={styles.dashedSpinner}></div>
+    </div>
+  );
+}
 export default function ShowMyCloset() {
   const [userId, setUserId] = useState<string | null>(null);
   const [inspirationColors, setInspirationColors] = useState<string[]>([]);
@@ -31,13 +37,10 @@ export default function ShowMyCloset() {
     if (mode === "default") setInspirationColors([]);
   };
 
-  if (!userId) return <div>Loading...</div>;
-
   return (
     <div className={styles.pageContainer}>
       <Header />
       <div className={styles.pageTitleWrapper}></div>
-
       {isMobile && (
         <MobileNewLookBanner
           setInspirationColors={setInspirationColors}
@@ -45,23 +48,26 @@ export default function ShowMyCloset() {
           onModeChange={handleModeChange}
         />
       )}
-
       <div className={styles.mainArea}>
-        {!isMobile && (
-          <NewLook
-            setInspirationColors={setInspirationColors}
-            lookMode={lookMode}
-            onModeChange={handleModeChange}
-          />
+        {!userId ? (
+          <Loader />
+        ) : (
+          <>
+            {!isMobile && (
+              <NewLook
+                setInspirationColors={setInspirationColors}
+                lookMode={lookMode}
+                onModeChange={handleModeChange}
+              />
+            )}
+            <MyCloset
+              userId={userId}
+              inspirationColors={inspirationColors}
+              isMobile={isMobile}
+            />
+          </>
         )}
-        <MyCloset
-          userId={userId}
-          inspirationColors={inspirationColors}
-          isMobile={isMobile}
-
-        />
       </div>
-
       <Footer />
     </div>
   );

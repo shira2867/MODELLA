@@ -10,10 +10,8 @@ export default function AboutPage() {
       <Header />
 
       <section className={styles.hero}>
-        
         <div className={styles.heroText}>
           <div className={styles.heroTextInner}>
-            
             <h1 className={styles.title}>About</h1>
 
             <div className={styles.lead}>
@@ -25,8 +23,9 @@ export default function AboutPage() {
               </p>
 
               <p>
-                The goal is simple: to combine technology and fashion so everyone
-                can express their personal style — without needing a stylist.
+                The goal is simple: to combine technology and fashion so
+                everyone can express their personal style — without needing a
+                stylist.
               </p>
 
               <p>
@@ -40,17 +39,17 @@ export default function AboutPage() {
                 self-discovery.
               </p>
             </div>
-
           </div>
         </div>
 
         <div className={styles.heroImage}>
-          <img src="/about/hero.webp" alt="About Hero Image" />
+          <img
+            src="/about/2-100_3bba1b55-ff56-440e-b664-95105d4ac417.webp"
+            alt="About Hero Image"
+          />
         </div>
-
       </section>
-            <Footer />
-      
+      <Footer />
     </div>
   );
 }
