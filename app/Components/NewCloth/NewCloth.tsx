@@ -14,6 +14,7 @@ import { ClothingItemPayload } from "@/types/clothTypes";
 import {
   closestColorLAB,
   getDominantColorsFromCenter,
+  getDominantColorsKMeansCenter,
 } from "@/services/server/colorUtils";
 
 type NewClothProps = { userId: string };
@@ -90,7 +91,7 @@ const NewCloth: React.FC<NewClothProps> = ({ userId }) => {
       img.crossOrigin = "anonymous";
       img.src = imageUrl;
       img.onload = () => {
-        const topColors = getDominantColorsFromCenter(img, 100, 1);
+        const topColors = getDominantColorsKMeansCenter(img, 1);
         const mainColor = topColors[0];
         const colorName = closestColorLAB(mainColor);
 

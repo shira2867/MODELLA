@@ -39,7 +39,6 @@ export const COLOR_MAP: Record<string, RGB> = {
   Turquoise: [64, 224, 208],
 };
 
-
 export function isGrayRGB([r, g, b]: RGB): boolean {
   return Math.max(r, g, b) - Math.min(r, g, b) < 20 && r > 50 && r < 200;
 }
@@ -49,20 +48,18 @@ export function isYellowRGB([r, g, b]: RGB): boolean {
 }
 
 export function isBrownRGB([r, g, b]: RGB): boolean {
+  if (b > r || b > g) return false;
+
   const warm = r > g && r > b;
-  const lowBlue = b < 90;
-  const midRange = r >= 60 && r <= 160;
+  const lowBlue = b < 80;
+  const midRange = r >= 70 && r <= 160;
   const notTooRed = r - g < 25 && r - b < 40;
 
   return warm && lowBlue && midRange && notTooRed;
 }
 
 export function isBurgundyRGB([r, g, b]: RGB): boolean {
-  const redDominant = r > g + 25 && r > b + 20;
-  const dark = r < 120 && g < 70 && b < 70;
-  const burgundyHue = r > 80 && b > 30; 
-
-  return redDominant && dark && burgundyHue;
+  return r > g + 25 && r > b + 20 && r < 120 && g < 70 && b < 70 && b > 30;
 }
 
 export function isCyanRGB([r, g, b]: RGB): boolean {
@@ -74,82 +71,49 @@ export function isPinkRGB([r, g, b]: RGB): boolean {
 }
 
 export function isDenimRGB([r, g, b]: RGB): boolean {
-  if (
+  return (
     b > r &&
     b > g &&
-    b - r >= 20 &&
+    b - r >= 15 &&
     b - g >= 10 &&
-    r >= 60 &&
-    g >= 60 &&
     b >= 60 &&
-    b <= 185
-  )
-    return true;
-
-  if (
-    b > r &&
-    b > g &&
-    b - r >= 10 &&
-    b - g >= 5 &&
-    r >= 120 &&
-    g >= 140 &&
-    b >= 160 &&
     b <= 200
-  )
-    return true;
-
-  return false;
+  );
 }
 
 export function isGreenRGB([r, g, b]: RGB): boolean {
   return g > r + 5 && g > b + 5 && g >= 50;
 }
 
-
-
 export function isRedRGB([r, g, b]: RGB): boolean {
   return r > 150 && g < 80 && b < 80;
 }
 
 export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
-  const [L, a, labB] = chroma([r, g, b]).lab();
+  const [L] = chroma([r, g, b]).lab();
+
+  if (L > 90) return false;
 
   if (g > r || g > b) return false;
 
-  const isLightPurple =
-    L > 65 &&
-    r > 150 &&
-    b > 150 &&
-    Math.abs(r - b) < 70 &&
-    g < 160;
-
-  const isMediumPurple =
-    L >= 35 &&
-    L <= 70 &&
-    r > 80 &&
-    b > 80 &&
-    Math.abs(r - b) < 80 &&
-    g < Math.min(r, b) - 10;
-
-  const isDarkPurple =
-    L < 35 &&
-    r > 40 &&
-    b > 40 &&
-    Math.abs(r - b) < 60 &&
-    g < Math.min(r, b) - 5;
-
-  return isLightPurple || isMediumPurple || isDarkPurple;
+  return (
+    (L > 65 && r > 150 && b > 150 && Math.abs(r - b) < 70) ||
+    (L >= 35 && L <= 65 && r > 80 && b > 80 && Math.abs(r - b) < 80) ||
+    (L < 35 && r > 40 && b > 40 && Math.abs(r - b) < 60)
+  );
 }
 
 
 export function closestColorLAB(rgb: RGB): string {
-  const lab = chroma(rgb).lab();
-  const L = lab[0];
-  const a = lab[1];
-  const bLab = lab[2];
+  const [L] = chroma(rgb).lab();
+  const [h, s] = chroma(rgb).hsl();
 
-  if (L < 20 && Math.abs(a) < 10 && Math.abs(bLab) < 10) return "Black";
+  if (L < 20) return "Black";
   if (L > 95) return "White";
+
+  if (h !== undefined && h > 190 && h < 260 && s > 0.15) {
+    return "Blue";
+  }
 
   if (isBurgundyRGB(rgb)) return "Burgundy";
   if (isRedRGB(rgb)) return "Red";
@@ -162,14 +126,6 @@ export function closestColorLAB(rgb: RGB): string {
   if (isPinkRGB(rgb)) return "Pink";
   if (isPurpleShadeRGB(rgb)) return "Purple";
 
-  const [r, g, b] = rgb;
-
-  if (r > 70 && r < 150 && g < 80 && b < 80 && r > g + 15) {
-    return "Burgundy";
-  }
-
-  if (r >= 150 && g >= 60 && g <= 150 && b <= 40) return "Orange";
-
   let closest = "";
   let minDistance = Infinity;
 
@@ -181,18 +137,20 @@ export function closestColorLAB(rgb: RGB): string {
     }
   }
 
-  const blueShades = ["Blue", "DenimBlue", "DarkDenim", "MediumDenim", "LightDenim", "Navy", "Indigo"];
-  if (blueShades.includes(closest)) return "Blue";
-const purplrShades = ["Purple", "LightPurple", "Lavender"];
-  if (purplrShades.includes(closest)) return "Purple";
-  const greenShades = ["Green", "Olive", "Teal", "Turquoise"];
-  if (greenShades.includes(closest)) return "Green";
+  if (["Blue", "DenimBlue", "DarkDenim", "MediumDenim", "LightDenim", "Navy", "Indigo"].includes(closest))
+    return "Blue";
 
-  const brownShades = ["Brown", "DarkBrown", "Chocolate", "DarkGray"];
-  if (brownShades.includes(closest)) return "Brown";
+  if (["Purple", "LightPurple", "Lavender"].includes(closest))
+    return "Purple";
 
-  const yellowShades = ["Yellow", "SoftYellow", "Golden", "WarmYellow", "Mustard"];
-  if (yellowShades.includes(closest)) return "Yellow";
+  if (["Green", "Olive", "Teal", "Turquoise"].includes(closest))
+    return "Green";
+
+  if (["Brown", "DarkBrown", "Chocolate"].includes(closest))
+    return "Brown";
+
+  if (["Yellow", "SoftYellow", "Golden", "WarmYellow", "Mustard"].includes(closest))
+    return "Yellow";
 
   return closest;
 }
@@ -251,7 +209,7 @@ export function getDominantColorsKMeans(
 
 export function getDominantColorsFromCenter(
   img: HTMLImageElement,
-  size = 200,
+  size = 400,
   topN = 4
 ): RGB[] {
   const canvas = document.createElement("canvas");
@@ -313,4 +271,51 @@ export function getDominantColorsFromCenter(
   while (finalColors.length < topN) finalColors.push(sortedColors[0]);
 
   return finalColors;
+}
+
+export function getDominantColorsKMeansCenter(
+  img: HTMLImageElement,
+  size = 200,
+  topN = 4
+): RGB[] {
+  const canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return [];
+
+  ctx.drawImage(img, 0, 0);
+
+  const centerX = Math.floor(img.width / 2);
+  const centerY = Math.floor(img.height / 2);
+
+  const pixels: RGB[] = [];
+  const fallbackPixels: RGB[] = [];
+
+  for (let x = centerX - size; x < centerX + size; x++) {
+    for (let y = centerY - size; y < centerY + size; y++) {
+      if (x < 0 || x >= img.width || y < 0 || y >= img.height) continue;
+
+      const data = ctx.getImageData(x, y, 1, 1).data;
+      const rgb: RGB = [data[0], data[1], data[2]];
+
+      fallbackPixels.push(rgb);
+
+      const [L] = chroma(rgb).lab();
+      const saturation = chroma(rgb).hsl()[1];
+
+      if (L > 98) continue;
+      if (saturation < 0.03 && L > 85) continue;
+
+      pixels.push(rgb);
+    }
+  }
+
+  if (!pixels.length) {
+    const mid = fallbackPixels[Math.floor(fallbackPixels.length / 2)];
+    return [mid];
+  }
+
+  const { centroids } = kmeans(pixels, topN, {});
+  return centroids.map(c => c.map(v => Math.round(v)) as RGB);
 }
