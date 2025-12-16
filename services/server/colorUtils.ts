@@ -92,10 +92,8 @@ export function isRedRGB([r, g, b]: RGB): boolean {
 export function isPurpleShadeRGB([r, g, b]: RGB): boolean {
   const [L] = chroma([r, g, b]).lab();
 
-  // אם בהיר מאוד – כנראה לבן/אפור, לא סגול
   if (L > 90) return false;
 
-  // אם ירוק יותר מדי – לא סגול
   if (g > r || g > b) return false;
 
   return (
@@ -306,7 +304,6 @@ export function getDominantColorsKMeansCenter(
       const [L] = chroma(rgb).lab();
       const saturation = chroma(rgb).hsl()[1];
 
-      // סינון רקע / לבן קיצוני
       if (L > 98) continue;
       if (saturation < 0.03 && L > 85) continue;
 
@@ -314,7 +311,6 @@ export function getDominantColorsKMeansCenter(
     }
   }
 
-  // אם הכל סונן – נחזיר צבע מרכזי אמיתי (ולא שחור)
   if (!pixels.length) {
     const mid = fallbackPixels[Math.floor(fallbackPixels.length / 2)];
     return [mid];
