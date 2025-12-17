@@ -21,39 +21,47 @@ export default function StyleFeedPage() {
 
   useEffect(() => {
     const userData = localStorage.getItem("user-storage");
-    if (userData) {
-      try {
-        const parsed = JSON.parse(userData);
-        setUserId(parsed.state.userId);
-      } catch (err) {
-        console.error("Error parsing user-storage", err);
-      }
+    if (!userData) return;
+
+    try {
+      const parsed = JSON.parse(userData);
+      setUserId(parsed?.state?.userId ?? null);
+    } catch (err) {
+      console.error("Error parsing user-storage", err);
     }
   }, []);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery<ShareLookType[]>({
     queryKey: ["shared-looks", userId],
     queryFn: async () => {
-      if (!userId) return [];
-      const res = await fetch(`/api/sharelook?userId=${userId}`);
-      if (!res.ok) throw new Error("Failed to fetch shared looks");
+      const url = userId ? `/api/sharelook?userId=${userId}` : `/api/sharelook`;
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error("Failed to fetch shared looks");
+      }
       return res.json();
     },
-    enabled: !!userId,
   });
 
-  const looks: ShareLookType[] = data || [];
+  const looks = data ?? [];
 
   return (
     <div className={styles.pageContainer}>
       <Header />
 
       <main className={styles.mainContent}>
-        {isLoading ? (
-          <Loader />
-        ) : isError ? (
+        {isLoading && <Loader />}
+
+        {isError && (
           <p className={styles.error}>An error occurred while loading looks</p>
-        ) : (
+        )}
+
+        {!isLoading && !isError && looks.length === 0 && (
+          <p className={styles.empty}>No shared looks available yet</p>
+        )}
+
+        {!isLoading && !isError && looks.length > 0 && (
           <div className={styles.grid}>
             {looks.map((look) => (
               <div key={look._id} className={styles.card}>
@@ -63,6 +71,7 @@ export default function StyleFeedPage() {
           </div>
         )}
       </main>
+
       <Footer />
     </div>
   );

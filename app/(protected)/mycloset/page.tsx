@@ -1,3 +1,77 @@
+// "use client";
+
+// import MyCloset from "@/app/Components/MyCloset/MyCloset";
+// import NewLook from "@/app/Components/NewLook/NewLook";
+// import Footer from "../../Components/Footer/Footer";
+// import Header from "../../Components/Header/Header";
+// import MobileNewLookBanner from "@/app/Components/MobileNewLookBanner/MobileNewLookBanner";
+// import { useEffect, useState } from "react";
+// import styles from "./mycloset.module.css";
+
+// type LookCreationMode = "default" | "inspiration";
+// function Loader() {
+//   return (
+//     <div className={styles.loaderContainer}>
+//       <div className={styles.dashedSpinner}></div>
+//     </div>
+//   );
+// }
+// export default function ShowMyCloset() {
+//   const [userId, setUserId] = useState<string | null>(null);
+//   const [inspirationColors, setInspirationColors] = useState<string[]>([]);
+//   const [lookMode, setLookMode] = useState<LookCreationMode>("default");
+//   const [isMobile, setIsMobile] = useState(false);
+
+//   useEffect(() => {
+//     const storedUserId = localStorage.getItem("userId");
+//     setUserId(storedUserId);
+
+//     const checkMobile = () => setIsMobile(window.innerWidth <= 960);
+//     checkMobile();
+//     window.addEventListener("resize", checkMobile);
+//     return () => window.removeEventListener("resize", checkMobile);
+//   }, []);
+
+//   const handleModeChange = (mode: LookCreationMode) => {
+//     setLookMode(mode);
+//     if (mode === "default") setInspirationColors([]);
+//   };
+
+//   return (
+//     <div className={styles.pageContainer}>
+//       <Header />
+//       <div className={styles.pageTitleWrapper}></div>
+//       {isMobile && (
+//         <MobileNewLookBanner
+//           setInspirationColors={setInspirationColors}
+//           lookMode={lookMode}
+//           onModeChange={handleModeChange}
+//         />
+//       )}
+//       <div className={styles.mainArea}>
+//         {!userId ? (
+//           <Loader />
+//         ) : (
+//           <>
+//             {!isMobile && (
+//               <NewLook
+//                 setInspirationColors={setInspirationColors}
+//                 lookMode={lookMode}
+//                 onModeChange={handleModeChange}
+//               />
+//             )}
+//             <MyCloset
+//               userId={userId}
+//               inspirationColors={inspirationColors}
+//               isMobile={isMobile}
+//             />
+//           </>
+//         )}
+//       </div>
+//       <Footer />
+//     </div>
+//   );
+// }
 "use client";
 
 import MyCloset from "@/app/Components/MyCloset/MyCloset";
@@ -9,6 +83,7 @@ import { useEffect, useState } from "react";
 import styles from "./mycloset.module.css";
 
 type LookCreationMode = "default" | "inspiration";
+
 function Loader() {
   return (
     <div className={styles.loaderContainer}>
@@ -16,6 +91,7 @@ function Loader() {
     </div>
   );
 }
+
 export default function ShowMyCloset() {
   const [userId, setUserId] = useState<string | null>(null);
   const [inspirationColors, setInspirationColors] = useState<string[]>([]);
@@ -41,6 +117,7 @@ export default function ShowMyCloset() {
     <div className={styles.pageContainer}>
       <Header />
       <div className={styles.pageTitleWrapper}></div>
+
       {isMobile && (
         <MobileNewLookBanner
           setInspirationColors={setInspirationColors}
@@ -48,6 +125,7 @@ export default function ShowMyCloset() {
           onModeChange={handleModeChange}
         />
       )}
+
       <div className={styles.mainArea}>
         {!userId ? (
           <Loader />
@@ -68,6 +146,7 @@ export default function ShowMyCloset() {
           </>
         )}
       </div>
+
       <Footer />
     </div>
   );
