@@ -3,13 +3,18 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Header from "@/app/Components/Header/Header";
 import Footer from "@/app/Components/Footer/Footer";
 import BuildSimilarLook from "@/app/Components/LookCreator/LookCreator";
 
 export default function ShareLookPersonalPage() {
+  const router = useRouter();
   const params = useParams(); 
-  const lookId = params?.id || "";
+  const lookIdParam = params?.id;
+  const lookId = Array.isArray(lookIdParam) ? lookIdParam[0] : (lookIdParam ?? "");
+  
+
 
   const { data: look, isLoading, error } = useQuery({
     queryKey: ["look", lookId],
@@ -19,6 +24,11 @@ export default function ShareLookPersonalPage() {
     },
     enabled: !!lookId,
   });
+    // ✅ client-side fallback redirect on unauthorized
+  if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
+    router.replace(`/welcome?next=${encodeURIComponent(`/sharelookpersonal/${lookId}`)}`);
+    return null;
+  }
 
   if (isLoading) return <p>Loading...</p>;
   if (error || !look) return <p>Look not found</p>;

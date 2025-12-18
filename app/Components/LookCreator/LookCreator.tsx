@@ -9,6 +9,7 @@ import { ClothingItem } from "@/types/clothTypes";
 import { LookType as Look } from "@/types/lookTypes";
 import { updateClick } from "@/services/client/clickSuggestions";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/userStore";
 
 type Props = {
   readonly look: Look;
@@ -16,24 +17,17 @@ type Props = {
 
 export default function BuildSimilarLook({ look }: Props) {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
-  const [userItems, setUserItems] = useState<Record<string, ClothingItem[]>>(
-    {}
-  );
-  const [selectedItems, setSelectedItems] = useState<
-    Record<string, ClothingItem>
-  >({});
+
+  // ✅ take userId from Zustand (source of truth after login)
+  const userId = useUserStore((s) => s.userId);
+
+  const [userItems, setUserItems] = useState<Record<string, ClothingItem[]>>({});
+  const [selectedItems, setSelectedItems] = useState<Record<string, ClothingItem>>({});
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [noteCandidate, setNoteCandidate] = useState<{ text: string } | null>(
-    null
-  );
+  const [noteCandidate, setNoteCandidate] = useState<{ text: string } | null>(null);
   const [existingNotes, setExistingNotes] = useState<string[]>([]);
   const { showToast } = useToast();
 
-  useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) setUserId(storedUserId);
-  }, []);
   const { data: userChecklist } = useQuery({
     queryKey: ["userChecklist", userId],
     queryFn: async () => {
@@ -43,11 +37,13 @@ export default function BuildSimilarLook({ look }: Props) {
     },
     enabled: !!userId,
   });
+
   useEffect(() => {
     if (userChecklist) {
       setExistingNotes(userChecklist.map((note) => note.text));
     }
   }, [userChecklist]);
+
   const { data: allUserItems } = useQuery({
     queryKey: ["userItems", userId],
     queryFn: async () => {
@@ -76,13 +72,17 @@ export default function BuildSimilarLook({ look }: Props) {
 
   const handleCategoryClick = async (item: ClothingItem) => {
     if (!userId) return;
+
     const category = item.category;
     const colorName = item.colorName;
     const noteText = `${category} - ${colorName}`;
+
     try {
       const updateResult = await updateClick(category, colorName!);
+
       const isExistingNote = existingNotes.includes(noteText);
       const isAlreadySelected = selectedItems[category]?._id === item._id;
+
       const isUserItemMatch =
         allUserItems?.some(
           (userItem) =>
@@ -90,6 +90,7 @@ export default function BuildSimilarLook({ look }: Props) {
             userItem.colorName &&
             userItem.colorName.toLowerCase() === colorName!.toLowerCase()
         ) ?? false;
+
       if (
         updateResult.suggest &&
         !isAlreadySelected &&
@@ -101,6 +102,7 @@ export default function BuildSimilarLook({ look }: Props) {
     } catch (err) {
       console.error("❌ Error saving click or getting clicks:", err);
     }
+
     setActiveCategory((prev) => (prev === category ? null : category));
   };
 
@@ -141,6 +143,7 @@ export default function BuildSimilarLook({ look }: Props) {
 
   const handleConfirm = async () => {
     if (!userId || !look) return;
+
     try {
       const res = await axios.post("/api/looks", { userId, items: newLook });
       showToast("New Look created!", "success");
@@ -184,8 +187,7 @@ export default function BuildSimilarLook({ look }: Props) {
               </p>
             </div>
 
-            {userItems[activeCategory] &&
-            userItems[activeCategory].length > 0 ? (
+            {userItems[activeCategory] && userItems[activeCategory].length > 0 ? (
               <div className={styles.selectionGrid}>
                 {userItems[activeCategory].map((userItem) => (
                   <button
@@ -226,6 +228,7 @@ export default function BuildSimilarLook({ look }: Props) {
               {newLook.length} of {look.items.length} pieces selected
             </p>
           </div>
+
           <div className={styles.previewContainer}>
             {newLook.length === 0 ? (
               <p className={styles.previewPlaceholder}>
@@ -233,10 +236,7 @@ export default function BuildSimilarLook({ look }: Props) {
               </p>
             ) : (
               newLook.map((item, index) => (
-                <div
-                  key={item._id + "-" + index}
-                  className={styles.previewItem}
-                >
+                <div key={item._id + "-" + index} className={styles.previewItem}>
                   <img src={item.imageUrl} alt={item.category} loading="lazy" />
                   <span>{item.category}</span>
                 </div>
@@ -251,6 +251,7 @@ export default function BuildSimilarLook({ look }: Props) {
           </button>
         </div>
       </div>
+
       {noteCandidate && (
         <div className={styles.notemodalOverlay}>
           <div className={styles.notemodal}>

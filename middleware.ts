@@ -21,6 +21,8 @@ const PROTECTED_PATHS = [
 ];
 
 export function middleware(req: NextRequest) {
+  console.log("MIDDLEWARE HIT:", req.nextUrl.pathname);
+
   const { pathname, search } = req.nextUrl;
 
   const isProtected = PROTECTED_PATHS.some((path) =>
