@@ -62,7 +62,6 @@ export default function HomePage() {
       title: "Step 1: Your Closet",
       description:
         "Quickly add all your favorite clothes into the app, and keep them organized in one place.",
-      // imageUrl: "step_1_kgktj8",
       img: "/home/360dd27e6cd686b81e0c3a1ad5ebec8a_1000x.webp",
 
       bullets: [
@@ -75,7 +74,6 @@ export default function HomePage() {
       title: "Step 2: Daily Outfits",
       description:
         "Expertly styled outfits every day, personalized for your weather and activities. Choose a recommended outfit, edit the ones you like, or build your own.",
-      // imageUrl: "step_2_b4kjht",
       img: "/home/as.jpg",
       bullets: [
         "Receive daily outfit suggestions",
@@ -87,7 +85,6 @@ export default function HomePage() {
       title: "Step 3: Love What You Wear",
       description:
         "Save time, clear the clutter, and stop spending money. Be free to be you. Sustainable fashion is about knowing your personal style so you can be more intentional.",
-      // imageUrl: "step_3_hggv5q",
       img: "/home/aa.jpg",
 
       bullets: [
@@ -121,9 +118,7 @@ export default function HomePage() {
     if (activeIndex !== null)
       setActiveIndex((prev) => (prev! - 1 + videos.length) % videos.length);
   };
-  // const getCloudinaryUrl = (id: string) =>
-  //   `https://res.cloudinary.com/dfrgvh4hf/image/upload/v123456/${id}.jpg`;
-
+  
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (activeIndex !== null) {
