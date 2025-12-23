@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MODELLA 👗
+## Smart Digital Wardrobe — Full-Stack Fashion App
 
-## Getting Started
+**MODELLA** is a full-stack smart wardrobe application that allows users to manage their digital clothing collection, upload garment images, analyze dominant colors, and intelligently filter and build outfits.
 
-First, run the development server:
+Beyond personal wardrobe management, MODELLA enables **sharing looks with the app’s community**, creating a social fashion experience that encourages inspiration, style discovery, and interaction between users.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+The project combines image processing, color analysis, advanced state management, and a modern, user-focused interface to simulate a real-world fashion product.
+
+---
+
+## ✨ Key Features
+
+- Personal digital wardrobe management  
+- Upload clothing items with images  
+- Dominant color detection from images  
+- Smart filtering and outfit creation  
+- Share outfits with the user community  
+- Explore and get inspired by looks from other users  
+- Responsive and modern user interface  
+- Advanced client-side state management  
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Next.js (App Router)**
+- **React**
+- **TypeScript**
+- **CSS Modules**
+- **Zustand** – state management
+
+### Data & Utilities
+- Image processing  
+- Color analysis from images  
+- HTML Canvas usage  
+
+---
+
+## 📂 Project Structure
+
+> This structure shows only application-related files.  
+> System folders such as `node_modules` are excluded.
+
+```
+MODELLA/
+│
+├── app/                 # Next.js App Router
+│   ├── Components/      # Shared UI components
+│   ├── pages/           # Application pages
+│   └── styles/          # Global styles
+│
+├── public/              # Static assets (images, icons)
+│   ├── img/
+│   ├── home/
+│   └── slider/
+│
+├── services/            # Business logic and API communication
+│   ├── client/          # Client-side services
+│   └── server/          # Server-side services / APIs
+│
+├── store/               # Global state management (Zustand)
+│
+├── types/               # TypeScript types and definitions
+│
+├── package.json
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Running Locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+The application will start in local development mode.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📝 Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Built using **Next.js App Router**
+- Clear separation between UI, logic, and state
+- Combines personal wardrobe management with social fashion features
+- Strong focus on user experience and image-based functionality
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 👩‍💻 Project Creator
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Shira Goldstein**  
+Full-Stack Development – Educational Project
